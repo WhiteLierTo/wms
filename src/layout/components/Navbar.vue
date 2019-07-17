@@ -4,6 +4,8 @@
 
     <breadcrumb class="breadcrumb-container" />
 
+    <el-button size="mini" type="" style="margin-left:60%;margin-top:10px" @click="langChange('cn')">中文</el-button>
+    <el-button size="mini" @click="langChange('en')">英文</el-button>   
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
@@ -28,26 +30,49 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+     <tags-view v-if="needTagsView" />
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters,mapState } from 'vuex'
+import TagsView from './TagsView/index'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 
 export default {
   components: {
     Breadcrumb,
-    Hamburger
+    Hamburger,
+    TagsView
   },
   computed: {
     ...mapGetters([
       'sidebar',
       'avatar'
-    ])
+    ]),
+      ...mapState({
+      sidebar: state => state.app.sidebar,
+      device: state => state.app.device,
+      showSettings: state => state.settings.showSettings,
+      needTagsView: state => state.settings.tagsView,
+      fixedHeader: state => state.settings.fixedHeader
+    }),
+    classObj() {
+      return {
+        hideSidebar: !this.sidebar.opened,
+        openSidebar: this.sidebar.opened,
+        withoutAnimation: this.sidebar.withoutAnimation,
+        mobile: this.device === 'mobile'
+      }
+    }
   },
   methods: {
+    //语言切换
+    langChange(e) {
+      localStorage.setItem("lang", e);
+      this.$i18n.locale = e;
+    },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },

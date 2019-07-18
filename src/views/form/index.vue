@@ -58,6 +58,7 @@
 </template>
 
 <script>
+import { getList, addList } from '@/api/table'
 export default {
   name: 'Form',
   data() {
@@ -71,14 +72,48 @@ export default {
         type: [],
         resource: '',
         desc: ''
+      },
+      list: null,
+      listLoading: true,
+      info: {
+        apply: 'Lee',
+        careType: 0,
+        createAt: '2019-07-18T01:56:08.268Z',
+        deleted: true,
+        enabled: true,
+        headImg: 'Lee',
+        id: 0,
+        modifyAt: '2019-07-18T01:56:08.268Z',
+        price: '188',
+        serviceTime: '2019-07-18',
+        serviceType: '1'
       }
     }
   },
+  mounted() {
+    this.fetchData()
+  },
   methods: {
+    fetchData() {
+      // this.listLoading = true
+      getList().then(response => {
+        // this.list = response.data.items
+        // this.listLoading = false
+        console.log('数据:' + JSON.stringify(response))
+      })
+    },
+    addData() {
+      addList(this.info).then(response => {
+        // this.list = response.data.items
+        // this.listLoading = false
+        console.log('数据:' + JSON.stringify(response))
+      })
+    },
     onSubmit() {
       this.$message('submit!')
     },
     onCancel() {
+      this.addData()
       this.$message({
         message: 'cancel!',
         type: 'warning'

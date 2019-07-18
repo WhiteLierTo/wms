@@ -1,41 +1,37 @@
 <template>
   <div class="navbar">
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <hamburger
+      :is-active="sidebar.opened"
+      class="hamburger-container"
+      @toggleClick="toggleSideBar"
+    />
 
     <breadcrumb class="breadcrumb-container" />
 
-    <el-button size="mini" type="" style="margin-left:60%;margin-top:10px" @click="langChange('cn')">中文</el-button>
-    <el-button size="mini" @click="langChange('en')">英文</el-button>   
+    <el-button size="mini" type style="margin-left:60%;margin-top:10px" @click="langChange('cn')">中文</el-button>
+    <el-button size="mini" @click="langChange('en')">英文</el-button>
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+          <img src="@/assets/avatar.jpg" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
-            <el-dropdown-item>
-              Home
-            </el-dropdown-item>
+            <el-dropdown-item>个人中心</el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
           <el-dropdown-item divided>
-            <span style="display:block;" @click="logout">Log Out</span>
+            <span style="display:block;" @click="logout">退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-     <tags-view v-if="needTagsView" />
+    <tags-view v-if="needTagsView" />
   </div>
 </template>
 
 <script>
-import { mapGetters,mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import TagsView from './TagsView/index'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
@@ -47,11 +43,8 @@ export default {
     TagsView
   },
   computed: {
-    ...mapGetters([
-      'sidebar',
-      'avatar'
-    ]),
-      ...mapState({
+    ...mapGetters(['sidebar', 'avatar']),
+    ...mapState({
       sidebar: state => state.app.sidebar,
       device: state => state.app.device,
       showSettings: state => state.settings.showSettings,
@@ -68,10 +61,10 @@ export default {
     }
   },
   methods: {
-    //语言切换
+    // 语言切换
     langChange(e) {
-      localStorage.setItem("lang", e);
-      this.$i18n.locale = e;
+      localStorage.setItem('lang', e)
+      this.$i18n.locale = e
     },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
@@ -90,18 +83,18 @@ export default {
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 
   .hamburger-container {
     line-height: 46px;
     height: 100%;
     float: left;
     cursor: pointer;
-    transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
+    transition: background 0.3s;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
-      background: rgba(0, 0, 0, .025)
+      background: rgba(0, 0, 0, 0.025);
     }
   }
 
@@ -128,10 +121,10 @@ export default {
 
       &.hover-effect {
         cursor: pointer;
-        transition: background .3s;
+        transition: background 0.3s;
 
         &:hover {
-          background: rgba(0, 0, 0, .025)
+          background: rgba(0, 0, 0, 0.025);
         }
       }
     }

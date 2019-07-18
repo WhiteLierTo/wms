@@ -1,40 +1,51 @@
 <template>
   <div>
-   
-      <div class="body">
-         <el-card class="box-card">
+    <div class="body">
+      <el-card class="box-card">
         <section>
           <div style="float:right">
             <!--工具条-->
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px">
               <el-form :inline="true" :model="page">
                 <el-form-item>
-                  <el-input size="small" v-model="page.warehouseName" :placeholder="$t('header.warehouseName')"></el-input>
+                  <el-input
+                    v-model="page.warehouseName"
+                    size="small"
+                    :placeholder="$t('header.warehouseName')"
+                  />
                 </el-form-item>
                 <el-form-item>
-                  <el-select size="small" v-model="page.warehouseLock" :placeholder="$t('header.warehouseLockedState')">
+                  <el-select
+                    v-model="page.warehouseLock"
+                    size="small"
+                    :placeholder="$t('header.warehouseLockedState')"
+                  >
                     <el-option
                       v-for="item in options"
                       :key="item.value"
                       :label="item.label"
                       :value="item.value"
-                    ></el-option>
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item>
-                  <el-button size="small" type="primary" style="bacground:#0076a8">{{$t('header.query')}}</el-button>
+                  <el-button
+                    size="small"
+                    type="primary"
+                    style="bacground:#0076a8"
+                  >{{ $t('header.query') }}</el-button>
                 </el-form-item>
                 <el-form-item>
-                  <el-button size="small" type="primary" @click="add = true">{{$t('header.add')}}</el-button>
+                  <el-button size="small" type="primary" @click="add = true">{{ $t('header.add') }}</el-button>
                 </el-form-item>
               </el-form>
             </el-col>
           </div>
           <!--列表-->
           <el-table border :data="listData" style="width: 100%">
-            <el-table-column prop="wid" label="仓库ID"></el-table-column>
-            <el-table-column prop="warehouseName" label="仓库名称"></el-table-column>
-            <el-table-column prop="description" label="仓库描述"></el-table-column>
+            <el-table-column prop="wid" label="仓库ID" />
+            <el-table-column prop="warehouseName" label="仓库名称" />
+            <el-table-column prop="description" label="仓库描述" />
             <el-table-column prop="warehouseLock" label="仓库锁状态">
               <template slot-scope="scope">
                 <div v-if="scope.row.warehouseLock==0" style="color:#cc0000">关闭</div>
@@ -49,19 +60,18 @@
             </el-table-column>
           </el-table>
         </section>
-         <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page.sync="current"
-              :page-sizes="[10, 20, 30, 40]"
-              :page-size="10"
-              layout="sizes, prev, pager, next"
-              style="float: right;margin:20px 0px 20px 0px"
-              :total="100">
-            </el-pagination>
-         </el-card>
-      </div>
-   
+        <el-pagination
+          :current-page.sync="current"
+          :page-sizes="[10, 20, 30, 40]"
+          :page-size="10"
+          @size-change="handleSizeChange"
+          layout="sizes, prev, pager, next"
+          @current-change="handleCurrentChange"
+          style="float: right;margin:20px 0px 20px 0px"
+          :total="100"
+        />
+      </el-card>
+    </div>
 
     <!--新增-->
     <div>
@@ -74,10 +84,10 @@
                 label="仓库名称"
                 :label-width="formLabelWidth"
                 :rules="[
-					{ required: true, message: '仓库名称不能为空'},
-					]"
+                  { required: true, message: '仓库名称不能为空'},
+                ]"
               >
-                <el-input v-model="addData.warehouseName" autocomplete="off"></el-input>
+                <el-input v-model="addData.warehouseName" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -86,10 +96,10 @@
                 label="仓库描述"
                 :label-width="formLabelWidth"
                 :rules="[
-					{ required: true, message: '仓库描述不能为空'}
-					]"
+                  { required: true, message: '仓库描述不能为空'}
+                ]"
               >
-                <el-input v-model.number="addData.description" autocomplete="off"></el-input>
+                <el-input v-model.number="addData.description" autocomplete="off" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -121,10 +131,10 @@
                 label="仓库名称"
                 :label-width="formLabelWidth"
                 :rules="[
-					{ required: true, message: '仓库名称不能为空'},
-					]"
+                  { required: true, message: '仓库名称不能为空'},
+                ]"
               >
-                <el-input v-model="editData.warehouseName" autocomplete="off"></el-input>
+                <el-input v-model="editData.warehouseName" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -133,10 +143,10 @@
                 label="仓库描述"
                 :label-width="formLabelWidth"
                 :rules="[
-					{ required: true, message: '仓库数量不能为空'},
-					]"
+                  { required: true, message: '仓库数量不能为空'},
+                ]"
               >
-                <el-input v-model="editData.description" autocomplete="off"></el-input>
+                <el-input v-model="editData.description" autocomplete="off" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -161,125 +171,125 @@
 
 <script>
 export default {
-  name:"Tree",
+  name: 'Tree',
   data() {
     return {
       current: 5,
       options: [
         {
-          //仓库状态查询
-          value: "1",
-          label: "开启"
+          // 仓库状态查询
+          value: '1',
+          label: '开启'
         },
         {
-          value: "0",
-          label: "关闭"
+          value: '0',
+          label: '关闭'
         }
       ],
       add: false,
       edit: false,
-      formLabelWidth: "80px",
+      formLabelWidth: '80px',
       addData: {
-        //新增数据
-        warehouseName: "",
-        description: "",
-        warehouseLock: "1"
+        // 新增数据
+        warehouseName: '',
+        description: '',
+        warehouseLock: '1'
       },
       editData: {},
       page: {
-        //查询条件
-        warehouseLock: "",
-        warehouseName: "",
+        // 查询条件
+        warehouseLock: '',
+        warehouseName: '',
         total: 40,
         page: 1
       },
       listData: [
-        //列表数据
+        // 列表数据
         {
           wid: 0,
-          warehouseName: "恒温仓库",
-          description: "温度为15-20摄氏度",
-          warehouseLock: "1"
+          warehouseName: '恒温仓库',
+          description: '温度为15-20摄氏度',
+          warehouseLock: '1'
         },
         {
           wid: 1,
-          warehouseName: "低温仓库",
-          description: "温度为零下15-20摄氏度",
-          warehouseLock: "1"
+          warehouseName: '低温仓库',
+          description: '温度为零下15-20摄氏度',
+          warehouseLock: '1'
         },
         {
           wid: 2,
-          warehouseName: "高温仓库",
-          description: "温度为零下40-60摄氏度",
-          warehouseLock: "0"
+          warehouseName: '高温仓库',
+          description: '温度为零下40-60摄氏度',
+          warehouseLock: '0'
         }
       ]
-    };
+    }
   },
   methods: {
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      console.log(`每页 ${val} 条`)
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      console.log(`当前页: ${val}`)
     },
     editHandleClick(e) {
-      this.edit = true;
-      this.editData = e;
+      this.edit = true
+      this.editData = e
     },
     deleteHandleClick() {
-      this.$confirm("此操作将永久删除该仓库, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+      this.$confirm('此操作将永久删除该仓库, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
-        .then(async () => {
+        .then(async() => {
           this.$message({
-            type: "success",
-            message: "删除成功!"
-          });
+            type: 'success',
+            message: '删除成功!'
+          })
         })
-        .catch(() => {});
+        .catch(() => {})
     },
     addHandleClick() {
       if (!this.addData.warehouseName || !this.addData.description) {
         this.$message({
           showClose: true,
-          message: "请完善信息",
-          type: "warning"
-        });
-        return;
+          message: '请完善信息',
+          type: 'warning'
+        })
+        return
       }
-      this.add = false;
+      this.add = false
       this.$message({
-        message: "添加成功",
-        type: "success"
-      });
+        message: '添加成功',
+        type: 'success'
+      })
     },
     editSubmit() {
       if (!this.editData.warehouseName || !this.editData.description) {
         this.$message({
           showClose: true,
-          message: "请完善信息",
-          type: "warning"
-        });
-        return;
+          message: '请完善信息',
+          type: 'warning'
+        })
+        return
       }
-      this.edit = false;
+      this.edit = false
       this.$message({
-        message: "编辑成功",
-        type: "success"
-      });
+        message: '编辑成功',
+        type: 'success'
+      })
     }
   }
-};
+}
 </script>
 
 <style>
 .body {
   margin: 20px 0px 0px 2%;
 }
-.box-card{
+.box-card {
   width: 98%;
 }
 </style>

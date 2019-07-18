@@ -23,14 +23,14 @@ export const constantRoutes = [{
 {
   path: '/',
   component: Layout,
-  redirect: '/dashboard',
+  redirect: '/home',
   children: [{
-    path: 'dashboard',
-    name: 'Dashboard',
+    path: 'home',
+    name: 'Home',
     component: () =>
-                import('@/views/dashboard/index'),
+                import('@/views/home/index'),
     hidden: true,
-    meta: { title: '首页', icon: 'dashboard' }
+    meta: { title: '首页', icon: 'home' }
   }]
 },
 
@@ -40,11 +40,9 @@ export const constantRoutes = [{
   children: [{
     path: 'tree',
     name: 'Tree',
-    noCache: false,
-    affix: true,
     component: () =>
                 import('@/views/tree/index'),
-    meta: { title: '采购退货', icon: 'example' }
+    meta: { title: '采购退货', icon: 'example', noCache: false, affix: true }
   }]
 },
 
@@ -63,8 +61,8 @@ export const constantRoutes = [{
 {
   path: '/nested',
   component: Layout,
-  redirect: '/nested/menu1',
-  name: 'Nested',
+  redirect: '/nested/menu2',
+  name: 'nested',
   meta: {
     title: '数据管理',
     icon: 'nested'

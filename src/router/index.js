@@ -10,51 +10,39 @@ export const constantRoutes = [
   {
     path: '/404',
     component: () =>
-      import('@/views/404'),
-    hidden: true
+      import('@/views/home/index'),
+    hidden: true,
+    meta: { title: '首页', icon: 'home' }
   },
-
   {
-    path: '/',
+    path: '/data-manager',
     component: Layout,
-    redirect: '/home',
-    children: [{
-      path: 'home',
-      name: 'Home',
-      component: () =>
-        import('@/views/home/index'),
-      hidden: true,
-      meta: { title: '首页', icon: 'home' }
-    }]
-  },
-  {
-    path: '/login',
-    name: 'login',
-    component: () =>
-      import('@/views/login/index'),
-    hidden: true
-  },
-  {
-    path: '/warehouse',
-    component: Layout,
-    name: 'warehouse',
+    redirect: '/data-manager/warehouse-manager',
+    name: 'data-manager',
     meta: {
       title: '数据管理',
       icon: 'nested'
     },
     children: [{
-      path: 'warehouseManager',
+      path: 'warehouse-manager',
       component: () =>
-        import('@/views/warehouse/warehouse-manager'), // Parent router-view
-      name: 'warehouseManager',
+      import('@/views/data-manager/warehouse-manager'),
+      name: 'warehouse-manager',
       meta: { title: '库房管理' },
       children: []
     }, {
-      path: 'locationManager',
+      path: 'location-manager',
       component: () =>
-        import('@/views/warehouse/location-manager'), // Parent router-view
-      name: 'locationManager',
+      import('@/views/data-manager/location-manager'),
+      name: 'location-manager',
       meta: { title: '库位管理' },
+      children: []
+    }, {
+      path: 'production-batch',
+      component: () =>
+      import('@/views/data-manager/production-batch'),
+      name: 'production-batch',
+      meta: { title: '生产批次' },
       children: []
     }]
   },
@@ -65,7 +53,7 @@ export const constantRoutes = [
       path: 'warehouse',
       name: 'warehouse',
       component: () =>
-        import('@/views/warehouse/warehouse-manager'),
+            import('@/views/warehouse/warehouse-manager'),
       meta: { title: '采购退货', icon: 'example', noCache: false, affix: true }
     }]
   },
@@ -77,7 +65,7 @@ export const constantRoutes = [
       path: 'index',
       name: 'Form',
       component: () =>
-        import('@/views/form/index'),
+            import('@/views/form/index'),
       meta: { title: '条码打印', icon: 'form' }
     }]
   },
@@ -94,7 +82,7 @@ export const constantRoutes = [
     children: [{
       path: 'menu2',
       component: () =>
-        import('@/views/nested/menu2/index'), // Parent router-view
+            import('@/views/nested/menu2/index'), // Parent router-view
       name: 'Menu2',
       meta: { title: '采购订单' },
       children: []

@@ -34,27 +34,34 @@ export const constantRoutes = [{
   }]
 },
 {
-  path: '/warehouse',
+  path: '/data-manager',
   component: Layout,
-  redirect: '/warehouse/warehouse-manager',
-  name: 'warehouse',
+  redirect: '/data-manager/warehouse-manager',
+  name: 'data-manager',
   meta: {
     title: '数据管理',
     icon: 'nested'
   },
   children: [{
-    path: 'warehouse',
+    path: 'warehouse-manager',
     component: () =>
-                import('@/views/warehouse/warehouse-manager'), // Parent router-view
-    name: 'warehouse',
+                import('@/views/data-manager/warehouse-manager'),
+    name: 'warehouse-manager',
     meta: { title: '库房管理' },
     children: []
   }, {
     path: 'location-manager',
     component: () =>
-                import('@/views/warehouse/location-manager'), // Parent router-view
+                import('@/views/data-manager/location-manager'),
     name: 'location-manager',
     meta: { title: '库位管理' },
+    children: []
+  }, {
+    path: 'production-batch',
+    component: () =>
+                import('@/views/data-manager/production-batch'),
+    name: 'production-batch',
+    meta: { title: '生产批次' },
     children: []
   }]
 },

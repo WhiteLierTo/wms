@@ -53,7 +53,7 @@ export const constantRoutes = [
       path: 'warehouse',
       name: 'warehouse',
       component: () =>
-            import('@/views/warehouse/warehouse-manager'),
+            import('@/views/data-manager/warehouse-manager'),
       meta: { title: '采购退货', icon: 'example', noCache: false, affix: true }
     }]
   },

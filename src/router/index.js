@@ -33,15 +33,39 @@ export const constantRoutes = [{
     meta: { title: '首页', icon: 'home' }
   }]
 },
-
 {
-  path: '/tree',
+  path: '/warehouse',
+  component: Layout,
+  redirect: '/warehouse/warehouse-manager',
+  name: 'warehouse',
+  meta: {
+    title: '数据管理',
+    icon: 'nested'
+  },
+  children: [{
+    path: 'warehouse',
+    component: () =>
+                import('@/views/warehouse/warehouse-manager'), // Parent router-view
+    name: 'warehouse',
+    meta: { title: '库房管理' },
+    children: []
+  }, {
+    path: 'location-manager',
+    component: () =>
+                import('@/views/warehouse/location-manager'), // Parent router-view
+    name: 'location-manager',
+    meta: { title: '库位管理' },
+    children: []
+  }]
+},
+{
+  path: '/warehouse',
   component: Layout,
   children: [{
-    path: 'tree',
-    name: 'Tree',
+    path: 'warehouse',
+    name: 'warehouse',
     component: () =>
-                import('@/views/tree/index'),
+                import('@/views/warehouse/warehouse-manager'),
     meta: { title: '采购退货', icon: 'example', noCache: false, affix: true }
   }]
 },

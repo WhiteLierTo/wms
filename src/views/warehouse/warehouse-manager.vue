@@ -1,3 +1,4 @@
+<!--仓库管理-->
 <template>
   <div>
     <div class="body">
@@ -171,7 +172,7 @@
 
 <script>
 export default {
-  name: 'Tree',
+  name: 'warehouse',
   data() {
     return {
       current: 5,

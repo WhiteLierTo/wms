@@ -8,17 +8,22 @@
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
               <el-form :inline="true" :model="page">
                 <el-form-item>
-                  <el-select v-model="page.warehouseLock" size="small" placeholder="所属仓库">
+                  <el-select filterable clearable v-model="page.wid" size="small" placeholder="所属仓库">
                     <el-option
                       v-for="item in warehouse"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
+                      :key="item.wid"
+                      :label="item.warehouseName"
+                      :value="item.wid"
                     />
                   </el-select>
                 </el-form-item>
                 <el-form-item>
-                  <el-select v-model="page.warehouseLock" size="small" placeholder="库位锁状态">
+                  <el-select
+                    clearable
+                    v-model="page.locationLock"
+                    size="small"
+                    placeholder="库位锁状态"
+                  >
                     <el-option
                       v-for="item in options"
                       :key="item.value"
@@ -28,7 +33,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item>
-                  <el-button size="small" type="primary" style="bacground:#0076a8">查询</el-button>
+                  <el-button @click="queryHandleClick" size="small" type="primary" style="bacground:#0076a8">查询</el-button>
                 </el-form-item>
                 <el-form-item>
                   <el-button size="small" type="primary" @click="add = true">新增</el-button>
@@ -38,11 +43,7 @@
           </div>
 
           <!--列表-->
-          <el-table
-            :data="listData"
-            style="width: 100%"
-            border
-          >
+          <el-table :data="listData" style="width: 100%" border>
             <el-table-column type="expand">
               <template slot-scope="props">
                 <el-form label-position="left" inline class="demo-table-expand">
@@ -67,16 +68,16 @@
             <el-table-column prop="location" label="库位编号" />
             <el-table-column prop="wid" label="所属仓库" />
             <el-table-column prop="description" label="库位描述" />
-            <el-table-column prop="warehouseLock" label="库位锁">
+            <el-table-column prop="locationLock" label="库位锁">
               <template slot-scope="scope">
-                <div v-if="scope.row.locationLock==0" style="color:#cc0000">关闭</div>
-                <div v-if="scope.row.locationLock==1" style="color:#3c763d">开启</div>
+                <div v-if="scope.row.locationLock==false" style="color:#cc0000">关闭</div>
+                <div v-if="scope.row.locationLock==true" style="color:#3c763d">开启</div>
               </template>
             </el-table-column>
             <el-table-column label="操作" width="150">
               <template slot-scope="scope">
                 <el-button type="text" size="small" @click="editHandleClick(scope.row)">编辑</el-button>
-                <el-button type="text" size="small" @click="deleteHandleClick(scope.row)">删除</el-button>
+                <!-- <el-button type="text" size="small" @click="deleteHandleClick(scope.row)">删除</el-button> -->
               </template>
             </el-table-column>
           </el-table>
@@ -88,7 +89,7 @@
             @size-change="handleSizeChange"
             layout="total, sizes, prev, pager, next, jumper"
             @current-change="handleCurrentChange"
-            :total="40"
+            :total="page.total"
             style="float: right;margin:20px 0px 20px 0px"
           />
         </section>
@@ -101,60 +102,36 @@
         <el-form :model="addData" class="demo-ruleForm">
           <el-row>
             <el-col :span="12">
-              <el-form-item
-                prop="tempUpperLimit"
-                label="温度上限"
-                :label-width="formLabelWidth"
-              >
+              <el-form-item prop="tempUpperLimit" label="温度上限" :label-width="formLabelWidth">
                 <el-input v-model="addData.tempUpperLimit" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item
-                prop="tempLowerLimit"
-                label="温度下限"
-                :label-width="formLabelWidth"
-              >
+              <el-form-item prop="tempLowerLimit" label="温度下限" :label-width="formLabelWidth">
                 <el-input v-model="addData.tempLowerLimit" autocomplete="off" />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item
-                prop="humidityUpperLimit"
-                label="湿度上限"
-                :label-width="formLabelWidth"
-              >
+              <el-form-item prop="humidityUpperLimit" label="湿度上限" :label-width="formLabelWidth">
                 <el-input v-model="addData.humidityUpperLimit" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item
-                prop="humidityLowerLimit"
-                label="湿度下限"
-                :label-width="formLabelWidth"
-              >
+              <el-form-item prop="humidityLowerLimit" label="湿度下限" :label-width="formLabelWidth">
                 <el-input v-model="addData.humidityLowerLimit" autocomplete="off" />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item
-                prop="description"
-                label="仓库描述"
-                :label-width="formLabelWidth"
-              >
+              <el-form-item prop="description" label="仓库描述" :label-width="formLabelWidth">
                 <el-input v-model="addData.description" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item
-                prop="maximum"
-                label="最大承重"
-                :label-width="formLabelWidth"
-              >
+              <el-form-item prop="maximum" label="最大承重" :label-width="formLabelWidth">
                 <el-input v-model="addData.maximum" autocomplete="off" />
               </el-form-item>
             </el-col>
@@ -162,8 +139,8 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="仓库锁状态：" prop="region">
-                <el-radio v-model="addData.locationLock" label="1">开启</el-radio>
-                <el-radio v-model="addData.locationLock" label="0">关闭</el-radio>
+                <el-radio v-model="addData.locationLock" :label="true">开启</el-radio>
+                <el-radio v-model="addData.locationLock" :label="false">关闭</el-radio>
               </el-form-item>
             </el-col>
           </el-row>
@@ -182,60 +159,36 @@
         <el-form :model="editData" class="demo-ruleForm">
           <el-row>
             <el-col :span="12">
-              <el-form-item
-                prop="tempUpperLimit"
-                label="温度上限"
-                :label-width="formLabelWidth"
-              >
+              <el-form-item prop="tempUpperLimit" label="温度上限" :label-width="formLabelWidth">
                 <el-input v-model="editData.tempUpperLimit" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item
-                prop="tempLowerLimit"
-                label="温度下限"
-                :label-width="formLabelWidth"
-              >
+              <el-form-item prop="tempLowerLimit" label="温度下限" :label-width="formLabelWidth">
                 <el-input v-model="editData.tempLowerLimit" autocomplete="off" />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item
-                prop="humidityUpperLimit"
-                label="湿度上限"
-                :label-width="formLabelWidth"
-              >
+              <el-form-item prop="humidityUpperLimit" label="湿度上限" :label-width="formLabelWidth">
                 <el-input v-model="editData.humidityUpperLimit" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item
-                prop="humidityLowerLimit"
-                label="湿度下限"
-                :label-width="formLabelWidth"
-              >
+              <el-form-item prop="humidityLowerLimit" label="湿度下限" :label-width="formLabelWidth">
                 <el-input v-model="editData.humidityLowerLimit" autocomplete="off" />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item
-                prop="description"
-                label="仓库描述"
-                :label-width="formLabelWidth"
-              >
+              <el-form-item prop="description" label="仓库描述" :label-width="formLabelWidth">
                 <el-input v-model="editData.description" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item
-                prop="maximum"
-                label="最大承重"
-                :label-width="formLabelWidth"
-              >
+              <el-form-item prop="maximum" label="最大承重" :label-width="formLabelWidth">
                 <el-input v-model="editData.maximum" autocomplete="off" />
               </el-form-item>
             </el-col>
@@ -243,8 +196,8 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="仓库锁状态：" prop="region">
-                <el-radio v-model="editData.locationLock" label="1">开启</el-radio>
-                <el-radio v-model="editData.locationLock" label="0">关闭</el-radio>
+                <el-radio v-model="editData.locationLock" :label="true">开启</el-radio>
+                <el-radio v-model="editData.locationLock" :label="false">关闭</el-radio>
               </el-form-item>
             </el-col>
           </el-row>
@@ -260,152 +213,130 @@
 </template>
 
 <script>
+import { getLocationList, getWarehouseList } from "@/api/baseData";
 export default {
   data() {
     return {
-      warehouse: [
-        {
-          // 仓库状态查询
-          value: '2',
-          label: '高温仓库'
-        },
-        {
-          value: '1',
-          label: '恒温仓库'
-        },
-        {
-          value: '0',
-          label: '低温仓库'
-        }
-      ],
+      warehouse: [],
       options: [
         {
           // 仓库状态查询
-          value: '1',
-          label: '开启'
+          value: true,
+          label: "开启"
         },
         {
-          value: '0',
-          label: '关闭'
+          value: false,
+          label: "关闭"
         }
       ],
       add: false,
       edit: false,
-      formLabelWidth: '80px',
+      formLabelWidth: "80px",
       addData: {
         // 新增数据
-        warehouseName: '',
-        tempUpperLimit: '',
-        tempLowerLimit: '',
-        humidityUpperLimit: '',
-        humidityLowerLimit: '',
-        maximum: '',
-        description: '',
-        locationLock: '1'
+        warehouseName: "",
+        tempUpperLimit: "",
+        tempLowerLimit: "",
+        humidityUpperLimit: "",
+        humidityLowerLimit: "",
+        maximum: "",
+        description: "",
+        locationLock: false
       },
       editData: {},
       page: {
         // 查询条件
-        warehouseLock: '',
-        warehouseName: '',
-        total: 0,
-        page: 1
+        locationLock: "",
+        //wid: "",
+        total: 40,
+        current: 1,
+        size: 10
       },
-      listData: [
-        // 列表数据
-        {
-          location: 0,
-          wid: '1',
-          maximum: '1200',
-          tempUpperLimit: '30',
-          tempLowerLimit: '10',
-          humidityUpperLimit: '30',
-          humidityLowerLimit: '10',
-          locationLock: '1',
-          description: '该库位为第一库位'
-        },
-        {
-          location: 1,
-          wid: '1',
-          maximum: '1200',
-          tempUpperLimit: '40',
-          tempLowerLimit: '15',
-          humidityUpperLimit: '30',
-          humidityLowerLimit: '10',
-          locationLock: '1',
-          description: '该库位为第二库位'
-        },
-        {
-          location: 2,
-          wid: '1',
-          maximum: '1200',
-          tempUpperLimit: '25',
-          tempLowerLimit: '18',
-          humidityUpperLimit: '20',
-          humidityLowerLimit: '11',
-          locationLock: '0',
-          description: '该库位为第三库位'
-        }
-      ]
-    }
+      listData: []
+    };
+  },
+  mounted() {
+    this.fetchData();
+    this.getWarehouseList();
   },
   methods: {
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
+    //查询
+     queryHandleClick() {
+      this.fetchData();
     },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
-    },
+    //弹出修改页面并赋值
     editHandleClick(e) {
-      this.edit = true
-      this.editData = e
+      this.edit = true;
+      this.editData = e;
     },
-    deleteHandleClick() {
-      this.$confirm('此操作将永久删除该仓库, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(async() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-        })
-        .catch(() => {})
-    },
+    //curd
     addHandleClick() {
       if (!this.addData.maximum || !this.addData.description) {
         this.$message({
           showClose: true,
-          message: '请完善信息',
-          type: 'warning'
-        })
-        return
+          message: "请完善信息",
+          type: "warning"
+        });
+        return;
       }
-      this.add = false
+      this.add = false;
       this.$message({
-        message: '添加成功',
-        type: 'success'
+        message: "添加成功",
+        type: "success"
+      });
+    },
+    deleteHandleClick() {
+      this.$confirm("此操作将永久删除该仓库, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       })
+        .then(async () => {
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+        })
+        .catch(() => {});
     },
     editSubmit() {
       if (!this.editData.maximum || !this.editData.description) {
         this.$message({
           showClose: true,
-          message: '请完善信息',
-          type: 'warning'
-        })
-        return
+          message: "请完善信息",
+          type: "warning"
+        });
+        return;
       }
-      this.edit = false
+      this.edit = false;
       this.$message({
-        message: '编辑成功',
-        type: 'success'
-      })
+        message: "编辑成功",
+        type: "success"
+      });
+    },
+    //查询库位列表
+    fetchData() {
+      getLocationList(this.page).then(res => {
+        this.listData = res.result.list;
+        this.page.total = res.result.total;
+      });
+    },
+    //下拉查询库房列表
+    getWarehouseList() {
+      getWarehouseList().then(res => {
+        this.warehouse = res.result.list;
+      });
+    },
+    handleSizeChange(val) {
+      this.page.size = val;
+      this.fetchData();
+    },
+    handleCurrentChange(val) {
+      this.page.current = val;
+      this.fetchData();
     }
   }
-}
+};
 </script>
 
 <style>
@@ -416,9 +347,9 @@ export default {
   width: 90px;
 }
 .el-form--inline .el-form-item__label {
-    color : #99a9bf ;
-    float: none;
-    display: inline-block;
+  color: #99a9bf;
+  float: none;
+  display: inline-block;
 }
 .demo-table-expand .el-form-item {
   margin-right: 0;

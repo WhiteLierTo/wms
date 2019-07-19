@@ -9,14 +9,27 @@
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px">
               <el-form :inline="true" :model="page">
                 <el-form-item>
-                  <el-input
+                  <el-select
                     v-model="page.warehouseName"
-                    size="small"
+                    filterable
+                    remote
+                    reserve-keyword
                     :placeholder="$t('header.warehouseName')"
-                  />
+                    :remote-method="remoteMethod"
+                    :loading="loading"
+                     size="small"
+                  >
+                    <el-option
+                      v-for="item in remote"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    ></el-option>
+                  </el-select>
                 </el-form-item>
                 <el-form-item>
                   <el-select
+                    clearable
                     v-model="page.warehouseLock"
                     size="small"
                     :placeholder="$t('header.warehouseLockedState')"
@@ -31,6 +44,7 @@
                 </el-form-item>
                 <el-form-item>
                   <el-button
+                    @click="queryHandleClick"
                     size="small"
                     type="primary"
                     style="bacground:#0076a8"
@@ -56,21 +70,20 @@
             <el-table-column label="操作" width="150">
               <template slot-scope="scope">
                 <el-button type="text" size="small" @click="editHandleClick(scope.row)">编辑</el-button>
-                <el-button type="text" size="small" @click="deleteHandleClick(scope.row)">删除</el-button>
+                <!--  <el-button type="text" size="small" @click="deleteHandleClick(scope.row)">删除</el-button> -->
               </template>
             </el-table-column>
           </el-table>
         </section>
         <el-pagination
           background
-          :current-page.sync="current"
           :page-sizes="[10, 20, 30, 40]"
           :page-size="10"
           @size-change="handleSizeChange"
           layout="total, sizes, prev, pager, next, jumper"
           @current-change="handleCurrentChange"
           style="float: right;margin:20px 0px 20px 0px"
-          :total="30"
+          :total="page.total"
         />
       </el-card>
     </div>
@@ -92,7 +105,7 @@
                 <el-input v-model="addData.wid" autocomplete="off" />
               </el-form-item>
             </el-col>
-            <el-col  style="margin-left:10px" :span="11">
+            <el-col style="margin-left:10px" :span="11">
               <el-form-item
                 prop="warehouseName"
                 label="仓库名称"
@@ -124,9 +137,9 @@
           </div>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="仓库锁状态：" prop="region">
-                <el-radio v-model="addData.warehouseLock" label="true">开启</el-radio>
-                <el-radio v-model="addData.warehouseLock" label="false" checked>关闭</el-radio>
+              <el-form-item label="仓库锁状态：" prop="warehouseLock">
+                <el-radio v-model="addData.warehouseLock" :label="true">开启</el-radio>
+                <el-radio v-model="addData.warehouseLock" :label="false" checked>关闭</el-radio>
               </el-form-item>
             </el-col>
           </el-row>
@@ -144,7 +157,7 @@
       <el-dialog title="编辑仓库" :visible.sync="edit">
         <el-form :model="editData" class="demo-ruleForm">
           <el-row>
-           <el-col :span="11">
+            <el-col :span="11">
               <el-form-item
                 prop="wid"
                 label="仓库ID"
@@ -169,26 +182,26 @@
               </el-form-item>
             </el-col>
           </el-row>
-            <el-form-item
-              prop="description"
-              label="仓库描述"
-              :label-width="formLabelWidth"
-              :rules="[
+          <el-form-item
+            prop="description"
+            label="仓库描述"
+            :label-width="formLabelWidth"
+            :rules="[
                   { required: true, message: '仓库描述不能为空'}
                 ]"
-            >
-              <el-input
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 4}"
-                placeholder="请输仓库描述"
-                v-model="editData.description"
-              ></el-input>
-            </el-form-item>
+          >
+            <el-input
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              placeholder="请输仓库描述"
+              v-model="editData.description"
+            ></el-input>
+          </el-form-item>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="仓库锁状态：" prop="region">
-                <el-radio v-model="editData.warehouseLock" label="true">开启</el-radio>
-                <el-radio v-model="editData.warehouseLock" label="false">关闭</el-radio>
+              <el-form-item label="仓库锁状态：" prop="warehouseLock">
+                <el-radio v-model="editData.warehouseLock" :label="true">开启</el-radio>
+                <el-radio v-model="editData.warehouseLock" :label="false">关闭</el-radio>
               </el-form-item>
             </el-col>
           </el-row>
@@ -204,20 +217,22 @@
 </template>
 
 <script>
-import { getWarehouseList } from '@/api/baseData'
+import { getWarehouseList, putWarehouse } from "@/api/baseData";
 export default {
   name: "warehouse",
   data() {
     return {
-      current: 5,
+      remote:[],
+      setRemote:[],
+       loading: false,
       options: [
         {
           // 仓库状态查询
-          value: "true",
+          value: true,
           label: "开启"
         },
         {
-          value: "false",
+          value: false,
           label: "关闭"
         }
       ],
@@ -229,53 +244,48 @@ export default {
         wid: "",
         warehouseName: "",
         description: "",
-        warehouseLock: "false"
+        warehouseLock: false
       },
       editData: {},
       page: {
         // 查询条件
         warehouseLock: "",
-        warehouseName: "",
+        //warehouseName: "",
         total: 40,
-        page: 1
+        current: 1,
+        size: 10
       },
       listData: []
     };
   },
-   mounted() {
-    this.fetchData()
+  mounted() {
+    this.fetchData();
   },
   methods: {
-      fetchData() {
-      getWarehouseList().then(res => {
-       this.listData =res.result.list;
-       this.page.total = res.result.total;
-      })
+    //查询
+    queryHandleClick() {
+      this.fetchData();
     },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-    },
+    //弹出修改页面并赋值
     editHandleClick(e) {
       this.edit = true;
       this.editData = e;
     },
-    deleteHandleClick() {
-      this.$confirm("此操作将永久删除该仓库, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(async () => {
-          this.$message({
-            type: "success",
-            message: "删除成功!"
-          });
-        })
-        .catch(() => {});
-    },
+     remoteMethod(query) {
+        if (query !== '') {
+          this.loading = true;
+          setTimeout(() => {
+            this.loading = false;
+            this.remote = this.setRemote.filter(item => {
+              return item.label.toLowerCase()
+                .indexOf(query.toLowerCase()) > -1;
+            });
+          }, 200);
+        } else {
+          this.remote = [];
+        }
+      },
+    //curd
     addHandleClick() {
       if (!this.addData.warehouseName || !this.addData.description) {
         this.$message({
@@ -291,6 +301,20 @@ export default {
         type: "success"
       });
     },
+    deleteHandleClick() {
+      this.$confirm("此操作将永久删除该仓库, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+        })
+        .catch(() => {});
+    },
     editSubmit() {
       if (!this.editData.warehouseName || !this.editData.description) {
         this.$message({
@@ -300,12 +324,39 @@ export default {
         });
         return;
       }
-      this.edit = false;
-      this.$message({
-        message: "编辑成功",
-        type: "success"
+      let param = {
+        id: this.editData.id,
+        warehouseName: this.editData.warehouseName,
+        warehouseLock: this.editData.warehouseLock,
+        description: this.editData.description
+      };
+      putWarehouse(param).then(res => {
+         if(res.errorCode==0){
+             this.$message({
+              message: "编辑成功",
+              type: "success"
+            });
+            this.edit = false;
+         }
       });
     },
+    fetchData() {
+      getWarehouseList(this.page).then(res => {
+        this.listData = res.result.list;
+        this.page.total = res.result.total;
+         this.setRemote = this.listData.map(item => {
+        return { value: item.wid, label: item.warehouseName };
+      });
+      });
+    },
+    handleSizeChange(val) {
+      this.page.size = val;
+      this.fetchData();
+    },
+    handleCurrentChange(val) {
+      this.page.current = val;
+      this.fetchData();
+    }
   }
 };
 </script>

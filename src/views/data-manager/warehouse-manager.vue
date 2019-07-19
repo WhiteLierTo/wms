@@ -49,8 +49,8 @@
             <el-table-column prop="description" label="仓库描述" />
             <el-table-column prop="warehouseLock" label="仓库锁状态">
               <template slot-scope="scope">
-                <div v-if="scope.row.warehouseLock==0" style="color:#cc0000">关闭</div>
-                <div v-if="scope.row.warehouseLock==1" style="color:#3c763d">开启</div>
+                <div v-if="scope.row.warehouseLock==false" style="color:#cc0000">关闭</div>
+                <div v-if="scope.row.warehouseLock==true" style="color:#3c763d">开启</div>
               </template>
             </el-table-column>
             <el-table-column label="操作" width="150">
@@ -125,8 +125,8 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="仓库锁状态：" prop="region">
-                <el-radio v-model="addData.warehouseLock" label="1">开启</el-radio>
-                <el-radio v-model="addData.warehouseLock" label="0" checked>关闭</el-radio>
+                <el-radio v-model="addData.warehouseLock" label="true">开启</el-radio>
+                <el-radio v-model="addData.warehouseLock" label="false" checked>关闭</el-radio>
               </el-form-item>
             </el-col>
           </el-row>
@@ -187,8 +187,8 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="仓库锁状态：" prop="region">
-                <el-radio v-model="editData.warehouseLock" label="1">开启</el-radio>
-                <el-radio v-model="editData.warehouseLock" label="0">关闭</el-radio>
+                <el-radio v-model="editData.warehouseLock" label="true">开启</el-radio>
+                <el-radio v-model="editData.warehouseLock" label="false">关闭</el-radio>
               </el-form-item>
             </el-col>
           </el-row>
@@ -204,6 +204,7 @@
 </template>
 
 <script>
+import { getWarehouseList } from '@/api/baseData'
 export default {
   name: "warehouse",
   data() {
@@ -212,11 +213,11 @@ export default {
       options: [
         {
           // 仓库状态查询
-          value: "1",
+          value: "true",
           label: "开启"
         },
         {
-          value: "0",
+          value: "false",
           label: "关闭"
         }
       ],
@@ -228,7 +229,7 @@ export default {
         wid: "",
         warehouseName: "",
         description: "",
-        warehouseLock: "0"
+        warehouseLock: "false"
       },
       editData: {},
       page: {
@@ -238,30 +239,19 @@ export default {
         total: 40,
         page: 1
       },
-      listData: [
-        // 列表数据
-        {
-          wid: 0,
-          warehouseName: "恒温仓库",
-          description: "温度为15-20摄氏度",
-          warehouseLock: "1"
-        },
-        {
-          wid: 1,
-          warehouseName: "低温仓库",
-          description: "温度为零下15-20摄氏度",
-          warehouseLock: "1"
-        },
-        {
-          wid: 2,
-          warehouseName: "高温仓库",
-          description: "温度为零下40-60摄氏度",
-          warehouseLock: "0"
-        }
-      ]
+      listData: []
     };
   },
+   mounted() {
+    this.fetchData()
+  },
   methods: {
+      fetchData() {
+      getWarehouseList().then(res => {
+       this.listData =res.result.list;
+       this.page.total = res.result.total;
+      })
+    },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
     },
@@ -315,7 +305,7 @@ export default {
         message: "编辑成功",
         type: "success"
       });
-    }
+    },
   }
 };
 </script>

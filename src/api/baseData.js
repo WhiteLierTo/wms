@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export function getList(params) {
+export function getWarehouseList(params) {
   return request({
     url: '/bdWarehouse/list',
     method: 'get',

@@ -21,7 +21,7 @@
             <el-dropdown-item>个人中心</el-dropdown-item>
           </router-link>
           <el-dropdown-item divided>
-            <span style="display:block;" @click="logout">退出登录</span>
+            <span style="display:block;" @click="logoutHandleClick">退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -37,7 +37,6 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 
 export default {
-  name:"login",
   components: {
     Breadcrumb,
     Hamburger,
@@ -70,8 +69,8 @@ export default {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
-    logout() {
-     this.$router.push({ path: '/login' })
+    logoutHandleClick() {
+      this.$router.push({ path: '/login' })
     }
   }
 }

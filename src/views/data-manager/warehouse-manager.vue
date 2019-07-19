@@ -12,12 +12,13 @@
                   <el-select
                     v-model="page.warehouseName"
                     filterable
+                    clearable
                     remote
                     reserve-keyword
                     :placeholder="$t('header.warehouseName')"
                     :remote-method="remoteMethod"
                     :loading="loading"
-                     size="small"
+                    size="small"
                   >
                     <el-option
                       v-for="item in remote"
@@ -178,7 +179,7 @@
                   { required: true, message: '仓库名称不能为空'},
                 ]"
               >
-                <el-input v-model="editData.warehouseName" autocomplete="off" />
+                <el-input disabled v-model="editData.warehouseName" autocomplete="off" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -217,14 +218,19 @@
 </template>
 
 <script>
-import { getWarehouseList, putWarehouse } from "@/api/baseData";
+import {
+  getWarehouseList,
+  putWarehouse,
+  postWarehouse,
+  getWarehouseAll
+} from "@/api/baseData";
 export default {
   name: "warehouse",
   data() {
     return {
-      remote:[],
-      setRemote:[],
-       loading: false,
+      remote: [],
+      setRemote: [],
+      loading: false,
       options: [
         {
           // 仓库状态查询
@@ -250,7 +256,7 @@ export default {
       page: {
         // 查询条件
         warehouseLock: "",
-        //warehouseName: "",
+        warehouseName: "",
         total: 40,
         current: 1,
         size: 10
@@ -271,20 +277,20 @@ export default {
       this.edit = true;
       this.editData = e;
     },
-     remoteMethod(query) {
-        if (query !== '') {
-          this.loading = true;
-          setTimeout(() => {
-            this.loading = false;
-            this.remote = this.setRemote.filter(item => {
-              return item.label.toLowerCase()
-                .indexOf(query.toLowerCase()) > -1;
-            });
-          }, 200);
-        } else {
-          this.remote = [];
-        }
-      },
+    //查询库位编号
+    remoteMethod(query) {
+      if (query !== "") {
+        this.loading = true;
+        setTimeout(() => {
+          this.loading = false;
+          this.remote = this.setRemote.filter(item => {
+            return item.label.toLowerCase().indexOf(query.toLowerCase()) > -1;
+          });
+        }, 200);
+      } else {
+        this.remote = [];
+      }
+    },
     //curd
     addHandleClick() {
       if (!this.addData.warehouseName || !this.addData.description) {
@@ -295,10 +301,20 @@ export default {
         });
         return;
       }
-      this.add = false;
-      this.$message({
-        message: "添加成功",
-        type: "success"
+      let param = {
+        wid: this.addData.wid,
+        description: this.addData.description,
+        warehouseName: this.addData.warehouseName,
+        warehouseLock: this.addData.warehouseLock
+      };
+      postWarehouse(param).then(res => {
+        if (res.errorCode == 0) {
+          this.add = false;
+          this.$message({
+            message: "添加成功",
+            type: "success"
+          });
+        }
       });
     },
     deleteHandleClick() {
@@ -331,22 +347,27 @@ export default {
         description: this.editData.description
       };
       putWarehouse(param).then(res => {
-         if(res.errorCode==0){
-             this.$message({
-              message: "编辑成功",
-              type: "success"
-            });
-            this.edit = false;
-         }
+        if (res.errorCode == 0) {
+          this.$message({
+            message: "编辑成功",
+            type: "success"
+          });
+          this.edit = false;
+        }
       });
     },
     fetchData() {
       getWarehouseList(this.page).then(res => {
         this.listData = res.result.list;
         this.page.total = res.result.total;
-         this.setRemote = this.listData.map(item => {
-        return { value: item.wid, label: item.warehouseName };
       });
+      this.getWarehouseAll();
+    },
+    getWarehouseAll() {
+      getWarehouseAll().then(res => {
+        this.setRemote = res.result.map(item => {
+          return { value: item.warehouseName, label: item.warehouseName };
+        });
       });
     },
     handleSizeChange(val) {

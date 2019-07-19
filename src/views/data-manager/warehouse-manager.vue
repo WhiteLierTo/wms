@@ -62,14 +62,15 @@
           </el-table>
         </section>
         <el-pagination
+          background
           :current-page.sync="current"
           :page-sizes="[10, 20, 30, 40]"
           :page-size="10"
           @size-change="handleSizeChange"
-          layout="sizes, prev, pager, next"
+          layout="total, sizes, prev, pager, next, jumper"
           @current-change="handleCurrentChange"
           style="float: right;margin:20px 0px 20px 0px"
-          :total="100"
+          :total="30"
         />
       </el-card>
     </div>
@@ -79,7 +80,19 @@
       <el-dialog title="新增仓库" :visible.sync="add">
         <el-form :model="addData" class="demo-ruleForm">
           <el-row>
-            <el-col :span="12">
+            <el-col :span="11">
+              <el-form-item
+                prop="wid"
+                label="仓库ID"
+                :label-width="formLabelWidth"
+                :rules="[
+                  { required: true, message: '仓库ID不能为空'}
+                ]"
+              >
+                <el-input v-model="addData.wid" autocomplete="off" />
+              </el-form-item>
+            </el-col>
+            <el-col  style="margin-left:10px" :span="11">
               <el-form-item
                 prop="warehouseName"
                 label="仓库名称"
@@ -91,24 +104,29 @@
                 <el-input v-model="addData.warehouseName" autocomplete="off" />
               </el-form-item>
             </el-col>
-            <el-col :span="12">
-              <el-form-item
-                prop="description"
-                label="仓库描述"
-                :label-width="formLabelWidth"
-                :rules="[
+          </el-row>
+          <div>
+            <el-form-item
+              prop="description"
+              label="仓库描述"
+              :label-width="formLabelWidth"
+              :rules="[
                   { required: true, message: '仓库描述不能为空'}
                 ]"
-              >
-                <el-input v-model.number="addData.description" autocomplete="off" />
-              </el-form-item>
-            </el-col>
-          </el-row>
+            >
+              <el-input
+                type="textarea"
+                :autosize="{ minRows: 2, maxRows: 4}"
+                placeholder="请输仓库描述"
+                v-model="addData.description"
+              ></el-input>
+            </el-form-item>
+          </div>
           <el-row>
             <el-col :span="12">
               <el-form-item label="仓库锁状态：" prop="region">
-                <el-radio v-model="addData.warehouseLock" label="1" checked>开启</el-radio>
-                <el-radio v-model="addData.warehouseLock" label="0">关闭</el-radio>
+                <el-radio v-model="addData.warehouseLock" label="1">开启</el-radio>
+                <el-radio v-model="addData.warehouseLock" label="0" checked>关闭</el-radio>
               </el-form-item>
             </el-col>
           </el-row>
@@ -126,7 +144,19 @@
       <el-dialog title="编辑仓库" :visible.sync="edit">
         <el-form :model="editData" class="demo-ruleForm">
           <el-row>
-            <el-col :span="12">
+           <el-col :span="11">
+              <el-form-item
+                prop="wid"
+                label="仓库ID"
+                :label-width="formLabelWidth"
+                :rules="[
+                  { required: true, message: '仓库ID不能为空'},
+                ]"
+              >
+                <el-input disabled v-model="editData.wid" autocomplete="off" />
+              </el-form-item>
+            </el-col>
+            <el-col style="margin-left:10px" :span="11">
               <el-form-item
                 prop="warehouseName"
                 label="仓库名称"
@@ -138,19 +168,22 @@
                 <el-input v-model="editData.warehouseName" autocomplete="off" />
               </el-form-item>
             </el-col>
-            <el-col :span="12">
-              <el-form-item
-                prop="description"
-                label="仓库描述"
-                :label-width="formLabelWidth"
-                :rules="[
-                  { required: true, message: '仓库数量不能为空'},
-                ]"
-              >
-                <el-input v-model="editData.description" autocomplete="off" />
-              </el-form-item>
-            </el-col>
           </el-row>
+            <el-form-item
+              prop="description"
+              label="仓库描述"
+              :label-width="formLabelWidth"
+              :rules="[
+                  { required: true, message: '仓库描述不能为空'}
+                ]"
+            >
+              <el-input
+                type="textarea"
+                :autosize="{ minRows: 2, maxRows: 4}"
+                placeholder="请输仓库描述"
+                v-model="editData.description"
+              ></el-input>
+            </el-form-item>
           <el-row>
             <el-col :span="12">
               <el-form-item label="仓库锁状态：" prop="region">
@@ -172,35 +205,36 @@
 
 <script>
 export default {
-  name: 'warehouse',
+  name: "warehouse",
   data() {
     return {
       current: 5,
       options: [
         {
           // 仓库状态查询
-          value: '1',
-          label: '开启'
+          value: "1",
+          label: "开启"
         },
         {
-          value: '0',
-          label: '关闭'
+          value: "0",
+          label: "关闭"
         }
       ],
       add: false,
       edit: false,
-      formLabelWidth: '80px',
+      formLabelWidth: "80px",
       addData: {
         // 新增数据
-        warehouseName: '',
-        description: '',
-        warehouseLock: '1'
+        wid: "",
+        warehouseName: "",
+        description: "",
+        warehouseLock: "0"
       },
       editData: {},
       page: {
         // 查询条件
-        warehouseLock: '',
-        warehouseName: '',
+        warehouseLock: "",
+        warehouseName: "",
         total: 40,
         page: 1
       },
@@ -208,82 +242,82 @@ export default {
         // 列表数据
         {
           wid: 0,
-          warehouseName: '恒温仓库',
-          description: '温度为15-20摄氏度',
-          warehouseLock: '1'
+          warehouseName: "恒温仓库",
+          description: "温度为15-20摄氏度",
+          warehouseLock: "1"
         },
         {
           wid: 1,
-          warehouseName: '低温仓库',
-          description: '温度为零下15-20摄氏度',
-          warehouseLock: '1'
+          warehouseName: "低温仓库",
+          description: "温度为零下15-20摄氏度",
+          warehouseLock: "1"
         },
         {
           wid: 2,
-          warehouseName: '高温仓库',
-          description: '温度为零下40-60摄氏度',
-          warehouseLock: '0'
+          warehouseName: "高温仓库",
+          description: "温度为零下40-60摄氏度",
+          warehouseLock: "0"
         }
       ]
-    }
+    };
   },
   methods: {
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
+      console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
+      console.log(`当前页: ${val}`);
     },
     editHandleClick(e) {
-      this.edit = true
-      this.editData = e
+      this.edit = true;
+      this.editData = e;
     },
     deleteHandleClick() {
-      this.$confirm('此操作将永久删除该仓库, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+      this.$confirm("此操作将永久删除该仓库, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       })
-        .then(async() => {
+        .then(async () => {
           this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
+            type: "success",
+            message: "删除成功!"
+          });
         })
-        .catch(() => {})
+        .catch(() => {});
     },
     addHandleClick() {
       if (!this.addData.warehouseName || !this.addData.description) {
         this.$message({
           showClose: true,
-          message: '请完善信息',
-          type: 'warning'
-        })
-        return
+          message: "请完善信息",
+          type: "warning"
+        });
+        return;
       }
-      this.add = false
+      this.add = false;
       this.$message({
-        message: '添加成功',
-        type: 'success'
-      })
+        message: "添加成功",
+        type: "success"
+      });
     },
     editSubmit() {
       if (!this.editData.warehouseName || !this.editData.description) {
         this.$message({
           showClose: true,
-          message: '请完善信息',
-          type: 'warning'
-        })
-        return
+          message: "请完善信息",
+          type: "warning"
+        });
+        return;
       }
-      this.edit = false
+      this.edit = false;
       this.$message({
-        message: '编辑成功',
-        type: 'success'
-      })
+        message: "编辑成功",
+        type: "success"
+      });
     }
   }
-}
+};
 </script>
 
 <style>

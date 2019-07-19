@@ -34,6 +34,19 @@ export const constantRoutes = [{
   }]
 },
 {
+  path: '/login',
+  component: Layout,
+  redirect: '/login',
+  children: [{
+    path: 'login',
+    name: 'login',
+    component: () =>
+                import('@/views/login/index'),
+    hidden: true,
+    meta: { title: '用户登录', icon: 'login' }
+  }]
+},
+{
   path: '/data-manager',
   component: Layout,
   redirect: '/data-manager/warehouse-manager',

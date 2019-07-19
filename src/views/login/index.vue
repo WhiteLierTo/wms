@@ -33,7 +33,8 @@
   }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+  $bg:#fff;
   .loginBody {
     width: 100%;
     height: 1000px;
@@ -46,7 +47,7 @@
     margin: 20px 0;
     border-radius: 20px 20px;
     background: rgba(247, 22, 13, 0.76);
-    color: #ffffff;
+    color: $bg;
     font-size: 20px;
   }
 

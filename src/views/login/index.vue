@@ -2,12 +2,12 @@
   <div class="loginBody">
     <div class="loginContent">
       <h4 class="title">USER LOGIN</h4>
-      <el-form status-icon ref="ruleForm2" :rules="rules2" class="demo-ruleForm">
+      <el-form ref="ruleForm2" status-icon :rules="rules2" class="demo-ruleForm">
         <el-form-item prop="username" class="sty">
-          <el-input auto-complete="off" placeholder="账号:"/>
+          <el-input auto-complete="off" placeholder="账号:" />
         </el-form-item>
         <el-form-item class="sty">
-          <el-input type="password" auto-complete="off" placeholder="密码:"/>
+          <el-input type="password" auto-complete="off" placeholder="密码:" />
         </el-form-item>
         <el-form-item>
           <el-button class="login_btn" @click="submitForm('ruleForm2')">登录</el-button>
@@ -19,9 +19,11 @@
 
 <script>
 export default {
-  name: 'login',
+  name: 'Login',
   data() {
-    return {}
+    return {
+      ruleForm2: ''
+    }
   },
   methods: {}
 }

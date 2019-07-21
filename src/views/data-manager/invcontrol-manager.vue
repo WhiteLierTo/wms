@@ -24,30 +24,14 @@
                 </el-form-item>
                 <el-form-item>
                   <el-select
-                    v-model="page.qualityStatus"
-                    clearable
-                    filterable
-                    size="small"
-                    placeholder="质检状态"
-                  >
-                    <el-option
-                      v-for="item in qualityStatusList"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </el-form-item>
-                <el-form-item>
-                  <el-select
-                    v-model="page.pass"
+                    v-model="page.blocked"
                     size="small"
                     clearable
                     filterable
-                    placeholder="是否通过质检"
+                    placeholder="是否被卡控"
                   >
                     <el-option
-                      v-for="item in passList"
+                      v-for="item in blockedList"
                       :key="item.value"
                       :label="item.label"
                       :value="item.value"
@@ -72,30 +56,21 @@
           <!--列表-->
           <el-table :data="listData" style="width: 100%" border>
             <el-table-column prop="batchNumber" label="批次编号" />
-            <el-table-column prop="vendBatchNumber" label="厂商批次编号" />
             <el-table-column prop="itemId" label="物料编号" />
-            <el-table-column prop="itemName" label="物料名称" />
-            <el-table-column prop="qualityStatus" label="QA检验状态">
+            <el-table-column prop="warehouse" label="仓库" />
+            <el-table-column prop="location" label="库位" />
+            <el-table-column prop="quantity" label="库存数量" />
+            <!-- <el-table-column prop="blocked" label="是否已被卡控">
               <template slot-scope="scope">
-                <div v-if="scope.row.qualityStatus==0" style="color:#ffcd6b">待检</div>
-                <div v-else-if="scope.row.qualityStatus==1" style="color:#3c763d">合格</div>
-                <div v-else-if="scope.row.qualityStatus==2" style="color:#cc0000">不合格</div>
-                <div v-else-if="scope.row.qualityStatus==3" style="color:#3c763d">滞留</div>
+                <div v-if="scope.row.blocked==false" style="color:#ffcd6b">否</div>
+                <div v-else-if="scope.row.blocked==true" style="color:#3c763d">是</div>
               </template>
-            </el-table-column>
-            <!-- <el-table-column prop="pass" label="是否通过">
+            </el-table-column> -->
+            <el-table-column prop="createAt" label="创建时间" />
+            <el-table-column label="是否被卡控" width="150">
               <template slot-scope="scope">
-                <div v-if="scope.row.pass==false" style="color:#cc0000">否</div>
-                <div v-else-if="scope.row.pass==true" style="color:#3c763d">是</div>
-              </template>
-            </el-table-column>-->
-            <el-table-column prop="produceDate" label="生产日期" />
-            <el-table-column prop="expireDate" label="过期时间" />
-            <el-table-column label="是否通过质检" width="150">
-              <template slot-scope="scope">
-                <!-- <el-button type="text" size="small" @click="editHandleClick(scope.row)">编辑</el-button> -->
                 <el-switch
-                  v-model="scope.row.pass"
+                  v-model="scope.row.blocked"
                   active-color="#13ce66"
                   inactive-color="#ff4949"
                   @change="changeHandleClick(scope.row)"
@@ -117,10 +92,9 @@
         </section>
       </el-card>
     </div>
-
     <!--新增-->
     <div>
-      <el-dialog title="新增批次" :visible.sync="add">
+      <el-dialog title="新增库存" :visible.sync="add">
         <el-form ref="addData" :model="addData" class="demo-ruleForm">
           <el-row>
             <el-col :span="12">
@@ -135,12 +109,12 @@
             </el-col>
             <el-col :span="12">
               <el-form-item
-                prop="vendBatchNumber"
-                label="厂商批次编号"
+                prop="quantity"
+                label="库存数量"
                 :label-width="formLabelWidth"
-                :rules="[{ required: true, message: '请输入厂商批次编号', trigger: 'blur' }]"
+                :rules="[{ required: true, message: '请输入库存数量', trigger: 'blur' }]"
               >
-                <el-input v-model="addData.vendBatchNumber" autocomplete="off" />
+                <el-input v-model="addData.quantity" autocomplete="off" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -157,84 +131,48 @@
             </el-col>
             <el-col :span="12">
               <el-form-item
-                prop="itemName"
-                label="物料名称"
+                prop="blocked"
+                label="是否被卡控"
                 :label-width="formLabelWidth"
-                :rules="[{ required: true, message: '请输入物料名称', trigger: 'blur' }]"
-              >
-                <el-input v-model="addData.itemName" autocomplete="off" />
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item
-                prop="produceDate"
-                label="生产日期"
-                :label-width="formLabelWidth"
-                :rules="[{ required: true, message: '请输入生产日期', trigger: 'blur' }]"
-              >
-                <el-date-picker
-                  v-model="addData.produceDate"
-                  type="datetime"
-                  placeholder="选择生产日期"
-                  default-time="12:00:00"
-                  style="width:100%"
-                />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
-                prop="expireDate"
-                label="过期日期"
-                :label-width="formLabelWidth"
-                :rules="[{ required: true, message: '请输入过期日期', trigger: 'blur' }]"
-              >
-                <el-date-picker
-                  v-model="addData.expireDate"
-                  type="datetime"
-                  placeholder="选择过期日期"
-                  default-time="12:00:00"
-                  style="width:100%"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item
-                label="是否通过质检"
-                prop="pass"
-                :rules="[{ required: true, message: '请选择是否通过质检', trigger: 'blur' }]"
-              >
-                <el-radio v-model="addData.pass" label="1">开启</el-radio>
-                <el-radio v-model="addData.pass" label="0">关闭</el-radio>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item
-                v-if="addData.pass==true"
-                prop="qualityStatus"
-                label="质检状态"
-                :label-width="formLabelWidth"
-                :rules="[{ required: true, message: '请选择质检状态', trigger: 'blur' }]"
+                :rules="[{ required: true, message: '请选择是否需要被卡控', trigger: 'blur' }]"
               >
                 <el-select
-                  v-model="addData.qualityStatus"
+                  v-model="addData.blocked"
                   clearable
                   filterable
                   size="small"
-                  placeholder="质检状态"
+                  placeholder="是否被卡控"
+                  style="width:100%"
                 >
                   <el-option
-                    v-for="item in qualityStatusList"
+                    v-for="item in blockedList"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
                   />
                 </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item
+                prop="warehouse"
+                label="仓库"
+                :label-width="formLabelWidth"
+                :rules="[{ required: true, message: '请输入仓库', trigger: 'blur' }]"
+              >
+                <el-input v-model="addData.warehouse" autocomplete="off" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item
+                prop="location"
+                label="库位"
+                :label-width="formLabelWidth"
+                :rules="[{ required: true, message: '请输入库位', trigger: 'blur' }]"
+              >
+                <el-input v-model="addData.location" autocomplete="off" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -248,41 +186,31 @@
     </div>
   </div>
 </template>
-
 <script>
 import {
-  getinvBatchList,
-  updateinvBatchList,
-  addinvBatchList,
-  getAllinvBatchList
+  getInvControlList,
+  getAllInvControlList,
+  updateInvControlList,
+  addInvControlList
 } from '@/api/baseData'
-import { dateFnc } from '@/utils/validate'
 export default {
-  name: 'ProductionBatch',
+  name: 'InvcontrolManager',
   data() {
     return {
-      qualityStatusList: [
+      add: false,
+      formLabelWidth: '120px',
+      addData: {
+        // 新增数据
+        batchNumber: '',
+        blocked: '',
+        itemId: '',
+        location: '',
+        quantity: '',
+        warehouse: ''
+      },
+      blockedList: [
         {
-          // 质检状态查询
-          value: '0',
-          label: '待检'
-        },
-        {
-          value: '1',
-          label: '合格'
-        },
-        {
-          value: '2',
-          label: '不合格'
-        },
-        {
-          value: '3',
-          label: '滞留'
-        }
-      ],
-      passList: [
-        {
-          // 是否通过
+          // 是否卡控
           value: '1',
           label: '是'
         },
@@ -291,47 +219,32 @@ export default {
           label: '否'
         }
       ],
-      add: false,
-      formLabelWidth: '120px',
-      addData: {
-        // 新增数据
-        batchNumber: '',
-        expireDate: '',
-        itemId: '',
-        itemName: '',
-        pass: false,
-        produceDate: '',
-        qualityStatus: '',
-        vendBatchNumber: ''
-      },
       page: {
-        // 查询条件
         batchNumber: null,
-        qualityStatus: '',
-        pass: '',
+        blocked: '',
         current: 1,
         size: 10
       },
       listData: [],
+      pages: 0, // 总页码
       total: 0, // 总数
       batchNumberList: [],
       options: [],
       loading: false,
-      value: true,
       updateVal: {}
     }
   },
   mounted() {
-    // 初始化批次列表
-    this.getinvBatchFnc()
-    // 初始化所有批次列表
-    this.getAllinvBatchFnc()
+    // 初始化库存列表
+    this.getInvControlFnc()
+    // 获取所有库存列表
+    this.getAllInvControlFnc()
   },
   methods: {
     // 查询
     referHandleClick() {
-      // 初始化批次列表
-      this.getinvBatchFnc()
+      // 初始化库存列表
+      this.getInvControlFnc()
     },
     remoteMethod(query) {
       if (query !== '') {
@@ -348,33 +261,33 @@ export default {
     },
     changeHandleClick(val) {
       this.updateVal = val
+      console.error(this.updateVal)
       this.$confirm('是否继续操作, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.updateBatchFnc()
+        this.updateInvControlFnc()
       })
     },
     // 当前显示第几页
     handleSizeChange(val) {
       this.page.size = val
       // 初始化批次列表
-      this.getinvBatchFnc()
+      this.getInvControlFnc()
     },
     // 当前页显示多少条
     handleCurrentChange(val) {
       this.page.current = val
       // 初始化批次列表
-      this.getinvBatchFnc()
+      this.getInvControlFnc()
     },
     addHandleClick(formName) {
-      this.addData.produceDate = dateFnc(this.addData.produceDate)
-      this.addData.expireDate = dateFnc(this.addData.expireDate)
-      this.addData.pass = 1 ? 'true' : 'false'
+      this.addData.blocked = 1 ? 'true' : 'false'
+      console.log('数据：' + JSON.stringify(this.addData))
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.addBatchFnc()
+          this.addInvControlFnc()
         } else {
           this.$message.error('请填写完整!')
           return false
@@ -382,22 +295,22 @@ export default {
       })
     },
     // 分页获取批次列表
-    getinvBatchFnc() {
-      getinvBatchList(this.page).then(res => {
+    getInvControlFnc() {
+      getInvControlList(this.page).then(res => {
         this.listData = res.result.list
         this.total = res.result.total
       })
     },
     // 获取所有批次列表
-    getAllinvBatchFnc() {
-      getAllinvBatchList().then(res => {
+    getAllInvControlFnc() {
+      getAllInvControlList().then(res => {
         const AlllistData = res.result
         this.batchNumberList = AlllistData.map(v => v.batchNumber)
       })
     },
-    // 更新列表（是否需要质检）
-    updateBatchFnc() {
-      updateinvBatchList(this.updateVal).then(res => {
+    // 更新列表（是否需要卡控）
+    updateInvControlFnc() {
+      updateInvControlList(this.updateVal).then(res => {
         this.$message({
           message: '编辑成功',
           type: 'success'
@@ -405,8 +318,8 @@ export default {
       })
     },
     // 增加列表
-    addBatchFnc() {
-      addinvBatchList(this.addData).then(res => {
+    addInvControlFnc() {
+      addInvControlList(this.addData).then(res => {
         this.add = false
         this.addData = {}
         this.$message({
@@ -414,7 +327,7 @@ export default {
           type: 'success'
         })
         // 初始化批次列表
-        this.getinvBatchFnc()
+        this.getInvControlFnc()
       })
     }
   }

@@ -60,8 +60,15 @@ export const constantRoutes = [{
     path: 'production-batch',
     component: () =>
                 import('@/views/data-manager/production-batch'),
-    name: 'production-batch',
+    name: 'productionBatch',
     meta: { title: '生产批次' },
+    children: []
+  }, {
+    path: 'invcontrol-manager',
+    component: () =>
+                import('@/views/data-manager/invcontrol-manager'),
+    name: 'InvcontrolManager',
+    meta: { title: '库存管理' },
     children: []
   }]
 },
@@ -95,7 +102,7 @@ export const constantRoutes = [{
   redirect: '/nested/menu2',
   name: 'nested',
   meta: {
-    title: '数据管理',
+    title: '系统管理',
     icon: 'nested'
   },
   children: [{

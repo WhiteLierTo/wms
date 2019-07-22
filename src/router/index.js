@@ -37,7 +37,7 @@ export const constantRoutes = [{
         path: '/data-manager',
         component: Layout,
         redirect: '/data-manager/warehouse-manager',
-        name: 'data-manager',
+        name: 'dataManager',
         meta: {
             title: '数据管理',
             icon: 'data'
@@ -53,7 +53,7 @@ export const constantRoutes = [{
             path: 'location-manager',
             component: () =>
                 import ('@/views/data-manager/location-manager'),
-            name: 'location-manager',
+            name: 'locationManager',
             meta: { title: '库位管理' },
             children: []
         }, {
@@ -84,7 +84,7 @@ export const constantRoutes = [{
         component: Layout,
         children: [{
             path: 'warehouse-manager',
-            name: 'warehouse-manager',
+            name: 'warehouseManager',
             component: () =>
                 import ('@/views/data-manager/warehouse-manager'),
             meta: { title: '采购退货', icon: 'purchase', noCache: false, affix: true }
@@ -94,7 +94,7 @@ export const constantRoutes = [{
         path: '/label-manager',
         component: Layout,
         redirect: '/label-manager/label-painter',
-        name: 'label-manager',
+        name: 'labelManager',
         meta: {
             title: '标签管理',
             icon: 'label'

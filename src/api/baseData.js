@@ -190,4 +190,11 @@ export function putUnit(data) {
     data
   })
 }
-
+// 更新单位
+export function deleteUnit(id) {
+  return request({
+    baseURL,
+    url: `bdUnit/${id}`,
+    method: 'delete'
+  })
+}

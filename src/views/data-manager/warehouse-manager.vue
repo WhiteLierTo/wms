@@ -383,7 +383,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .body {
   margin: 20px 0px 0px 2%;
 }

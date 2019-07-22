@@ -84,6 +84,13 @@ export const constantRoutes = [{
     name: 'unitManager',
     meta: { title: '单位管理' },
     children: []
+  }, {
+    path: 'unit-conversion',
+    component: () =>
+              import('@/views/data-manager/unit-conversion'),
+    name: 'unitConversion',
+    meta: { title: '单位转换' },
+    children: []
   }]
 },
 {

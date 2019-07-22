@@ -206,7 +206,7 @@
 
         <div slot="footer" class="dialog-footer">
           <el-button @click="add = false">取 消</el-button>
-          <el-button type="primary" @click="addHandleClick">确 定</el-button>
+          <el-button type="primary" @click="addHandleClick('addData')">确 定</el-button>
         </div>
       </el-dialog>
     </div>
@@ -376,9 +376,12 @@ export default {
         })
         return
       }
-      const param = {
-        wid: this.addData.wid,
-        location: this.addData.location,
+      this.postLocationFnc();
+    },
+    postLocationFnc(){
+      let param = {
+        wid:this.addData.wid,
+        location:this.addData.location,
         warehouseName: this.addData.warehouseName,
         tempUpperLimit: this.addData.tempUpperLimit,
         tempLowerLimit: this.addData.tempLowerLimit,
@@ -396,13 +399,8 @@ export default {
             type: 'success'
           })
         }
-        if (res.errorCode === 20522) {
-          this.$message({
-            message: '本仓库下已存在此库位',
-            type: 'warning'
+
           })
-        }
-      })
     },
     deleteHandleClick() {
       this.$confirm('此操作将永久删除该仓库, 是否继续?', '提示', {
@@ -429,6 +427,7 @@ export default {
       }
       const param = {
         id: this.editData.id,
+        wid:this.editData.wid,
         tempUpperLimit: this.editData.tempUpperLimit,
         tempLowerLimit: this.editData.tempLowerLimit,
         humidityUpperLimit: this.editData.humidityUpperLimit,

@@ -59,7 +59,7 @@
           </div>
           <!--列表-->
           <el-table border :data="listData" style="width: 100%">
-            <el-table-column prop="wid" label="仓库ID" />
+            <el-table-column prop="id" label="仓库ID" />
             <el-table-column prop="warehouseName" label="仓库名称" />
             <el-table-column prop="description" label="仓库描述" />
             <el-table-column prop="warehouseLock" label="仓库锁状态">
@@ -96,14 +96,14 @@
           <el-row>
             <el-col :span="11">
               <el-form-item
-                prop="wid"
+                prop="id"
                 label="仓库ID"
                 :label-width="formLabelWidth"
                 :rules="[
                   { required: true, message: '仓库ID不能为空'}
                 ]"
               >
-                <el-input v-model="addData.wid" autocomplete="off" />
+                <el-input v-model="addData.id" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
@@ -160,14 +160,14 @@
           <el-row>
             <el-col :span="11">
               <el-form-item
-                prop="wid"
+                prop="id"
                 label="仓库ID"
                 :label-width="formLabelWidth"
                 :rules="[
                   { required: true, message: '仓库ID不能为空'},
                 ]"
               >
-                <el-input v-model="editData.wid" disabled autocomplete="off" />
+                <el-input disabled v-model="editData.id" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
@@ -247,9 +247,9 @@ export default {
       formLabelWidth: '80px',
       addData: {
         // 新增数据
-        wid: '',
-        warehouseName: '',
-        description: '',
+        id: "",
+        warehouseName: "",
+        description: "",
         warehouseLock: false
       },
       editData: {},
@@ -301,8 +301,8 @@ export default {
         })
         return
       }
-      const param = {
-        wid: this.addData.wid,
+      let param = {
+        id: this.addData.id,
         description: this.addData.description,
         warehouseName: this.addData.warehouseName,
         warehouseLock: this.addData.warehouseLock
@@ -315,7 +315,8 @@ export default {
             type: 'success'
           })
         }
-      })
+        this.fetchData();
+      });
     },
     deleteHandleClick() {
       this.$confirm('此操作将永久删除该仓库, 是否继续?', '提示', {

@@ -24,14 +24,14 @@
                       :key="item.value"
                       :label="item.label"
                       :value="item.value"
-                    ></el-option>
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item>
                   <el-select
+                    v-model="page.wid"
                     filterable
                     clearable
-                    v-model="page.wid"
                     size="small"
                     placeholder="所属仓库"
                   >
@@ -44,7 +44,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item>
-                  <el-select clearable v-model="page.locationLock" size="small" placeholder="库位锁状态">
+                  <el-select v-model="page.locationLock" clearable size="small" placeholder="库位锁状态">
                     <el-option
                       v-for="item in options"
                       :key="item.value"
@@ -55,10 +55,10 @@
                 </el-form-item>
                 <el-form-item>
                   <el-button
-                    @click="queryHandleClick"
                     size="small"
                     type="primary"
                     style="bacground:#0076a8"
+                    @click="queryHandleClick"
                   >查询</el-button>
                 </el-form-item>
                 <el-form-item>
@@ -111,11 +111,11 @@
             background
             :page-sizes="[10, 20, 30, 40]"
             :page-size="10"
-            @size-change="handleSizeChange"
             layout="total, sizes, prev, pager, next, jumper"
-            @current-change="handleCurrentChange"
             style="float: right;margin:20px 0px 20px 0px"
             :total="page.total"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
           />
         </section>
       </el-card>
@@ -127,26 +127,34 @@
         <el-form :model="addData" class="demo-ruleForm">
           <el-row>
             <el-col :span="12">
-              <el-form-item prop="location" label="库位编号" :label-width="formLabelWidth"
-               :rules="[
+              <el-form-item
+                prop="location"
+                label="库位编号"
+                :label-width="formLabelWidth"
+                :rules="[
                   { required: true, message: '库位编号不能为空'}
-                ]">
+                ]"
+              >
                 <el-input v-model="addData.location" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item prop="wid" label="所属仓库" :label-width="formLabelWidth"
-               :rules="[
+              <el-form-item
+                prop="wid"
+                label="所属仓库"
+                :label-width="formLabelWidth"
+                :rules="[
                   { required: true, message: '请选择所属仓库',trigger: 'change'}
-                ]">
-                  <el-select style="width:100%" v-model="addData.wid" clearable placeholder="请选择">
-                    <el-option
-                      v-for="item in warehouse"
-                      :key="item.wid"
-                      :label="item.warehouseName"
-                      :value="item.wid">
-                    </el-option>
-                  </el-select>
+                ]"
+              >
+                <el-select v-model="addData.wid" style="width:100%" clearable placeholder="请选择">
+                  <el-option
+                    v-for="item in warehouse"
+                    :key="item.wid"
+                    :label="item.warehouseName"
+                    :value="item.wid"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -210,12 +218,12 @@
           <el-row>
             <el-col :span="12">
               <el-form-item prop="tempUpperLimit" label="库位编号" :label-width="formLabelWidth">
-                <el-input disabled v-model="editData.location" autocomplete="off" />
+                <el-input v-model="editData.location" disabled autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item prop="tempLowerLimit" label="所属仓库" :label-width="formLabelWidth">
-                <el-input disabled v-model="editData.warehouseName" autocomplete="off" />
+                <el-input v-model="editData.warehouseName" disabled autocomplete="off" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -282,11 +290,11 @@ import {
   postLocation,
   getWarehouseAll,
   getLocationAll
-} from "@/api/baseData";
+} from '@/api/baseData'
 export default {
   data() {
     return {
-      remote: [], //远程查询库位编号
+      remote: [], // 远程查询库位编号
       setRemote: [],
       loading: false,
       warehouse: [], // 库房下拉
@@ -294,83 +302,83 @@ export default {
         {
           // 仓库状态查询
           value: true,
-          label: "开启"
+          label: '开启'
         },
         {
           value: false,
-          label: "关闭"
+          label: '关闭'
         }
       ],
       add: false,
       edit: false,
-      formLabelWidth: "80px",
+      formLabelWidth: '80px',
       addData: {
         // 新增数据
-        location: "",
-        wid: "",
-        warehouseName: "",
-        tempUpperLimit: "",
-        tempLowerLimit: "",
-        humidityUpperLimit: "",
-        humidityLowerLimit: "",
-        maximum: "",
-        description: "",
+        location: '',
+        wid: '',
+        warehouseName: '',
+        tempUpperLimit: '',
+        tempLowerLimit: '',
+        humidityUpperLimit: '',
+        humidityLowerLimit: '',
+        maximum: '',
+        description: '',
         locationLock: false
       },
       editData: {},
       page: {
         // 查询条件
-        location: "",
-        locationLock: "",
-        wid: "",
+        location: '',
+        locationLock: '',
+        wid: '',
         total: 40,
         current: 1,
         size: 10
       },
       listData: []
-    };
+    }
   },
   mounted() {
-    this.fetchData();
-    this.getWarehouseList();
+    this.fetchData()
+    this.getWarehouseList()
   },
   methods: {
-    //查询
+    // 查询
     queryHandleClick() {
-      this.fetchData();
+      this.fetchData()
     },
-    //弹出修改页面并赋值
+    // 弹出修改页面并赋值
     editHandleClick(e) {
-      this.edit = true;
-      this.editData = e;
+      this.edit = true
+      this.editData = e
     },
-    //查询库位编号
+    // 查询库位编号
     remoteMethod(query) {
-      if (query !== "") {
-        this.loading = true;
+      if (query !== '') {
+        this.loading = true
         setTimeout(() => {
-          this.loading = false;
+          this.loading = false
           this.remote = this.setRemote.filter(item => {
-            return item.label.toLowerCase().indexOf(query.toLowerCase()) > -1;
-          });
-        }, 200);
+            return item.label.toLowerCase().indexOf(query.toLowerCase()) > -1
+          })
+        }, 200)
       } else {
-        this.remote = [];
+        this.remote = []
       }
     },
-    //curd
+    // curd
     addHandleClick() {
       if (!this.addData.wid || !this.addData.location) {
         this.$message({
           showClose: true,
-          message: "请完善信息",
-          type: "warning"
-        });
-        return;
+          message: '请完善信息',
+          type: 'warning'
+        })
+        return
       }
-      let param = {
-        wid:this.addData.wid,
-        location:this.addData.location,
+      const param = {
+        wid: this.addData.wid,
+        location: this.addData.location,
         warehouseName: this.addData.warehouseName,
         tempUpperLimit: this.addData.tempUpperLimit,
         tempLowerLimit: this.addData.tempLowerLimit,
@@ -379,48 +387,48 @@ export default {
         maximum: this.addData.maximum,
         description: this.addData.description,
         locationLock: this.addData.locationLock
-      };
+      }
       postLocation(param).then(res => {
-        if (res.errorCode == 0) {
-          this.add = false;
+        if (res.errorCode === 0) {
+          this.add = false
           this.$message({
-            message: "添加成功",
-            type: "success"
-          });
+            message: '添加成功',
+            type: 'success'
+          })
         }
-        if (res.errorCode == 20522) {
+        if (res.errorCode === 20522) {
           this.$message({
-            message: "本仓库下已存在此库位",
-            type: "warning"
-          });
+            message: '本仓库下已存在此库位',
+            type: 'warning'
+          })
         }
-      });
+      })
     },
     deleteHandleClick() {
-      this.$confirm("此操作将永久删除该仓库, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+      this.$confirm('此操作将永久删除该仓库, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
-        .then(async () => {
+        .then(async() => {
           this.$message({
-            type: "success",
-            message: "删除成功!"
-          });
+            type: 'success',
+            message: '删除成功!'
+          })
         })
-        .catch(() => {});
+        .catch(() => {})
     },
     editSubmit() {
       if (!this.editData.warehouseName || !this.editData.description) {
         this.$message({
           showClose: true,
-          message: "请完善信息",
-          type: "warning"
-        });
-        return;
+          message: '请完善信息',
+          type: 'warning'
+        })
+        return
       }
-      let param = {
-        id:this.editData.id,
+      const param = {
+        id: this.editData.id,
         tempUpperLimit: this.editData.tempUpperLimit,
         tempLowerLimit: this.editData.tempLowerLimit,
         humidityUpperLimit: this.editData.humidityUpperLimit,
@@ -428,49 +436,49 @@ export default {
         maximum: this.editData.maximum,
         description: this.editData.description,
         locationLock: this.editData.locationLock
-      };
+      }
       putLocation(param).then(res => {
-        if (res.errorCode == 0) {
+        if (res.errorCode === 0) {
           this.$message({
-            message: "编辑成功",
-            type: "success"
-          });
-          this.edit = false;
+            message: '编辑成功',
+            type: 'success'
+          })
+          this.edit = false
         }
-      });
+      })
     },
-    //查询库位列表
+    // 查询库位列表
     fetchData() {
       getLocationList(this.page).then(res => {
-        this.listData = res.result.list;
-        this.page.total = res.result.total;
-      });
-      this.getWarehouseList();
-      this.getLocationAll();
+        this.listData = res.result.list
+        this.page.total = res.result.total
+      })
+      this.getWarehouseList()
+      this.getLocationAll()
     },
     getLocationAll() {
       getLocationAll().then(res => {
         this.setRemote = res.result.map(item => {
-          return { value: item.location, label: item.location };
-        });
-      });
+          return { value: item.location, label: item.location }
+        })
+      })
     },
-    //下拉查询库房列表
+    // 下拉查询库房列表
     getWarehouseList() {
       getWarehouseAll().then(res => {
-        this.warehouse = res.result;
-      });
+        this.warehouse = res.result
+      })
     },
     handleSizeChange(val) {
-      this.page.size = val;
-      this.fetchData();
+      this.page.size = val
+      this.fetchData()
     },
     handleCurrentChange(val) {
-      this.page.current = val;
-      this.fetchData();
+      this.page.current = val
+      this.fetchData()
     }
   }
-};
+}
 </script>
 
 <style>

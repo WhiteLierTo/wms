@@ -80,7 +80,6 @@
           </el-table>
           <el-pagination
             background
-            :current-page="10"
             :page-sizes="[10, 20, 30, 40]"
             :page-size="10"
             layout="total, sizes, prev, pager, next, jumper"
@@ -284,7 +283,6 @@ export default {
     },
     addHandleClick(formName) {
       this.addData.blocked = 1 ? 'true' : 'false'
-      console.log('数据：' + JSON.stringify(this.addData))
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.addInvControlFnc()

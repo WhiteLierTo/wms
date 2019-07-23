@@ -94,14 +94,35 @@ export const constantRoutes = [{
   }]
 },
 {
-  path: '/warehouse-manager',
+  path: '/stock',
   component: Layout,
+  redirect: '/stock/stockIn-Header',
+  name: 'stockInHeader',
+  meta: {
+    title: '采购管理',
+    icon: 'purchase'
+  },
   children: [{
     path: 'warehouse-manager',
-    name: 'warehouseManager',
     component: () =>
-                import('@/views/data-manager/warehouse-manager'),
-    meta: { title: '采购退货', icon: 'purchase', noCache: false, affix: true }
+                import('@/views/stock/stockIn-Header'),
+    name: 'stockInHeader',
+    meta: { title: '入库管理' },
+    children: []
+  }, {
+    path: 'stockIn-Line',
+    component: () =>
+                import('@/views/stock/stockIn-Line'),
+    name: 'stockInLine',
+    meta: { title: '单行' },
+    children: []
+  }, {
+    path: 'stockIn-detail',
+    component: () =>
+                import('@/views/stock/stockIn-detail'),
+    name: 'stockInDetail',
+    meta: { title: '入库明细' },
+    children: []
   }]
 },
 {

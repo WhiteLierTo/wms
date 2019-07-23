@@ -168,7 +168,7 @@ export default {
       editData: {},
       page: {
         // 查询条件
-        unit: '',
+        unit: null,
         total: 40,
         current: 1,
         size: 10

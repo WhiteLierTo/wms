@@ -1,4 +1,4 @@
-<!--单位管理-->
+<!--单位转换-->
 <template>
   <div>
     <div class="body">
@@ -44,8 +44,10 @@
           </div>
           <!--列表-->
           <el-table border :data="listData" style="width: 100%">
-            <el-table-column prop="id" label="单位ID" />
+            <el-table-column prop="itemId" label="物料名称" />
             <el-table-column prop="unit" label="单位名称" />
+            <el-table-column prop="coefficient" label="系数" />
+            <el-table-column prop="unitTo" label="换算单位" />
             <el-table-column prop="description" label="单位描述" />
             <el-table-column label="操作" width="150">
               <template slot-scope="scope">
@@ -75,29 +77,92 @@
           <el-row>
             <el-col :span="11">
               <el-form-item
-                prop="unit"
-                label="单位名称"
+                prop="itemId"
+                label="物料"
                 :label-width="formLabelWidth"
                 :rules="[
-                  { required: true, message: '单位名称不能为空'}
+                  { required: true, message: '物料名称不能为空'}
                 ]"
               >
-                <el-input v-model="addData.unit" autocomplete="off" />
+                <el-select style="width:100%" v-model="addData.itemId" placeholder="请选择物料">
+                  <el-option
+                    v-for="item in item"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
               <el-form-item
-                prop="description"
-                label="单位描述"
+                prop="unit"
+                label="单位名称"
                 :label-width="formLabelWidth"
                 :rules="[
-                  { required: true, message: '单位描述不能为空'},
+                  { required: true, message: '单位名称不能为空'},
                 ]"
               >
-                <el-input v-model="addData.description" autocomplete="off" />
+                <el-select style="width:100%" v-model="addData.unit" placeholder="请选择单位">
+                  <el-option
+                    v-for="item in setRemote"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item
+                prop="coefficient"
+                label="换算系数"
+                :label-width="formLabelWidth"
+                :rules="[
+                  { required: true, message: '换算系数不能为空'}
+                ]"
+              >
+                <el-input v-model="addData.coefficient" autocomplete="off" />
+              </el-form-item>
+            </el-col>
+            <el-col style="margin-left:10px" :span="11">
+              <el-form-item
+                prop="unitTo"
+                label="换算单位"
+                :label-width="formLabelWidth"
+                :rules="[
+                  { required: true, message: '换算单位不能为空'},
+                ]"
+              >
+                <el-select style="width:100%" v-model="addData.unitTo" placeholder="请选择换算单位">
+                  <el-option
+                    v-for="item in setRemote"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-form-item
+            prop="description"
+            label="描述"
+            :label-width="formLabelWidth"
+            :rules="[
+                  { required: true, message: '描述不能为空'},
+                ]"
+          >
+            <el-input
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              placeholder="请输入描述"
+              v-model="addData.description"
+              autocomplete="off"
+            />
+          </el-form-item>
         </el-form>
 
         <div slot="footer" class="dialog-footer">
@@ -110,9 +175,28 @@
     <!--编辑-->
     <div>
       <el-dialog title="编辑单位" :visible.sync="edit">
-        <el-form  ref="editData"  :model="editData" class="demo-ruleForm">
+        <el-form ref="editData" :model="editData" class="demo-ruleForm">
           <el-row>
             <el-col :span="11">
+              <el-form-item
+                prop="itemId"
+                label="物料"
+                :label-width="formLabelWidth"
+                :rules="[
+                  { required: true, message: '物料名称不能为空'}
+                ]"
+              >
+                <el-select style="width:100%" v-model="editData.itemId" placeholder="请选择物料">
+                  <el-option
+                    v-for="item in item"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col style="margin-left:10px" :span="11">
               <el-form-item
                 prop="unit"
                 label="单位名称"
@@ -121,22 +205,66 @@
                   { required: true, message: '单位名称不能为空'},
                 ]"
               >
-                <el-input v-model="editData.unit" autocomplete="off" />
+                <el-select style="width:100%" v-model="editData.unit" placeholder="请选择单位">
+                  <el-option
+                    v-for="item in setRemote"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item
+                prop="coefficient"
+                label="换算系数"
+                :label-width="formLabelWidth"
+                :rules="[
+                  { required: true, message: '换算系数不能为空'}
+                ]"
+              >
+                <el-input v-model="editData.coefficient" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
               <el-form-item
-                prop="description"
-                label="单位描述"
+                prop="unitTo"
+                label="换算单位"
                 :label-width="formLabelWidth"
                 :rules="[
-                  { required: true, message: '单位描述不能为空'},
+                  { required: true, message: '换算单位不能为空'},
                 ]"
               >
-                <el-input v-model="editData.description" autocomplete="off" />
+                <el-select style="width:100%" v-model="editData.unitTo" placeholder="请选择换算单位">
+                  <el-option
+                    v-for="item in setRemote"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
+          <el-form-item
+            prop="description"
+            label="描述"
+            :label-width="formLabelWidth"
+            :rules="[
+                  { required: true, message: '描述不能为空'},
+                ]"
+          >
+            <el-input
+              type="textarea"
+              :autosize="{ minRows: 2, maxRows: 4}"
+              placeholder="请输入描述"
+              v-model="editData.description"
+              autocomplete="off"
+            />
+          </el-form-item>
         </el-form>
 
         <div slot="footer" class="dialog-footer">
@@ -149,12 +277,20 @@
 </template>
 
 <script>
-import { getUnit, postUnit,putUnit,deleteUnit, getUnitAll } from "@/api/baseData";
+import {
+  getUnitConversion,
+  getItemAllFnc,
+  postUnitConversion,
+  putUnitConversion,
+  deleteUnitConversion,
+  getUnitAll
+} from "@/api/baseData";
 export default {
   name: "unit-manager",
   data() {
     return {
       remote: [],
+      item: [], //物料
       setRemote: [],
       loading: false,
       add: false,
@@ -163,12 +299,15 @@ export default {
       addData: {
         // 新增数据
         unit: "",
+        unitTo: "",
+        itemId: "",
+        coefficient: "",
         description: ""
       },
       editData: {},
       page: {
         // 查询条件
-        unit: '',
+        //unit: '',
         total: 40,
         current: 1,
         size: 10
@@ -180,12 +319,15 @@ export default {
     this.fetchData();
   },
   methods: {
-      //新增取消
-      addCancelHandleClick(){
-          this.add = false,
-          this.addData.unit = "";
-          this.addData.description =" ";
-      },
+    //新增取消
+    addCancelHandleClick() {
+      this.add = false;
+      this.addData.unit = "";
+      this.addData.description = "";
+      this.addData.unitTo = "";
+      this.addData.itemId = "";
+      this.addData.coefficient = "";
+    },
     // 查询
     queryHandleClick() {
       this.fetchData();
@@ -214,14 +356,20 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           let param = {
+            coefficient: this.addData.coefficient,
+            unitTo: this.addData.unitTo,
+            itemId: this.addData.itemId,
             description: this.addData.description,
             unit: this.addData.unit
           };
-          postUnit(param).then(res => {
+          postUnitConversion(param).then(res => {
             if (res.errorCode === 0) {
               this.add = false;
               this.addData.unit = "";
               this.addData.description = "";
+              this.addData.unitTo = "";
+              this.addData.itemId = "";
+              this.addData.coefficient = "";
               this.$message({
                 message: "添加成功",
                 type: "success"
@@ -242,7 +390,7 @@ export default {
         type: "warning"
       })
         .then(async () => {
-        deleteUnit(e).then(res => {
+          deleteUnitConversion(e).then(res => {
             if (res.errorCode === 0) {
               this.add = false;
               this.$message({
@@ -251,27 +399,30 @@ export default {
               });
             }
             this.fetchData();
-          });    
+          });
         })
         .catch(() => {});
     },
     editSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-        const param = {
-        id: this.editData.id,
-        unit: this.editData.unit,
-        description: this.editData.description
-      };
-      putUnit(param).then(res => {
-        if (res.errorCode === 0) {
-          this.$message({
-            message: "编辑成功",
-            type: "success"
+          const param = {
+            id:this.editData.id,
+            coefficient: this.editData.coefficient,
+            unitTo: this.editData.unitTo,
+            itemId: this.editData.itemId,
+            description: this.editData.description,
+            unit: this.editData.unit
+          };
+          putUnitConversion(param).then(res => {
+            if (res.errorCode === 0) {
+              this.$message({
+                message: "编辑成功",
+                type: "success"
+              });
+              this.edit = false;
+            }
           });
-          this.edit = false;
-        }
-      });
         } else {
           this.$message.error("请完善信息!");
           return false;
@@ -279,12 +430,22 @@ export default {
       });
     },
     fetchData() {
-      getUnit(this.page).then(res => {
+      getUnitConversion(this.page).then(res => {
         this.listData = res.result.list;
         this.page.total = res.result.total;
       });
       this.getUnitAllFnc();
+      this.getItemAllFnc();
     },
+    //获取全部物料
+    getItemAllFnc() {
+      getItemAllFnc().then(res => {
+        this.item = res.result.map(item => {
+          return { value: item.id, label: item.itemName };
+        });
+      });
+    },
+    //获取全部单位
     getUnitAllFnc() {
       getUnitAll().then(res => {
         this.setRemote = res.result.map(item => {

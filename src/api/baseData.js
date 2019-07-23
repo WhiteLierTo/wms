@@ -198,3 +198,47 @@ export function deleteUnit(id) {
     method: 'delete'
   })
 }
+// 获取单位换算列表
+export function getUnitConversion(params) {
+  return request({
+    baseURL,
+    url: 'bdUnitConverter/list',
+    method: 'get',
+    params
+  })
+}
+// 获取全部物料
+export function getItemAllFnc(params) {
+  return request({
+    baseURL,
+    url: 'bdItem/all',
+    method: 'get',
+    params
+  })
+}
+// 新增单位换算
+export function postUnitConversion(data) {
+  return request({
+    baseURL,
+    url: 'bdUnitConverter',
+    method: 'post',
+    data
+  })
+}
+// 新增单位换算
+export function putUnitConversion(data) {
+  return request({
+    baseURL,
+    url: 'bdUnitConverter',
+    method: 'put',
+    data
+  })
+}
+// 删除单位换算
+export function deleteUnitConversion(id) {
+  return request({
+    baseURL,
+    url: `bdUnitConverter/${id}`,
+    method: 'delete'
+  })
+}

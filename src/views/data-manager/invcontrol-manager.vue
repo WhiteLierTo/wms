@@ -23,22 +23,6 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item>
-                  <el-select
-                    v-model="page.blocked"
-                    size="small"
-                    clearable
-                    filterable
-                    placeholder="是否被卡控"
-                  >
-                    <el-option
-                      v-for="item in blockedList"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </el-form-item>
-                <el-form-item>
                   <el-button
                     size="small"
                     type="primary"
@@ -60,23 +44,7 @@
             <el-table-column prop="warehouse" label="仓库" />
             <el-table-column prop="location" label="库位" />
             <el-table-column prop="quantity" label="库存数量" />
-            <!-- <el-table-column prop="blocked" label="是否已被卡控">
-              <template slot-scope="scope">
-                <div v-if="scope.row.blocked==false" style="color:#ffcd6b">否</div>
-                <div v-else-if="scope.row.blocked==true" style="color:#3c763d">是</div>
-              </template>
-            </el-table-column> -->
             <el-table-column prop="createAt" label="创建时间" />
-            <el-table-column label="是否被卡控" width="150">
-              <template slot-scope="scope">
-                <el-switch
-                  v-model="scope.row.blocked"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                  @change="changeHandleClick(scope.row)"
-                />
-              </template>
-            </el-table-column>
           </el-table>
           <el-pagination
             background
@@ -130,24 +98,22 @@
             </el-col>
             <el-col :span="12">
               <el-form-item
-                prop="blocked"
-                label="是否被卡控"
+                prop="warehouse"
+                label="仓库"
                 :label-width="formLabelWidth"
-                :rules="[{ required: true, message: '请选择是否需要被卡控', trigger: 'blur' }]"
+                :rules="[{ required: true, message: '请选择仓库', trigger: 'blur' }]"
               >
                 <el-select
-                  v-model="addData.blocked"
-                  clearable
-                  filterable
-                  size="small"
-                  placeholder="是否被卡控"
+                  v-model="addData.warehouse"
+                  placeholder="请选择仓库"
                   style="width:100%"
+                  @change="warehouseChange"
                 >
                   <el-option
-                    v-for="item in blockedList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
+                    v-for="item in warehouseList"
+                    :key="item.id"
+                    :label="item.warehouseName"
+                    :value="item.id"
                   />
                 </el-select>
               </el-form-item>
@@ -156,22 +122,19 @@
           <el-row>
             <el-col :span="12">
               <el-form-item
-                prop="warehouse"
-                label="仓库"
-                :label-width="formLabelWidth"
-                :rules="[{ required: true, message: '请输入仓库', trigger: 'blur' }]"
-              >
-                <el-input v-model="addData.warehouse" autocomplete="off" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item
                 prop="location"
                 label="库位"
                 :label-width="formLabelWidth"
-                :rules="[{ required: true, message: '请输入库位', trigger: 'blur' }]"
+                :rules="[{ required: true, message: '请选择库位', trigger: 'blur' }]"
               >
-                <el-input v-model="addData.location" autocomplete="off" />
+                <el-select v-model="addData.location" placeholder="请选择库位" style="width:100%">
+                  <el-option
+                    v-for="item in locationList"
+                    :key="item.id"
+                    :label="item.location"
+                    :value="item.location"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -190,7 +153,9 @@ import {
   getInvControlList,
   getAllInvControlList,
   updateInvControlList,
-  addInvControlList
+  addInvControlList,
+  getWarehouseAll,
+  getLocationAll
 } from '@/api/baseData'
 export default {
   name: 'InvcontrolManager',
@@ -207,30 +172,22 @@ export default {
         quantity: '',
         warehouse: ''
       },
-      blockedList: [
-        {
-          // 是否卡控
-          value: '1',
-          label: '是'
-        },
-        {
-          value: '0',
-          label: '否'
-        }
-      ],
       page: {
-        batchNumber: null,
-        blocked: '',
+        batchNumber: '',
         current: 1,
         size: 10
       },
       listData: [],
-      pages: 0, // 总页码
       total: 0, // 总数
       batchNumberList: [],
       options: [],
       loading: false,
-      updateVal: {}
+      updateVal: {},
+      warehouseList: [],
+      locationList: [],
+      locationObj: {
+        wid: ''
+      }
     }
   },
   mounted() {
@@ -238,6 +195,10 @@ export default {
     this.getInvControlFnc()
     // 获取所有库存列表
     this.getAllInvControlFnc()
+    // 获取所有的仓库
+    this.getWarehouseAllFnc()
+    // 获取所有的库位
+    this.getLocationAllFnc()
   },
   methods: {
     // 查询
@@ -260,7 +221,6 @@ export default {
     },
     changeHandleClick(val) {
       this.updateVal = val
-      console.error(this.updateVal)
       this.$confirm('是否继续操作, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -282,7 +242,6 @@ export default {
       this.getInvControlFnc()
     },
     addHandleClick(formName) {
-      this.addData.blocked = 1 ? 'true' : 'false'
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.addInvControlFnc()
@@ -291,6 +250,16 @@ export default {
           return false
         }
       })
+    },
+    // 根据仓库查库位
+    warehouseChange(val) {
+      this.addData.warehouse = this.warehouseList.find(
+        v => v.id === val
+      ).warehouseName
+      this.locationObj.wid = val
+      this.locationList = []
+      this.addData.location = ''
+      this.getLocationAllFnc()
     },
     // 分页获取批次列表
     getInvControlFnc() {
@@ -326,6 +295,18 @@ export default {
         })
         // 初始化批次列表
         this.getInvControlFnc()
+      })
+    },
+    // 获取所有的仓库
+    getWarehouseAllFnc() {
+      getWarehouseAll().then(res => {
+        this.warehouseList = res.result
+      })
+    },
+    // 获取所有的库位
+    getLocationAllFnc() {
+      getLocationAll(this.locationObj).then(res => {
+        this.locationList = res.result
       })
     }
   }

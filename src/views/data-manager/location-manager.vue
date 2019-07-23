@@ -285,7 +285,6 @@
 <script>
 import {
   getLocationList,
-  getWarehouseList,
   putLocation,
   postLocation,
   getWarehouseAll,
@@ -376,12 +375,12 @@ export default {
         })
         return
       }
-      this.postLocationFnc();
+      this.postLocationFnc()
     },
-    postLocationFnc(){
-      let param = {
-        wid:this.addData.wid,
-        location:this.addData.location,
+    postLocationFnc() {
+      const param = {
+        wid: this.addData.wid,
+        location: this.addData.location,
         warehouseName: this.addData.warehouseName,
         tempUpperLimit: this.addData.tempUpperLimit,
         tempLowerLimit: this.addData.tempLowerLimit,
@@ -399,8 +398,7 @@ export default {
             type: 'success'
           })
         }
-
-          })
+      })
     },
     deleteHandleClick() {
       this.$confirm('此操作将永久删除该仓库, 是否继续?', '提示', {
@@ -427,7 +425,7 @@ export default {
       }
       const param = {
         id: this.editData.id,
-        wid:this.editData.wid,
+        wid: this.editData.wid,
         tempUpperLimit: this.editData.tempUpperLimit,
         tempLowerLimit: this.editData.tempLowerLimit,
         humidityUpperLimit: this.editData.humidityUpperLimit,

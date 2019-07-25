@@ -167,7 +167,7 @@
                   { required: true, message: '仓库ID不能为空'},
                 ]"
               >
-                <el-input disabled v-model="editData.id" autocomplete="off" />
+                <el-input v-model="editData.id" disabled autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
@@ -225,7 +225,7 @@ import {
   getWarehouseAll
 } from '@/api/baseData'
 export default {
-  name: 'Warehouse',
+  name: 'WarehouseManager',
   data() {
     return {
       remote: [],
@@ -247,9 +247,9 @@ export default {
       formLabelWidth: '80px',
       addData: {
         // 新增数据
-        id: "",
-        warehouseName: "",
-        description: "",
+        id: '',
+        warehouseName: '',
+        description: '',
         warehouseLock: false
       },
       editData: {},
@@ -301,7 +301,7 @@ export default {
         })
         return
       }
-      let param = {
+      const param = {
         id: this.addData.id,
         description: this.addData.description,
         warehouseName: this.addData.warehouseName,
@@ -315,8 +315,8 @@ export default {
             type: 'success'
           })
         }
-        this.fetchData();
-      });
+        this.fetchData()
+      })
     },
     deleteHandleClick() {
       this.$confirm('此操作将永久删除该仓库, 是否继续?', '提示', {

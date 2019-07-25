@@ -291,6 +291,7 @@ import {
   getLocationAll
 } from '@/api/baseData'
 export default {
+  name: 'LocationManager',
   data() {
     return {
       remote: [], // 远程查询库位编号

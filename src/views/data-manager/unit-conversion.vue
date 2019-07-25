@@ -156,8 +156,8 @@
             ]"
           >
             <el-input
-              type="textarea"
               v-model="addData.description"
+              type="textarea"
               :autosize="{ minRows: 2, maxRows: 4}"
               placeholder="请输入描述"
               autocomplete="off"
@@ -258,8 +258,8 @@
             ]"
           >
             <el-input
-              type="textarea"
               v-model="editData.description"
+              type="textarea"
               :autosize="{ minRows: 2, maxRows: 4}"
               placeholder="请输入描述"
               autocomplete="off"
@@ -286,7 +286,7 @@ import {
   getUnitAll
 } from '@/api/baseData'
 export default {
-  name: 'UnitManager',
+  name: 'UnitConversion',
   data() {
     return {
       remote: [],

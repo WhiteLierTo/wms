@@ -18,14 +18,14 @@ const loading = {
 // request interceptor
 service.interceptors.request.use(
     config => {
-        Loading.service(loading)
+        // Loading.service(loading)
         if (store.getters.token) {
             config.headers['X-Token'] = getToken()
         }
         return config
     },
     error => {
-        Loading.service(loading).close()
+        // Loading.service(loading).close()
         console.log('错误' + error) // for debug
         return Promise.reject(error)
     }
@@ -35,6 +35,7 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     response => {
         const res = response.data
+            // Loading.service(loading).close()
         if (res.errorCode !== 0) {
             Message({
                 message: res.message || 'Error',
@@ -54,18 +55,16 @@ service.interceptors.response.use(
             }
             return Promise.reject(new Error(res.message || 'Error'))
         } else {
-            Loading.service(loading).close()
             return res
         }
     },
     error => {
-        console.log('err' + error) // for debug
         Message({
-            message: '请求超时',
-            type: 'error',
-            duration: 5 * 1000
-        })
-        Loading.service(loading).close()
+                message: '请求超时',
+                type: 'error',
+                duration: 5 * 1000
+            })
+            // Loading.service(loading).close()
         return Promise.reject(error)
     }
 )

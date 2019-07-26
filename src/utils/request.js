@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
+import { MessageBox, Message, Loading } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
@@ -9,16 +9,23 @@ const service = axios.create({
     // withCredentials: true, // send cookies when cross-domain requests
     timeout: 5000 // request timeout
 })
+const loading = {
+    lock: true,
+    text: '正在加载中...',
+    spinner: 'el-icon-loading'
+}
 
 // request interceptor
 service.interceptors.request.use(
     config => {
+        Loading.service(loading)
         if (store.getters.token) {
             config.headers['X-Token'] = getToken()
         }
         return config
     },
     error => {
+        Loading.service(loading).close()
         console.log('错误' + error) // for debug
         return Promise.reject(error)
     }
@@ -47,16 +54,18 @@ service.interceptors.response.use(
             }
             return Promise.reject(new Error(res.message || 'Error'))
         } else {
+            Loading.service(loading).close()
             return res
         }
     },
     error => {
         console.log('err' + error) // for debug
         Message({
-            message: error.message,
+            message: '请求超时',
             type: 'error',
             duration: 5 * 1000
         })
+        Loading.service(loading).close()
         return Promise.reject(error)
     }
 )

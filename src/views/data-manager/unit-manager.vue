@@ -182,6 +182,13 @@ export default {
       listData: []
     }
   },
+  watch: {
+    // 监听路由
+    $route(to, from) {
+      console.log('to:' + to.path)
+      console.log('from:' + from.path)
+    }
+  },
   mounted() {
     this.fetchData()
   },

@@ -98,6 +98,13 @@ export const constantRoutes = [{
     name: 'ExternalDocuments',
     meta: { title: '外部单据' },
     children: []
+  }, {
+    path: 'historical-record',
+    component: () =>
+                import('@/views/data-manager/historical-record'),
+    name: 'historicalRecord',
+    meta: { title: '出入库历史' },
+    children: []
   }]
 },
 {

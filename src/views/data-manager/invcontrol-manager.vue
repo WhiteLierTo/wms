@@ -175,7 +175,8 @@ export default {
       page: {
         batchNumber: '',
         current: 1,
-        size: 10
+        size: 10,
+        deleted:false
       },
       listData: [],
       total: 0, // 总数

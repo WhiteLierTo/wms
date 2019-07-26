@@ -2,22 +2,6 @@
   <div>
     <div class="body">
       <el-card class="box-card">
-        <el-row>
-          <el-col :span="6">
-            <el-input disabled v-model="header.billType"></el-input>
-             </el-col>
-              <el-col :span="6">
-            <el-input disabled v-model="header.billNumber"></el-input>
-             </el-col>
-              <el-col :span="6">
-            <el-input disabled v-model="header.vendorName"></el-input>
-             </el-col>
-              <el-col :span="6">
-            <el-input disabled v-model="header.state"></el-input>
-          </el-col>
-        </el-row>
-      </el-card>
-      <el-card class="box-card">
         <section>
           <div style="float:right">
             <!--工具条-->
@@ -65,6 +49,7 @@
 <script>
 import { getStockInLine, getStockInHeaderOne } from "@/api/stock";
 export default {
+   name: "stockIn-Line",
   data() {
     return {
       header: {},
@@ -76,7 +61,7 @@ export default {
         total: 10,
         current: 1,
         size: 10,
-        delete: false
+        deleted: false
       },
       listData: []
     };
@@ -107,8 +92,8 @@ export default {
     }
   },
   mounted() {
-    this.headerData.id =  sessionStorage.getItem("getStockLine");;
-    this.page.headerId =  sessionStorage.getItem("getStockLine");;
+    this.headerData.id =  sessionStorage.getItem("getStockLine");
+    this.page.headerId =  sessionStorage.getItem("getStockLine");
     this.fetchData();
     this.getHeader();
   }

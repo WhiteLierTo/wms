@@ -91,149 +91,73 @@ export const constantRoutes = [{
     name: 'unitConversion',
     meta: { title: '单位转换' },
     children: []
+  }, {
+    path: 'historical-record',
+    component: () =>
+              import('@/views/data-manager/historical-record'),
+    name: 'unitConversion',
+    meta: { title: '出入库历史' },
+    children: []
   }]
 },
 {
-  path: '/stock',
+  path: '/stockIn',
   component: Layout,
-  redirect: '/stock/stockIn-Header',
+  redirect: '/stockIn/stockIn-Header',
   name: 'stockInHeader',
   meta: {
-    title: '采购管理',
+    title: '入库管理',
     icon: 'purchase'
   },
   children: [{
-    path: 'warehouse-manager',
+    path: 'stockIn-Header',
     component: () =>
-                import('@/views/stock/stockIn-Header'),
+                import('@/views/stockIn/stockIn-Header'),
     name: 'stockInHeader',
     meta: { title: '入库管理' },
     children: []
   }, {
     path: 'stockIn-Line',
     component: () =>
-                import('@/views/stock/stockIn-Line'),
+                import('@/views/stockIn/stockIn-Line'),
     name: 'stockInLine',
     meta: { title: '单行' },
+    hidden: true,
     children: []
   }, {
     path: 'stockIn-detail',
     component: () =>
-                import('@/views/stock/stockIn-detail'),
+                import('@/views/stockIn/stockIn-detail'),
     name: 'stockInDetail',
     meta: { title: '入库明细' },
-    children: []
-  }]
-},
-{
-  path: '/label-manager',
-  component: Layout,
-  redirect: '/label-manager/label-painter',
-  name: 'labelManager',
-  meta: {
-    title: '标签管理',
-    icon: 'label'
-  },
-  children: [{
-    path: 'label-painter',
-    component: () =>
-                import('@/views/label-manager/label-painter'),
-    name: 'labelPainter',
-    meta: { title: '标签打印' },
-    children: []
-  }]
-},
-// 404 page must be placed at the end !!!
-{ path: '*', redirect: '/404', hidden: true },
-{
-  path: '/',
-  component: Layout,
-  redirect: '/home',
-  children: [{
-    path: 'home',
-    name: 'Home',
-    component: () =>
-                import('@/views/home/index'),
     hidden: true,
-    meta: { title: '首页', icon: 'home' }
+    children: []
   }]
 },
 {
-  path: '/data-manager',
+  path: '/stockout',
   component: Layout,
-  redirect: '/data-manager/warehouse-manager',
-  name: 'dataManager',
+  redirect: '/stockout/stockout-Header',
+  name: 'stockoutHeader',
   meta: {
-    title: '数据管理',
-    icon: 'data'
+    title: '出库管理',
+    icon: 'purchase'
   },
   children: [{
-    path: 'warehouse-manager',
+    path: 'stockout-Header',
     component: () =>
-                import('@/views/data-manager/warehouse-manager'),
-    name: 'warehouseManager',
-    meta: { title: '库房管理' },
+                import('@/views/stockout/stockout-Header'),
+    name: 'stockoutHeader',
+    meta: { title: '出库管理' },
     children: []
   }, {
-    path: 'location-manager',
+    path: 'stockout-detail',
     component: () =>
-                import('@/views/data-manager/location-manager'),
-    name: 'locationManager',
-    meta: { title: '库位管理' },
+                import('@/views/stockout/stockout-detail'),
+    name: 'stockoutDetail',
+    meta: { title: '出库明细' },
+    hidden: true,
     children: []
-  }, {
-    path: 'production-batch',
-    component: () =>
-                import('@/views/data-manager/production-batch'),
-    name: 'productionBatch',
-    meta: { title: '生产批次' },
-    children: []
-  }, {
-    path: 'invcontrol-manager',
-    component: () =>
-                import('@/views/data-manager/invcontrol-manager'),
-    name: 'InvcontrolManager',
-    meta: { title: '库存管理' },
-    children: []
-  }, {
-    path: 'material-manager',
-    component: () =>
-                import('@/views/data-manager/material-manager'),
-    name: 'materialManager',
-    meta: { title: '物料管理' },
-    children: []
-  }, {
-    path: 'unit-manager',
-    component: () =>
-                import('@/views/data-manager/unit-manager'),
-    name: 'unitManager',
-    meta: { title: '单位管理' },
-    children: []
-  }, {
-    path: 'unit-conversion',
-    component: () =>
-                import('@/views/data-manager/unit-conversion'),
-    name: 'unitConversion',
-    meta: { title: '单位转换' },
-    children: []
-  }, {
-    path: 'external-documents',
-    component: () =>
-                import('@/views/data-manager/external-documents'),
-    name: 'externalDocuments',
-    meta: { title: '外部单据' },
-    children: []
-  }]
-},
-{
-  path: '/warehouse-manager',
-  component: Layout,
-  children: [{
-    path: 'warehouse-manager',
-    name: 'warehouseManager',
-    component: () =>
-                import('@/views/data-manager/warehouse-manager'),
-    meta: { title: '采购退货', icon: 'purchase', noCache: false, affix: true }
   }]
 },
 {

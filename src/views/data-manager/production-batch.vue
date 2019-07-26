@@ -79,23 +79,28 @@
                 prop="itemId"
                 label="物料编号"
                 :label-width="formLabelWidth"
-                :rules="[{ required: true, message: '请输入物料编号', trigger: 'blur' }]"
+                :rules="[
+                  { required: true, message: '物料编号不能为空'}
+                ]"
               >
-                <el-input v-model="addData.itemId" autocomplete="off" />
+                <el-select
+                  v-model="addData.itemId"
+                  clearable
+                  filterable
+                  placeholder="物料编号"
+                  @change="itemAddChange"
+                >
+                  <el-option
+                    v-for="item in item"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="12">
-              <el-form-item
-                prop="itemName"
-                label="物料名称"
-                :label-width="formLabelWidth"
-                :rules="[{ required: true, message: '请输入物料名称', trigger: 'blur' }]"
-              >
-                <el-input v-model="addData.itemName" autocomplete="off" />
-              </el-form-item>
-            </el-col>
             <el-col :span="12">
               <el-form-item
                 prop="producedDate"
@@ -107,23 +112,6 @@
                   v-model="addData.producedDate"
                   type="date"
                   placeholder="选择生产日期"
-                  style="width:100%"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item
-                prop="expiredDate"
-                label="过期日期"
-                :label-width="formLabelWidth"
-                :rules="[{ required: true, message: '请输入过期日期', trigger: 'blur' }]"
-              >
-                <el-date-picker
-                  v-model="addData.expiredDate"
-                  type="date"
-                  placeholder="选择过期日期"
                   style="width:100%"
                 />
               </el-form-item>
@@ -145,27 +133,29 @@ import {
   getinvBatchList,
   updateinvBatchList,
   addinvBatchList,
-  getAllinvBatchList
-} from '@/api/baseData'
-import { dateFnc } from '@/utils/validate'
+  getAllinvBatchList,
+  getItemAllFnc,
+  getItemOne
+} from "@/api/baseData";
+import { dateFnc } from "@/utils/validate";
 export default {
-  name: 'ProductionBatch',
+  name: "ProductionBatch",
   data() {
     return {
       add: false,
-      formLabelWidth: '120px',
+      formLabelWidth: "120px",
       addData: {
         // 新增数据
-        batchNumber: '',
-        expiredDate: '',
-        itemId: '',
-        itemName: '',
-        producedDate: ''
+        batchNumber: "",
+        itemId: "",
+        itemName: "",
+        producedDate: ""
       },
       page: {
         // 查询条件
-        batchNumber: '',
+        batchNumber: "",
         current: 1,
+        sort:'create_at',
         size: 10
       },
       listData: [],
@@ -175,105 +165,123 @@ export default {
       loading: false,
       value: true,
       updateVal: {}
-    }
+    };
   },
   mounted() {
     // 初始化批次列表
-    this.getinvBatchFnc()
+    this.getinvBatchFnc();
     // 初始化所有批次列表
-    this.getAllinvBatchFnc()
+    this.getAllinvBatchFnc();
+    //获取全部物料
+    this.getItemAllFnc();
   },
   methods: {
+    //单行新增选择物料下拉数据，用物料ID查询物料名称
+    itemAddChange(){
+      let param = {
+        id:this.addData.itemId
+      }
+       getItemOne(param).then(res => {
+        this.addData.itemName = res.result.itemName;
+      });
+    },
     // 查询
     referHandleClick() {
       // 初始化批次列表
-      this.getinvBatchFnc()
+      this.getinvBatchFnc();
     },
     remoteMethod(query) {
-      if (query !== '') {
-        this.loading = true
+      if (query !== "") {
+        this.loading = true;
         setTimeout(() => {
-          this.loading = false
+          this.loading = false;
           this.options = this.batchNumberList.filter(item => {
-            return item.toLowerCase().indexOf(query.toLowerCase()) > -1
-          })
-        }, 200)
+            return item.toLowerCase().indexOf(query.toLowerCase()) > -1;
+          });
+        }, 200);
       } else {
-        this.options = []
+        this.options = [];
       }
     },
     changeHandleClick(val) {
-      this.updateVal = val
-      this.$confirm('是否继续操作, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+      this.updateVal = val;
+      this.$confirm("是否继续操作, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       }).then(() => {
-        this.updateBatchFnc()
-      })
+        this.updateBatchFnc();
+      });
     },
     // 当前显示第几页
     handleSizeChange(val) {
-      this.page.size = val
+      this.page.size = val;
       // 初始化批次列表
-      this.getinvBatchFnc()
+      this.getinvBatchFnc();
     },
     // 当前页显示多少条
     handleCurrentChange(val) {
-      this.page.current = val
+      this.page.current = val;
       // 初始化批次列表
-      this.getinvBatchFnc()
+      this.getinvBatchFnc();
     },
     addHandleClick(formName) {
-      this.addData.producedDate = dateFnc(this.addData.producedDate).slice(0, 10)
-      this.addData.expiredDate = dateFnc(this.addData.expiredDate).slice(0, 10)
+      this.addData.producedDate = dateFnc(this.addData.producedDate).slice(0,10);
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.addBatchFnc()
+          this.addBatchFnc();
         } else {
-          this.$message.error('请填写完整!')
-          return false
+          this.$message.error("请填写完整!");
+          return false;
         }
-      })
+      });
     },
     // 分页获取批次列表
     getinvBatchFnc() {
       getinvBatchList(this.page).then(res => {
-        this.listData = res.result.list
-        this.total = res.result.total
-      })
+        this.listData = res.result.list;
+        this.total = res.result.total;
+      });
     },
     // 获取所有批次列表
     getAllinvBatchFnc() {
       getAllinvBatchList().then(res => {
-        const AlllistData = res.result
-        this.batchNumberList = AlllistData.map(v => v.batchNumber)
-      })
+        const AlllistData = res.result;
+        this.batchNumberList = AlllistData.map(v => v.batchNumber);
+      });
     },
     // 更新列表（是否需要质检）
     updateBatchFnc() {
       updateinvBatchList(this.updateVal).then(res => {
         this.$message({
-          message: '编辑成功',
-          type: 'success'
-        })
-      })
+          message: "编辑成功",
+          type: "success"
+        });
+      });
     },
     // 增加列表
     addBatchFnc() {
       addinvBatchList(this.addData).then(res => {
-        this.add = false
-        this.addData = {}
+        this.add = false;
+        this.addData = {};
         this.$message({
-          message: '添加成功',
-          type: 'success'
-        })
+          message: "添加成功",
+          type: "success"
+        });
         // 初始化批次列表
-        this.getinvBatchFnc()
-      })
+        this.getinvBatchFnc();
+      });
+    },
+    // 获取全部物料
+    getItemAllFnc() {
+      getItemAllFnc().then(res => {
+        this.item = res.result.map(item => {
+          return { value: item.id, label: item.id };
+        });
+      });
     }
   }
-}
+};
 </script>
 
 <style scoped>

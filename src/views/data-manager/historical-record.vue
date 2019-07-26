@@ -10,11 +10,11 @@
               <el-form :inline="true" :model="page">
                 <el-form-item>
                   <el-select
-                    v-model="page.unit"
+                    v-model="page.itemId"
                     filterable
                     clearable
                     reserve-keyword
-                    placeholder="物料名称"
+                    placeholder="物料编号"
                     :remote-method="remoteMethod"
                     :loading="loading"
                     size="small"
@@ -57,11 +57,11 @@
                 </el-popover>    
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="150">
+           <!--  <el-table-column label="操作" width="150">
               <template slot-scope="scope">
                 <el-button type="text" size="small" @click="deleteHandleClick(scope.row.id)">删除</el-button>
               </template>
-            </el-table-column>
+            </el-table-column> -->
           </el-table>
         </section>
         <el-pagination
@@ -95,10 +95,11 @@ export default {
       formLabelWidth: "80px",
       page: {
         // 查询条件
-        unit: null,
+        itemId: '',
         total: 40,
         current: 1,
-        size: 10
+        size: 10,
+        sort:'create_at',
       },
       listData: []
     };
@@ -142,7 +143,7 @@ export default {
     getItem(){
      getAllItemList().then(res => {
         this.item = res.result.map(item => {
-          return { value: item.id, label: item.itemName }
+          return { value: item.id, label: item.id }
         })
       })
     },

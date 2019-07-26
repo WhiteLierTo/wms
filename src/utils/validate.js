@@ -24,3 +24,9 @@ export function dateFnc(time) {
   var date = new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
   return date
 }
+
+// 非负数
+export function positiveNumber(number) {
+  var reg = /^\+?[1-9]\d*$/
+  return reg.test(number)
+}

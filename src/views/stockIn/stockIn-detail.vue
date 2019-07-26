@@ -79,7 +79,8 @@
         >
           <el-form-item label="点收数量" prop="number"
            :rules="[
-                  { required: true, message: '点收数量不能为空'},
+                  {required: true, message: '点收数量不能为空'},
+                  { type: 'number', message: '点收数量必须为数字值'}
             ]">
             <el-input v-model="InventoryCheckEdit.number"></el-input>
           </el-form-item>
@@ -96,7 +97,7 @@
       <el-dialog title="上架" :visible.sync="shelves">
         <el-form
           :model="shelvesData"
-          ref="ruleForm"
+          ref="shelvesData"
           :label-width="formLabelWidth"
           class="demo-ruleForm"
         >
@@ -143,6 +144,11 @@
           </el-row>
           <el-row>
             <el-col :span="12">
+              <el-form-item label="数量">
+              <el-input  disabled  v-model="detailData.quantity" ></el-input>
+            </el-form-item>
+            </el-col>
+            <el-col :span="12">
           <el-form-item label="上架数量" prop="quantity"
            :rules="[
                   { required: true, message: '上架数量不能为空'},
@@ -154,7 +160,7 @@
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="shelvesCancleHandleClick()">取 消</el-button>
-          <el-button type="primary" @click="postShelvesHandleClick()">确 定</el-button>
+          <el-button type="primary" @click="postShelvesHandleClick('shelvesData')">确 定</el-button>
         </span>
       </el-dialog>
     </div>
@@ -169,6 +175,7 @@ export default {
   name:"stockIn-detail",
   data() {
     return {
+        detailData:{},
         headerId:'',
         formLabelWidth: '80px',
         locationList:[],  //库位数据
@@ -215,15 +222,18 @@ export default {
     shelvesHandleClick(e){
       this.shelves = true;
       this.detailId = e.id;  //明细ID
+      this.detailData = e;
     },
      //插入上架明细
-    postShelvesHandleClick(){
-      let param = {
-        id: this.detailId,
-        quantity: this.shelvesData.quantity,
-        warehouse: this.shelvesData.warehouse,
-        location: this.shelvesData.location
-      }
+    postShelvesHandleClick(formName){
+        this.$refs[formName].validate(valid => {
+        if (valid) {
+        let param = {
+          id: this.detailId,
+          quantity: this.shelvesData.quantity,
+          warehouse: this.shelvesData.warehouse,
+          location: this.shelvesData.location
+        }
       postShelves(param).then(res => {
         if (res.errorCode === 0) {
           this.shelves = false
@@ -235,11 +245,16 @@ export default {
         this.shelvesData.quantity = '';
         this.shelvesData.warehouse='';
         this.shelvesData.location='';
-         this.getLine();
-         this.fetchData();
+        this.getLine();
+        this.fetchData();
       })
       this.InventoryCheck = false;
       this.InventoryCheckEdit.number = '';
+       } else {
+          this.$message.error("请完善信息!");
+          return false;
+        }
+      });
     },
      //取消上架
      putCheckHandleClick(e) {

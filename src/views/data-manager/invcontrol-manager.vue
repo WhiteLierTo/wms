@@ -39,12 +39,12 @@
 
           <!--列表-->
           <el-table :data="listData" style="width: 100%" border>
-            <el-table-column prop="batchNumber" label="批次编号" />
             <el-table-column prop="itemId" label="物料编号" />
+            <el-table-column prop="batchNumber" label="批次编号" />
             <el-table-column prop="warehouse" label="仓库" />
             <el-table-column prop="location" label="库位" />
             <el-table-column prop="quantity" label="库存数量" />
-            <el-table-column prop="createAt" label="创建时间" />
+            <!-- <el-table-column prop="createAt" label="创建时间" /> -->
           </el-table>
           <el-pagination
             background
@@ -176,6 +176,7 @@ export default {
         batchNumber: '',
         current: 1,
         size: 10,
+        sort:'create_at',
         deleted:false
       },
       listData: [],

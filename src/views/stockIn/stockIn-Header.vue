@@ -12,6 +12,7 @@
                   <el-select
                     v-model="page.billType"
                     clearable
+                    filterable
                     size="small"
                     placeholder="外部单据类型"
                   >
@@ -48,6 +49,7 @@
                   :data="LineData"
                   style="width: 100%"
                 >
+                  <el-table-column  prop="itemId" label="物料编号" />
                   <el-table-column  prop="itemName" label="物料名称" />
                   <el-table-column  prop="itemUnit" label="入库单位"></el-table-column>
                   <el-table-column  prop="batchNumber" label="物料批次" />
@@ -60,7 +62,7 @@
                       <el-button v-show="line.status == 1" type="text" size="small" @click="editLineFnc(scope.row)">编辑</el-button>
                       <el-button v-show="line.status == 1" type="text" size="small" @click="deleteLineFnc(scope.row.id)">删除</el-button>
                       <el-button v-show="line.status == 3 || line.status == 2" type="text" size="small" @click="countingHandleClick(scope.row)">点收</el-button>
-                      <el-button type="text" size="small" @click="turnToStockDetail(scope.row)">明细</el-button>
+                      <el-button v-show="line.status != 1" type="text" size="small" @click="turnToStockDetail(scope.row)">明细</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -74,10 +76,10 @@
             <el-table-column  prop="status" label="状态">
               <template slot-scope="scope">
                 <div v-if="scope.row.status==1" style="color:#3c763d">create</div>
-                <div v-if="scope.row.status==2" style="color:#3c763d">confirm</div>
-                <div v-if="scope.row.status==3" style="color:#3c763d">register</div>
-                <div v-if="scope.row.status==4" style="color:#3c763d">receive</div>
-                <div v-if="scope.row.status==5" style="color:#3c763d">close</div>
+                <div v-if="scope.row.status==2" style="color:#2472c8">confirm</div>
+                <div v-if="scope.row.status==3" style="color:#2dd671">register</div>
+                <div v-if="scope.row.status==4" style="color:#ff605b">receive</div>
+                <div v-if="scope.row.status==5" style="color:#808080">close</div>
               </template>
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="200">
@@ -144,9 +146,9 @@
                 label="点收数量"
                 :label-width="formLabelWidth"
                 :rules="[
-                { required: true, message: '点收数量不能为空'},
+                { required: true, message: '点收数量不能为空'}
             ]">
-                <el-input v-model="countingData.number" autocomplete="off" />
+                <el-input type='number' v-model="countingData.number" autocomplete="off" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -154,7 +156,7 @@
 
         <div slot="footer" class="dialog-footer">
           <el-button @click="counting = false">取 消</el-button>
-          <el-button type="primary" @click="postCheckHandleClick()">确 定</el-button>
+          <el-button type="primary" @click="postCheckHandleClick('countingData')">确 定</el-button>
         </div>
       </el-dialog>
     </div>
@@ -194,7 +196,7 @@
             <el-col :span="11">
               <el-form-item
                 prop="billType"
-                label="入库单说明"
+                label="单据类型"
                 :label-width="formLabelWidth"
                 :rules="[
                   { required: true, message: '外部单据类型不能为空'}
@@ -203,6 +205,7 @@
                  <el-select
                     v-model="addData.billType"
                     clearable
+                    filterable
                     placeholder="外部单据类型"
                   >
                     <el-option
@@ -244,16 +247,17 @@
             <el-col :span="11">
             <el-form-item
                 prop="itemId"
-                label="物料名称"
+                label="物料编号"
                 :label-width="formLabelWidth"
                 :rules="[
-                  { required: true, message: '物料名称不能为空'}
+                  { required: true, message: '物料编号不能为空'}
                 ]"
               >
                  <el-select
                     v-model="addLineData.itemId"
                     clearable
-                    placeholder="物料名称"
+                    filterable
+                    placeholder="物料编号"
                     @change="itemAddChange"
                   >
                     <el-option
@@ -277,6 +281,7 @@
                  <el-select
                     v-model="addLineData.itemUnit"
                     clearable
+                    filterable
                     placeholder="入库单位"
                   >
                     <el-option
@@ -302,6 +307,7 @@
                  <el-select
                     v-model="addLineData.batchNumber"
                     clearable
+                    filterable
                     placeholder="物料批次"
                   >
                     <el-option
@@ -314,6 +320,20 @@
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
+              <el-form-item
+                prop="billNumber"
+                label="单据编号"
+                :label-width="formLabelWidth"
+                :rules="[
+                  { required: true, message: '单据编号不能为空'},
+                ]"
+              >
+                <el-input v-model="addLineData.billNumber" autocomplete="off" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
               <el-form-item
                 prop="quantity"
                 label="入库数量"
@@ -353,6 +373,7 @@
                  <el-select
                     v-model="editLineData.itemId"
                     clearable
+                    filterable
                     placeholder="物料名称"
                     @change="itemEditChange"
                   >
@@ -377,6 +398,7 @@
                  <el-select
                     v-model="editLineData.itemUnit"
                     clearable
+                    filterable
                     placeholder="入库单位"
                   >
                     <el-option
@@ -402,6 +424,7 @@
                  <el-select
                     v-model="editLineData.batchNumber"
                     clearable
+                    filterable
                     placeholder="物料批次"
                   >
                     <el-option
@@ -479,8 +502,8 @@
                  <el-select
                     v-model="editData.billType"
                     clearable
+                    filterable
                     placeholder="外部单据类型"
-                    @change="typeChange()"
                   >
                     <el-option
                       v-for="item in setRemote"
@@ -491,7 +514,7 @@
                   </el-select>
               </el-form-item>
             </el-col>
-            <el-col style="margin-left:10px" :span="11">
+            <el-col :span="12">
               <el-form-item
                 prop="state"
                 label="入库单说明"
@@ -530,6 +553,7 @@ import {
   deleteLine
 } from "@/api/stock";
 import {getAllinvBatchList,getUnitAll,getItemAllFnc,getItemOne} from "@/api/baseData";
+import {positiveNumber} from "@/utils/validate"
 export default {
   name: "stockIn-Header",
   data() {
@@ -572,6 +596,7 @@ export default {
         billType: '',
         total: 40,
         current: 1,
+        sort:'create_at',
         size: 10,
         deleted: false
       },
@@ -621,6 +646,13 @@ export default {
     editLineHandleClick(formName){
          this.$refs[formName].validate(valid => {
         if (valid) {
+        if(positiveNumber(this.editLineData.quantity) == false){
+             this.$message({
+                message: "数量应为有效正整数",
+                type: "warning"
+              });
+          return
+          }
           const param = {
             id:this.editLineData.id,
             itemName: this.editLineData.itemName,
@@ -650,12 +682,16 @@ export default {
     },
     //单行新增选择物料下拉数据，用物料ID查询物料名称
     itemAddChange(){
+      if(this.addLineData.itemId){
       let param = {
         id:this.addLineData.itemId
       }
        getItemOne(param).then(res => {
         this.addLineData.itemName = res.result.itemName;
       });
+      }else{
+       return
+      }
     },
      //单行编辑选择物料下拉数据，用物料ID查询物料名称
     itemEditChange(){
@@ -670,6 +706,13 @@ export default {
     postLineHandleClick(formName){
         this.$refs[formName].validate(valid => {
         if (valid) {
+         if(positiveNumber(this.addLineData.quantity) == false){
+             this.$message({
+                message: "数量应为有效正整数",
+                type: "warning"
+              });
+          return
+          }
           let param = {
             headerId: this.addLineData.headerId,
             itemId:this.addLineData.itemId,
@@ -757,17 +800,17 @@ export default {
         })
         .catch(() => {});
     },  
-    //编辑外部单据类型改变
-    typeChange(){
-      let bill = {};
-      bill = this.setRemote.find((item)=>{
-       return item.value == this.editData.billType
-      })
-      let billNumber = JSON.stringify(bill.label);
-      this.editData.billNumber = JSON.parse(billNumber);
-    },
      //插入点收明细
-    postCheckHandleClick(){
+    postCheckHandleClick(formName){
+        this.$refs[formName].validate(valid => {
+        if (valid) {
+                   if(positiveNumber(this.countingData.number) == false){
+             this.$message({
+                message: "数量应为有效正整数",
+                type: "warning"
+              });
+          return
+          }
       let param = {
         batchNumber: this.lineData.batchNumber,
         itemId: this.lineData.itemId,
@@ -798,6 +841,11 @@ export default {
       })
       this.counting = false;
       this.countingData.number = '';
+       } else {
+          this.$message.error("请完善信息!");
+          return false;
+        }
+      });
     },
     //点收弹窗
     countingHandleClick(e){
@@ -924,15 +972,20 @@ export default {
       this.line.headerId=row.id;
       this.line.status = row.status;
       //sessionStorage.setItem("headerId", row.id);
-      this.getStockInLine();
+        if (expandedRows.length > 1) {
+          expandedRows.shift()
+        }
+        if (row) {
+          let params = {
+            headerId: row.id
+          };
+          this.getStockInLine(params);
+        }
     },
     //获取行数据
-    getStockInLine(){
+    getStockInLine(e){
       this.LineData = [];
-      let params = {
-        headerId:this.line.headerId
-      };
-      getStockInLine(params).then(res => {
+      getStockInLine(e).then(res => {
         this.LineData = res.result.list;
         this.loading = false;
       });
@@ -958,7 +1011,7 @@ export default {
     getItemAllFnc() {
       getItemAllFnc().then(res => {
         this.item = res.result.map(item => {
-          return { value: item.id, label: item.itemName }
+          return { value: item.id, label: item.id }
         })
       })
     },

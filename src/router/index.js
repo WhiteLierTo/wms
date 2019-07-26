@@ -46,21 +46,21 @@ export const constantRoutes = [{
     path: 'warehouse-manager',
     component: () =>
                 import('@/views/data-manager/warehouse-manager'),
-    name: 'warehouseManager',
+    name: 'WarehouseManager',
     meta: { title: '库房管理' },
     children: []
   }, {
     path: 'location-manager',
     component: () =>
                 import('@/views/data-manager/location-manager'),
-    name: 'locationManager',
+    name: 'LocationManager',
     meta: { title: '库位管理' },
     children: []
   }, {
     path: 'production-batch',
     component: () =>
                 import('@/views/data-manager/production-batch'),
-    name: 'productionBatch',
+    name: 'ProductionBatch',
     meta: { title: '生产批次' },
     children: []
   }, {
@@ -74,29 +74,29 @@ export const constantRoutes = [{
     path: 'material-manager',
     component: () =>
                 import('@/views/data-manager/material-manager'),
-    name: 'materialManager',
+    name: 'MaterialManager',
     meta: { title: '物料管理' },
     children: []
   }, {
     path: 'unit-manager',
     component: () =>
-              import('@/views/data-manager/unit-manager'),
-    name: 'unitManager',
+                import('@/views/data-manager/unit-manager'),
+    name: 'UnitManager',
     meta: { title: '单位管理' },
     children: []
   }, {
     path: 'unit-conversion',
     component: () =>
-              import('@/views/data-manager/unit-conversion'),
-    name: 'unitConversion',
+                import('@/views/data-manager/unit-conversion'),
+    name: 'UnitConversion',
     meta: { title: '单位转换' },
     children: []
   }, {
-    path: 'historical-record',
+    path: 'external-documents',
     component: () =>
-              import('@/views/data-manager/historical-record'),
-    name: 'unitConversion',
-    meta: { title: '出入库历史' },
+                import('@/views/data-manager/external-documents'),
+    name: 'ExternalDocuments',
+    meta: { title: '外部单据' },
     children: []
   }]
 },
@@ -173,8 +173,13 @@ export const constantRoutes = [{
     path: 'label-painter',
     component: () =>
                 import('@/views/label-manager/label-painter'),
-    name: 'labelPainter',
-    meta: { title: '标签打印' },
+    name: 'LabelPainter',
+    // eslint-disable-next-line indent
+            meta: {
+      title: '标签打印',
+      noCache: true,
+      affix: true
+    },
     children: []
   }]
 },

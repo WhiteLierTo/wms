@@ -110,7 +110,7 @@
     <!--编辑-->
     <div>
       <el-dialog title="编辑单位" :visible.sync="edit">
-        <el-form  ref="editData"  :model="editData" class="demo-ruleForm">
+        <el-form ref="editData" :model="editData" class="demo-ruleForm">
           <el-row>
             <el-col :span="11">
               <el-form-item
@@ -149,9 +149,15 @@
 </template>
 
 <script>
-import { getUnit, postUnit,putUnit,deleteUnit, getUnitAll } from "@/api/baseData";
+import {
+  getUnit,
+  postUnit,
+  putUnit,
+  deleteUnit,
+  getUnitAll
+} from '@/api/baseData'
 export default {
-  name: "unit-manager",
+  name: 'UnitManager',
   data() {
     return {
       remote: [],
@@ -159,11 +165,11 @@ export default {
       loading: false,
       add: false,
       edit: false,
-      formLabelWidth: "80px",
+      formLabelWidth: '80px',
       addData: {
         // 新增数据
-        unit: "",
-        description: ""
+        unit: '',
+        description: ''
       },
       editData: {},
       page: {
@@ -174,134 +180,134 @@ export default {
         size: 10
       },
       listData: []
-    };
+    }
   },
   mounted() {
-    this.fetchData();
+    this.fetchData()
   },
   methods: {
-      //新增取消
-      addCancelHandleClick(){
-          this.add = false,
-          this.addData.unit = "";
-          this.addData.description =" ";
-      },
+    // 新增取消
+    addCancelHandleClick() {
+      this.add = false
+      this.addData.unit = ''
+      this.addData.description = ''
+    },
     // 查询
     queryHandleClick() {
-      this.fetchData();
+      this.fetchData()
     },
     // 弹出修改页面并赋值
     editHandleClick(e) {
-      this.edit = true;
-      this.editData = e;
+      this.edit = true
+      this.editData = e
     },
     // 查询单位名称
     remoteMethod(query) {
-      if (query !== "") {
-        this.loading = true;
+      if (query !== '') {
+        this.loading = true
         setTimeout(() => {
-          this.loading = false;
+          this.loading = false
           this.remote = this.setRemote.filter(item => {
-            return item.label.toLowerCase().indexOf(query.toLowerCase()) > -1;
-          });
-        }, 200);
+            return item.label.toLowerCase().indexOf(query.toLowerCase()) > -1
+          })
+        }, 200)
       } else {
-        this.remote = [];
+        this.remote = []
       }
     },
     // curd
     addHandleClick(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          let param = {
+          const param = {
             description: this.addData.description,
             unit: this.addData.unit
-          };
+          }
           postUnit(param).then(res => {
             if (res.errorCode === 0) {
-              this.add = false;
-              this.addData.unit = "";
-              this.addData.description = "";
+              this.add = false
+              this.addData.unit = ''
+              this.addData.description = ''
               this.$message({
-                message: "添加成功",
-                type: "success"
-              });
+                message: '添加成功',
+                type: 'success'
+              })
             }
-            this.fetchData();
-          });
+            this.fetchData()
+          })
         } else {
-          this.$message.error("请完善信息!");
-          return false;
+          this.$message.error('请完善信息!')
+          return false
         }
-      });
+      })
     },
     deleteHandleClick(e) {
-      this.$confirm("此操作将永久删除该单位, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+      this.$confirm('此操作将永久删除该单位, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
-        .then(async () => {
-        deleteUnit(e).then(res => {
+        .then(async() => {
+          deleteUnit(e).then(res => {
             if (res.errorCode === 0) {
-              this.add = false;
+              this.add = false
               this.$message({
-                message: "删除成功",
-                type: "success"
-              });
+                message: '删除成功',
+                type: 'success'
+              })
             }
-            this.fetchData();
-          });    
+            this.fetchData()
+          })
         })
-        .catch(() => {});
+        .catch(() => {})
     },
     editSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-        const param = {
-        id: this.editData.id,
-        unit: this.editData.unit,
-        description: this.editData.description
-      };
-      putUnit(param).then(res => {
-        if (res.errorCode === 0) {
-          this.$message({
-            message: "编辑成功",
-            type: "success"
-          });
-          this.edit = false;
-        }
-      });
+          const param = {
+            id: this.editData.id,
+            unit: this.editData.unit,
+            description: this.editData.description
+          }
+          putUnit(param).then(res => {
+            if (res.errorCode === 0) {
+              this.$message({
+                message: '编辑成功',
+                type: 'success'
+              })
+              this.edit = false
+            }
+          })
         } else {
-          this.$message.error("请完善信息!");
-          return false;
+          this.$message.error('请完善信息!')
+          return false
         }
-      });
+      })
     },
     fetchData() {
       getUnit(this.page).then(res => {
-        this.listData = res.result.list;
-        this.page.total = res.result.total;
-      });
-      this.getUnitAllFnc();
+        this.listData = res.result.list
+        this.page.total = res.result.total
+      })
+      this.getUnitAllFnc()
     },
     getUnitAllFnc() {
       getUnitAll().then(res => {
         this.setRemote = res.result.map(item => {
-          return { value: item.unit, label: item.unit };
-        });
-      });
+          return { value: item.unit, label: item.unit }
+        })
+      })
     },
     handleSizeChange(val) {
-      this.page.size = val;
-      this.fetchData();
+      this.page.size = val
+      this.fetchData()
     },
     handleCurrentChange(val) {
-      this.page.current = val;
-      this.fetchData();
+      this.page.current = val
+      this.fetchData()
     }
   }
-};
+}
 </script>
 
 <style scoped>

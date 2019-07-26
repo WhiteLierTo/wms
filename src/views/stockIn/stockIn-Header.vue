@@ -58,7 +58,7 @@
                   <el-table-column  label="操作" width="150">
                     <template slot-scope="scope">
                       <el-button v-show="line.status == 1" type="text" size="small" @click="editLineFnc(scope.row)">编辑</el-button>
-                      <el-button v-show="line.status == 1" type="text" size="small" @click="deleteLineFnc(scope.row)">删除</el-button>
+                      <el-button v-show="line.status == 1" type="text" size="small" @click="deleteLineFnc(scope.row.id)">删除</el-button>
                       <el-button v-show="line.status == 3 || line.status == 2" type="text" size="small" @click="countingHandleClick(scope.row)">点收</el-button>
                       <el-button type="text" size="small" @click="turnToStockDetail(scope.row)">明细</el-button>
                     </template>
@@ -254,7 +254,7 @@
                     v-model="addLineData.itemId"
                     clearable
                     placeholder="物料名称"
-                    @change="itemChange"
+                    @change="itemAddChange"
                   >
                     <el-option
                       v-for="item in item"
@@ -354,7 +354,7 @@
                     v-model="editLineData.itemId"
                     clearable
                     placeholder="物料名称"
-                    @change="itemChange"
+                    @change="itemEditChange"
                   >
                     <el-option
                       v-for="item in item"
@@ -526,7 +526,8 @@ import {
   deleteHeader,
   putHeaderStatus,
   postLine,
-  putLine
+  putLine,
+  deleteLine
 } from "@/api/stock";
 import {getAllinvBatchList,getUnitAll,getItemAllFnc,getItemOne} from "@/api/baseData";
 export default {
@@ -536,7 +537,6 @@ export default {
       remote: [],
       loading:false,
       setRemote: [],
-      loading: false,
       add: false,
       edit: false,
       counting:false,//点收弹窗
@@ -596,6 +596,27 @@ export default {
    this.getItemAllFnc();
   },
   methods: {
+    //删除单行数据
+    deleteLineFnc(e){
+      this.$confirm("此操作将永久删除该笔单行, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
+          deleteLine(e).then(res => {
+            if (res.errorCode === 0) {
+              this.add = false;
+              this.$message({
+                message: "删除成功",
+                type: "success"
+              });
+            }
+            this.fetchData();
+          });
+        })
+        .catch(() => {});
+    },
     //编辑单行确定
     editLineHandleClick(formName){
          this.$refs[formName].validate(valid => {
@@ -627,13 +648,22 @@ export default {
       this.editLine = true; 
       this.editLineData = e;
     },
-    //选择物料下拉数据，用物料ID查询物料名称
-    itemChange(){
+    //单行新增选择物料下拉数据，用物料ID查询物料名称
+    itemAddChange(){
       let param = {
         id:this.addLineData.itemId
       }
        getItemOne(param).then(res => {
         this.addLineData.itemName = res.result.itemName;
+      });
+    },
+     //单行编辑选择物料下拉数据，用物料ID查询物料名称
+    itemEditChange(){
+      let param = {
+        id:this.editLineData.itemId
+      }
+       getItemOne(param).then(res => {
+        this.editLineData.itemName = res.result.itemName;
       });
     },
     //新增单行数据
@@ -891,23 +921,22 @@ export default {
     //对某一行展开或者关闭的时候会触发该事件
     expandChange(row, expandedRows) {
       this.loading = true;
-      /*   if (expandedRows.length > 1) {
-          expandedRows.shift()
-        } */
       this.line.headerId=row.id;
       this.line.status = row.status;
-      sessionStorage.setItem("headerId", row.id);
+      //sessionStorage.setItem("headerId", row.id);
       this.getStockInLine();
     },
     //获取行数据
     getStockInLine(){
+      this.LineData = [];
       let params = {
-        headerId:sessionStorage.getItem("headerId")
+        headerId:this.line.headerId
       };
       getStockInLine(params).then(res => {
         this.LineData = res.result.list;
         this.loading = false;
       });
+      this.LineData = [];
     },
      //获取外部单据类型
     getTypeAllFnc() {

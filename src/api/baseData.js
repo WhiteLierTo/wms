@@ -1,6 +1,6 @@
 import request from '@/utils/request'
-// const baseURL = 'http://116.62.212.169:8100/wms/'
-const baseURL = 'http://172.16.28.17:8100/wms/'
+const baseURL = 'http://116.62.212.169:8100/wms/'
+// const baseURL = 'http://172.16.28.17:8100/wms/'
 
 // 获取库房列表
 export function getWarehouseList(params) {

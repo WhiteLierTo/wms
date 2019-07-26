@@ -29,6 +29,7 @@
           </div>
           <!--列表-->
           <el-table border :data="listData" style="width: 100%">
+            <el-table-column  width="150" prop="id" label="明细ID" />
             <el-table-column  width="150" prop="itemName" label="物料名称" />
             <el-table-column  width="150" prop="itemUnit" label="入库单位"></el-table-column>
             <el-table-column  width="150" prop="batchNumber" label="物料批次" />
@@ -38,10 +39,10 @@
             <el-table-column  width="150" prop="type" label="类型">
               <template slot-scope="scope">
                 <div v-if="scope.row.type==1" style="color:#3c763d">register</div>
-                <div v-if="scope.row.type==2" style="color:#3c763d">stock in</div>
+                <div v-if="scope.row.type==2" style="color:#dd001b">stock in</div>
               </template>
             </el-table-column>
-            <el-table-column  width="150" prop="inboundDate" label="入库日期" />
+            <el-table-column  width="200" prop="inboundDate" label="入库日期" />
             <el-table-column  fixed="right" label="操作" width="150">
               <template slot-scope="scope">
                 <div v-show="headerStatus != 'close'">
@@ -165,7 +166,7 @@ import { getStockDetailFnc, getStockInLineOne,postStockInDetail,putStockInDetail
 postShelves,putShelves,getHeaderStatus } from "@/api/stock";
 import { getWarehouseAll,getLocationAll} from '@/api/baseData'
 export default {
-  name:"stockIn-detail",
+  name:"stockout-detail",
   data() {
     return {
         headerId:'',

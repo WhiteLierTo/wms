@@ -25,6 +25,22 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item>
+                  <el-select
+                    v-model="page.status"
+                    clearable
+                    filterable
+                    size="small"
+                    placeholder="状态"
+                  >
+                    <el-option
+                      v-for="item in headerStatus"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
+                <el-form-item>
                   <el-button
                     size="small"
                     type="primary"
@@ -39,41 +55,56 @@
             </el-col>
           </div>
           <!--列表-->
-          <el-table @expand-change="expandChange"  :data="listData" style="width: 100%">
+          <el-table @expand-change="expandChange" :data="listData" style="width: 100%">
             <el-table-column type="expand">
               <!--单行信息-->
               <template>
-                <el-table
-                  v-loading="loading"
-                  border
-                  :data="LineData"
-                  style="width: 100%"
-                >
-                  <el-table-column  prop="itemId" label="物料编号" />
-                  <el-table-column  prop="itemName" label="物料名称" />
-                  <el-table-column  prop="itemUnit" label="入库单位"></el-table-column>
-                  <el-table-column  prop="batchNumber" label="物料批次" />
-                  <el-table-column  prop="quantity" label="入库数量" />
-                  <el-table-column  prop="quantityRegister" label="点收数量" />
-                  <el-table-column  prop="quantityReceive" label="上架数量" />
-                  <el-table-column  prop="producedDate" label="生产日期" />
-                  <el-table-column  label="操作" width="150">
+                <el-table v-loading="loading" border :data="LineData" style="width: 100%">
+                  <el-table-column prop="itemId" label="物料编号" />
+                  <el-table-column prop="itemName" label="物料名称" />
+                  <el-table-column prop="itemUnit" label="入库单位"></el-table-column>
+                  <el-table-column prop="batchNumber" label="物料批次" />
+                  <el-table-column prop="quantity" label="入库数量" />
+                  <el-table-column prop="quantityRegister" label="点收数量" />
+                  <el-table-column prop="quantityReceive" label="上架数量" />
+                  <el-table-column prop="producedDate" label="生产日期" />
+                  <el-table-column label="操作" width="150">
                     <template slot-scope="scope">
-                      <el-button v-show="line.status == 1" type="text" size="small" @click="editLineFnc(scope.row)">编辑</el-button>
-                      <el-button v-show="line.status == 1" type="text" size="small" @click="deleteLineFnc(scope.row.id)">删除</el-button>
-                      <el-button v-show="line.status == 3 || line.status == 2" type="text" size="small" @click="countingHandleClick(scope.row)">点收</el-button>
-                      <el-button v-show="line.status != 1" type="text" size="small" @click="turnToStockDetail(scope.row)">明细</el-button>
+                      <el-button
+                        v-show="line.status == 1"
+                        type="text"
+                        size="small"
+                        @click="editLineFnc(scope.row)"
+                      >编辑</el-button>
+                      <el-button
+                        v-show="line.status == 1"
+                        type="text"
+                        size="small"
+                        @click="deleteLineFnc(scope.row.id)"
+                      >删除</el-button>
+                      <el-button
+                        v-show="line.status == 3 || line.status == 2"
+                        type="text"
+                        size="small"
+                        @click="countingHandleClick(scope.row)"
+                      >点收</el-button>
+                      <el-button
+                        v-show="line.status != 1"
+                        type="text"
+                        size="small"
+                        @click="turnToStockDetail(scope.row)"
+                      >明细</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
               </template>
             </el-table-column>
-            <el-table-column  prop="vendorId" label="供应商ID" />
-            <el-table-column  prop="vendorName" label="供应商名称" />
-            <el-table-column  prop="billNumber" label="外部单据名称" />
+            <el-table-column prop="vendorId" label="供应商ID" />
+            <el-table-column prop="vendorName" label="供应商名称" />
+            <el-table-column prop="billNumber" label="外部单据编号" />
             <!-- <el-table-column  prop="billType" label="外部单据类型"></el-table-column> -->
-            <el-table-column  prop="state" label="入库单说明" />
-            <el-table-column  prop="status" label="状态">
+            <el-table-column prop="state" label="入库单说明" />
+            <el-table-column prop="status" label="状态">
               <template slot-scope="scope">
                 <div v-if="scope.row.status==1" style="color:#3c763d">create</div>
                 <div v-if="scope.row.status==2" style="color:#2472c8">confirm</div>
@@ -84,11 +115,36 @@
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="200">
               <template slot-scope="scope">
-                <el-button v-show="scope.row.completed==true" type="text" size="small" @click="closeHandleClick(scope.row)">关闭</el-button>
-                <el-button v-show="scope.row.status==1" type="text" size="small" @click="LineHandleClick(scope.row)">添加单行</el-button>
-                <el-button v-show="scope.row.status==1" type="text" size="small" @click="confirmHandleClick(scope.row)">确认</el-button>
-                <el-button v-show="scope.row.status==1" type="text" size="small" @click="editHandleClick(scope.row)">编辑</el-button>
-                <el-button v-show="scope.row.status==1" type="text" size="small" @click="deleteHandleClick(scope.row.id)">删除</el-button>
+                <el-button
+                  v-show="scope.row.completed==true"
+                  type="text"
+                  size="small"
+                  @click="closeHandleClick(scope.row)"
+                >关闭</el-button>
+                <el-button
+                  v-show="scope.row.status==1"
+                  type="text"
+                  size="small"
+                  @click="LineHandleClick(scope.row)"
+                >添加单行</el-button>
+                <el-button
+                  v-show="scope.row.status==1"
+                  type="text"
+                  size="small"
+                  @click="confirmHandleClick(scope.row)"
+                >确认</el-button>
+                <el-button
+                  v-show="scope.row.status==1"
+                  type="text"
+                  size="small"
+                  @click="editHandleClick(scope.row)"
+                >编辑</el-button>
+                <el-button
+                  v-show="scope.row.status==1"
+                  type="text"
+                  size="small"
+                  @click="deleteHandleClick(scope.row.id)"
+                >删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -112,31 +168,19 @@
         <el-form ref="countingData" :model="countingData" class="demo-ruleForm">
           <el-row>
             <el-col :span="11">
-              <el-form-item
-                prop="quantity"
-                label="入库数量"
-                :label-width="formLabelWidth"
-              >
+              <el-form-item prop="quantity" label="入库数量" :label-width="formLabelWidth">
                 <el-input readonly v-model="countingData.quantity" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
-              <el-form-item
-                prop="quantityRegister"
-                label="总点收数量"
-                :label-width="formLabelWidth"
-              >
+              <el-form-item prop="quantityRegister" label="总点收数量" :label-width="formLabelWidth">
                 <el-input readonly v-model="countingData.quantityRegister" autocomplete="off" />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="11">
-              <el-form-item
-                prop="quantityReceive"
-                label="上架数量"
-                :label-width="formLabelWidth"
-              >
+              <el-form-item prop="quantityReceive" label="上架数量" :label-width="formLabelWidth">
                 <el-input readonly v-model="countingData.quantityReceive" autocomplete="off" />
               </el-form-item>
             </el-col>
@@ -147,20 +191,21 @@
                 :label-width="formLabelWidth"
                 :rules="[
                 { required: true, message: '点收数量不能为空'}
-            ]">
-                <el-input type='number' v-model="countingData.number" autocomplete="off" />
+            ]"
+              >
+                <el-input type="number" v-model="countingData.number" autocomplete="off" />
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
 
         <div slot="footer" class="dialog-footer">
-          <el-button @click="counting = false">取 消</el-button>
+          <el-button @click="countingCancle()">取 消</el-button>
           <el-button type="primary" @click="postCheckHandleClick('countingData')">确 定</el-button>
         </div>
       </el-dialog>
     </div>
-  <!--点收弹窗end-->
+    <!--点收弹窗end-->
 
     <!--新增单头-->
     <div>
@@ -192,7 +237,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-           <el-row>
+          <el-row>
             <el-col :span="11">
               <el-form-item
                 prop="billType"
@@ -202,22 +247,31 @@
                   { required: true, message: '外部单据类型不能为空'}
                 ]"
               >
-                 <el-select
-                    v-model="addData.billType"
-                    clearable
-                    filterable
-                    placeholder="外部单据类型"
-                  >
-                    <el-option
-                      v-for="item in setRemote"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
+                <el-select v-model="addData.billType" clearable filterable placeholder="外部单据类型">
+                  <el-option
+                    v-for="item in setRemote"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
+              <el-form-item
+                prop="billNumber"
+                label="单据编号"
+                :label-width="formLabelWidth"
+                :rules="[
+                  { required: true, message: '单据编号不能为空'},
+                ]"
+              >
+                <el-input v-model="addData.billNumber" autocomplete="off" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
               <el-form-item
                 prop="state"
                 label="入库单说明"
@@ -239,13 +293,13 @@
       </el-dialog>
     </div>
 
-     <!--新增单行-->
+    <!--新增单行-->
     <div>
       <el-dialog title="新增入库单行" :visible.sync="addLine">
         <el-form ref="addLineData" :model="addLineData" class="demo-ruleForm">
           <el-row>
             <el-col :span="11">
-            <el-form-item
+              <el-form-item
                 prop="itemId"
                 label="物料编号"
                 :label-width="formLabelWidth"
@@ -253,49 +307,24 @@
                   { required: true, message: '物料编号不能为空'}
                 ]"
               >
-                 <el-select
-                    v-model="addLineData.itemId"
-                    clearable
-                    filterable
-                    placeholder="物料编号"
-                    @change="itemAddChange"
-                  >
-                    <el-option
-                      v-for="item in item"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
+                <el-select
+                  v-model="addLineData.itemId"
+                  clearable
+                  filterable
+                  placeholder="物料编号"
+                  @change="itemAddChange"
+                  @clear="itemClearFnc"
+                >
+                  <el-option
+                    v-for="item in item"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
-           <el-form-item
-                prop="itemUnit"
-                label="入库单位"
-                :label-width="formLabelWidth"
-                :rules="[
-                  { required: true, message: '入库单位不能为空'}
-                ]"
-              >
-                 <el-select
-                    v-model="addLineData.itemUnit"
-                    clearable
-                    filterable
-                    placeholder="入库单位"
-                  >
-                    <el-option
-                      v-for="item in unit"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.label"
-                    />
-                  </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-           <el-row>
-            <el-col :span="11">
               <el-form-item
                 prop="batchNumber"
                 label="物料批次"
@@ -304,36 +333,43 @@
                   { required: true, message: '物料批次不能为空'}
                 ]"
               >
-                 <el-select
-                    v-model="addLineData.batchNumber"
-                    clearable
-                    filterable
-                    placeholder="物料批次"
-                  >
-                    <el-option
-                      v-for="item in batchNumber"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.label"
-                    />
-                  </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col style="margin-left:10px" :span="11">
-              <el-form-item
-                prop="billNumber"
-                label="单据编号"
-                :label-width="formLabelWidth"
-                :rules="[
-                  { required: true, message: '单据编号不能为空'},
-                ]"
-              >
-                <el-input v-model="addLineData.billNumber" autocomplete="off" />
+                <el-select
+                  v-model="addLineData.batchNumber"
+                  clearable
+                  filterable
+                  placeholder="物料批次"
+                  @change="itemBatchChange"
+                  @clear="batchClearFnc"
+                >
+                  <el-option
+                    v-for="item in batchNumber"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.label"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="11">
+              <el-form-item prop="itemName" label="入库名称" :label-width="formLabelWidth">
+                <el-input disabled v-model="addLineData.itemName"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col style="margin-left:10px" :span="11">
+              <el-form-item prop="itemUnit" label="入库单位" :label-width="formLabelWidth">
+                <el-input disabled v-model="addLineData.itemUnit"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item prop="producedDate" label="生产日期" :label-width="formLabelWidth">
+                <el-input disabled v-model="addLineData.producedDate" autocomplete="off" />
+              </el-form-item>
+            </el-col>
+            <el-col style="margin-left:10px" :span="11">
               <el-form-item
                 prop="quantity"
                 label="入库数量"
@@ -356,63 +392,36 @@
     </div>
     <!--新增单行END-->
 
-      <!--编辑单行-->
+    <!--编辑单行-->
     <div>
       <el-dialog title="编辑入库单行" :visible.sync="editLine">
         <el-form ref="editLineData" :model="editLineData" class="demo-ruleForm">
-          <el-row>
+           <el-row>
             <el-col :span="11">
-            <el-form-item
+              <el-form-item
                 prop="itemId"
-                label="物料名称"
+                label="物料编号"
                 :label-width="formLabelWidth"
                 :rules="[
-                  { required: true, message: '物料名称不能为空'}
+                  { required: true, message: '物料编号不能为空'}
                 ]"
               >
-                 <el-select
-                    v-model="editLineData.itemId"
-                    clearable
-                    filterable
-                    placeholder="物料名称"
-                    @change="itemEditChange"
-                  >
-                    <el-option
-                      v-for="item in item"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
+                <el-select
+                  v-model="editLineData.itemId"
+                  filterable
+                  placeholder="物料编号"
+                  @change="itemEditChange"
+                >
+                  <el-option
+                    v-for="item in item"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
-           <el-form-item
-                prop="itemUnit"
-                label="入库单位"
-                :label-width="formLabelWidth"
-                :rules="[
-                  { required: true, message: '入库单位不能为空'}
-                ]"
-              >
-                 <el-select
-                    v-model="editLineData.itemUnit"
-                    clearable
-                    filterable
-                    placeholder="入库单位"
-                  >
-                    <el-option
-                      v-for="item in unit"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.label"
-                    />
-                  </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-           <el-row>
-            <el-col :span="11">
               <el-form-item
                 prop="batchNumber"
                 label="物料批次"
@@ -421,19 +430,38 @@
                   { required: true, message: '物料批次不能为空'}
                 ]"
               >
-                 <el-select
-                    v-model="editLineData.batchNumber"
-                    clearable
-                    filterable
-                    placeholder="物料批次"
+                <el-select
+                  v-model="editLineData.batchNumber"
+                  filterable
+                  placeholder="物料批次"
+                  @change="itemEditBatchChange"                
                   >
-                    <el-option
-                      v-for="item in batchNumber"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.label"
-                    />
-                  </el-select>
+                  <el-option
+                    v-for="item in batchNumber"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.label"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item prop="itemName" label="入库名称" :label-width="formLabelWidth">
+                <el-input disabled v-model="editLineData.itemName"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col style="margin-left:10px" :span="11">
+              <el-form-item prop="itemUnit" label="入库单位" :label-width="formLabelWidth">
+                <el-input disabled v-model="editLineData.itemUnit"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
+              <el-form-item prop="producedDate" label="生产日期" :label-width="formLabelWidth">
+                <el-input disabled v-model="editLineData.producedDate" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
@@ -452,7 +480,7 @@
         </el-form>
 
         <div slot="footer" class="dialog-footer">
-          <el-button @click="editLine = false">取 消</el-button>
+          <el-button @click="editLineCancle()">取 消</el-button>
           <el-button type="primary" @click="editLineHandleClick('editLineData')">确 定</el-button>
         </div>
       </el-dialog>
@@ -489,32 +517,41 @@
               </el-form-item>
             </el-col>
           </el-row>
-           <el-row>
+          <el-row>
             <el-col :span="11">
               <el-form-item
                 prop="billType"
-                label="入库单说明"
+                label="单据类型"
                 :label-width="formLabelWidth"
                 :rules="[
                   { required: true, message: '外部单据类型不能为空'}
                 ]"
               >
-                 <el-select
-                    v-model="editData.billType"
-                    clearable
-                    filterable
-                    placeholder="外部单据类型"
-                  >
-                    <el-option
-                      v-for="item in setRemote"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
+                <el-select v-model="editData.billType" clearable filterable placeholder="外部单据类型">
+                  <el-option
+                    v-for="item in setRemote"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col style="margin-left:10px" :span="11">
+              <el-form-item
+                prop="billNumber"
+                label="单据编号"
+                :label-width="formLabelWidth"
+                :rules="[
+                  { required: true, message: '单据编号不能为空'},
+                ]"
+              >
+                <el-input v-model="editData.billNumber" autocomplete="off" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="11">
               <el-form-item
                 prop="state"
                 label="入库单说明"
@@ -552,77 +589,133 @@ import {
   putLine,
   deleteLine
 } from "@/api/stock";
-import {getAllinvBatchList,getUnitAll,getItemAllFnc,getItemOne} from "@/api/baseData";
-import {positiveNumber} from "@/utils/validate"
+import {
+  getAllinvBatchList,
+  getUnitAll,
+  getItemAllFnc,
+  getItemOne,
+  getBatchOne
+} from "@/api/baseData";
+import { positiveNumber } from "@/utils/validate";
 export default {
   name: "stockIn-Header",
   data() {
     return {
       remote: [],
-      loading:false,
+      loading: false,
       setRemote: [],
+      billType:[],
+      billName:[],
       add: false,
       edit: false,
-      counting:false,//点收弹窗
-      addLine:false, //新增单行弹窗
-      editLine:false,//编辑单行弹窗
-      lineData: {},//行数据
-      countingData:{    //点收数据
-          quantity:'',
-          quantityRegister:'',
-          quantityReceive:"",
-          number:""
+      counting: false, //点收弹窗
+      addLine: false, //新增单行弹窗
+      editLine: false, //编辑单行弹窗
+      lineData: {}, //行数据
+      countingData: {
+        //点收数据
+        quantity: "",
+        quantityRegister: "",
+        quantityReceive: "",
+        number: ""
       },
       formLabelWidth: "100px",
       addData: {
         // 新增数据
         vendorId: "",
         vendorName: "",
-        state:'',
-        billType:''
+        state: "",
+        billType: "",
+        billNumber:''
       },
-      addLineData:{   //新增单行数据
-          headerId:"",
-          itemId:"",
-          itemName:'',
-          itemUnit:'',
-          batchNumber:'',
-          quantity:''
+      addLineData: {
+        //新增单行数据
+        headerId: "",
+        itemId: "",
+        itemName: "",
+        itemUnit: "",
+        batchNumber: "",
+        quantity: "",
+        producedDate: ""
       },
-      editLineData:[],
+      editLineData: [],
       editData: {},
       page: {
         // 查询条件
-        billType: '',
+        billType: "",
+        status:'',
         total: 40,
         current: 1,
-        sort:'create_at',
+        sort: "create_at",
         size: 10,
         deleted: false
       },
+      headerStatus:[
+        {
+          value: '1',
+          label: 'create'
+        }, {
+          value: '2',
+          label: 'confirm'
+        }, {
+          value: '3',
+          label: 'register'
+        }, {
+          value: '4',
+          label: 'receive'
+        }, {
+          value: '5',
+          label: 'close'
+        }
+      ],
       listData: [],
       LineData: [],
       line: {
         headerId: "",
-        status:''
+        status: ""
       },
-      item:[],   //物料下拉
-      unit:[],    //单位下拉
-      batchNumber:[]    //批次下拉
+      item: [], //物料下拉
+      unit: [], //单位下拉
+      batchNumber: [] //批次下拉
     };
   },
   mounted() {
     this.fetchData();
     //获取全部批次
     this.getAllinvBatchList();
-   //获取全部单位
-   this.getUnitAll();
+    //获取全部单位
+    this.getUnitAll();
     //获取全部物料
-   this.getItemAllFnc();
+    this.getItemAllFnc();
   },
   methods: {
+    //单行取消
+    editLineCancle(){
+      this.editLine = false;
+      this.fetchData();
+    },
+    //表单置空
+     resetForm(formName) {
+        this.$refs[formName].resetFields();
+      },
+    //点收取消清除数据
+    countingCancle(){
+      this.counting = false;
+      this.countingData.number = '';
+    },
+    //物料删除，联动清除
+    itemClearFnc() {
+      this.addLineData.itemName = "";
+      this.addLineData.itemUnit = "";
+      this.addLineData.batchNumber = "";
+      this.addLineData.producedDate = "";
+    },
+    //批次删除，联动清除
+    batchClearFnc() {
+      this.addLineData.producedDate = "";
+    },
     //删除单行数据
-    deleteLineFnc(e){
+    deleteLineFnc(e) {
       this.$confirm("此操作将永久删除该笔单行, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -643,18 +736,19 @@ export default {
         .catch(() => {});
     },
     //编辑单行确定
-    editLineHandleClick(formName){
-         this.$refs[formName].validate(valid => {
+    editLineHandleClick(formName) {
+      this.$refs[formName].validate(valid => {
         if (valid) {
-        if(positiveNumber(this.editLineData.quantity) == false){
-             this.$message({
-                message: "数量应为有效正整数",
-                type: "warning"
-              });
-          return
+          if (positiveNumber(this.editLineData.quantity) == false) {
+            this.$message({
+              message: "数量应为有效正整数",
+              type: "warning"
+            });
+            return;
           }
           const param = {
-            id:this.editLineData.id,
+            id: this.editLineData.id,
+            itemId: this.editLineData.itemId,
             itemName: this.editLineData.itemName,
             itemUnit: this.editLineData.itemUnit,
             batchNumber: this.editLineData.batchNumber,
@@ -676,60 +770,91 @@ export default {
       });
     },
     //编辑单行弹窗
-    editLineFnc(e){  
-      this.editLine = true; 
+    editLineFnc(e) {
+      this.editLine = true;
       this.editLineData = e;
     },
-    //单行新增选择物料下拉数据，用物料ID查询物料名称
-    itemAddChange(){
-      if(this.addLineData.itemId){
-      let param = {
-        id:this.addLineData.itemId
-      }
-       getItemOne(param).then(res => {
-        this.addLineData.itemName = res.result.itemName;
-      });
-      }else{
-       return
+    //新增选择批次后查询生产日期
+    itemBatchChange() {
+      if (this.addLineData.batchNumber) {
+        let param = {
+          batchNumber: this.addLineData.batchNumber
+        };
+        getBatchOne(param).then(res => {
+          this.addLineData.producedDate = res.result.producedDate;
+        });
+      } else {
+        return;
       }
     },
-     //单行编辑选择物料下拉数据，用物料ID查询物料名称
-    itemEditChange(){
-      let param = {
-        id:this.editLineData.itemId
+       //编辑选择批次后查询生产日期
+    itemEditBatchChange() {
+      if (this.editLineData.batchNumber) {
+        let param = {
+          batchNumber: this.editLineData.batchNumber
+        };
+        getBatchOne(param).then(res => {
+          this.editLineData.producedDate = res.result.producedDate;
+        });
+      } else {
+        return;
       }
-       getItemOne(param).then(res => {
-        this.editLineData.itemName = res.result.itemName;
-      });
+    },
+    //单行新增选择物料下拉数据，用物料ID查询物料名称
+    itemAddChange() {
+      if (this.addLineData.itemId) {
+        let param = {
+          id: this.addLineData.itemId
+        };
+        this.getAllinvBatchList(param);
+        getItemOne(param).then(res => {
+          this.addLineData.itemName = res.result.itemName;
+          this.addLineData.itemUnit = res.result.itemUnit;
+        });
+      } else {
+        return;
+      }
+    },
+    //单行编辑选择物料下拉数据，用物料ID查询物料名称
+    itemEditChange() {
+      this.editLineData.batchNumber='';
+      this.editLineData.producedDate='';
+       if (this.editLineData.itemId) {
+        let param = {
+          id: this.editLineData.itemId
+        };
+        this.getAllinvBatchList(param);
+        getItemOne(param).then(res => {
+          this.editLineData.itemName = res.result.itemName;
+          this.editLineData.itemUnit = res.result.itemUnit;
+        });
+      } else {
+        return;
+      }
     },
     //新增单行数据
-    postLineHandleClick(formName){
-        this.$refs[formName].validate(valid => {
+    postLineHandleClick(formName) {
+      this.$refs[formName].validate(valid => {
         if (valid) {
-         if(positiveNumber(this.addLineData.quantity) == false){
-             this.$message({
-                message: "数量应为有效正整数",
-                type: "warning"
-              });
-          return
+          if (positiveNumber(this.addLineData.quantity) == false) {
+            this.$message({
+              message: "数量应为有效正整数",
+              type: "warning"
+            });
+            return;
           }
           let param = {
             headerId: this.addLineData.headerId,
-            itemId:this.addLineData.itemId,
-            itemUnit:this.addLineData.itemUnit,
-            itemName:this.addLineData.itemName,
-            batchNumber:this.addLineData.batchNumber,
-            quantity:this.addLineData.quantity,
+            itemId: this.addLineData.itemId,
+            itemUnit: this.addLineData.itemUnit,
+            itemName: this.addLineData.itemName,
+            batchNumber: this.addLineData.batchNumber,
+            quantity: this.addLineData.quantity
           };
-         postLine(param).then(res => {
+          postLine(param).then(res => {
             if (res.errorCode === 0) {
+              this.resetForm(formName);
               this.addLine = false;
-              this.addLineData.headerId = "";
-              this.addLineData.itemId = "";
-              this.addLineData.itemUnit = "";
-              this.addLineData.itemName = "";
-              this.addLineData.batchNumber = "";
-              this.addLineData.quantity = "";
               this.$message({
                 message: "添加成功",
                 type: "success"
@@ -745,17 +870,17 @@ export default {
       });
     },
     //新增单行弹框
-    LineHandleClick(e){
+    LineHandleClick(e) {
       this.addLine = true;
       this.addLineData.headerId = e.id;
     },
     //单头确认
-    confirmHandleClick(e){
-        let param = {
-            id:e.id,
-            status:2
-        }
-        this.$confirm("单头确认后将不可再进行修改、删除操作, 是否继续?", "提示", {
+    confirmHandleClick(e) {
+      let param = {
+        id: e.id,
+        status: 2
+      };
+      this.$confirm("单头确认后将不可再进行修改、删除操作, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "info "
@@ -773,15 +898,15 @@ export default {
           });
         })
         .catch(() => {});
-    },  
-     //单头确认关闭
-    closeHandleClick(e){
-        let param = {
-            id:e.id,
-            status:5,
-            completed:false
-        }
-        this.$confirm("单头关闭后将不可再操作, 是否继续?", "提示", {
+    },
+    //单头确认关闭
+    closeHandleClick(e) {
+      let param = {
+        id: e.id,
+        status: 5,
+        completed: false
+      };
+      this.$confirm("单头关闭后将不可再操作, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "info "
@@ -799,56 +924,56 @@ export default {
           });
         })
         .catch(() => {});
-    },  
-     //插入点收明细
-    postCheckHandleClick(formName){
-        this.$refs[formName].validate(valid => {
+    },
+    //插入点收明细
+    postCheckHandleClick(formName) {
+      this.$refs[formName].validate(valid => {
         if (valid) {
-                   if(positiveNumber(this.countingData.number) == false){
-             this.$message({
-                message: "数量应为有效正整数",
-                type: "warning"
-              });
-          return
+          if (positiveNumber(this.countingData.number) == false) {
+            this.$message({
+              message: "数量应为有效正整数",
+              type: "warning"
+            });
+            return;
           }
-      let param = {
-        batchNumber: this.lineData.batchNumber,
-        itemId: this.lineData.itemId,
-        itemName: this.lineData.itemName,
-        itemUnit: this.lineData.itemUnit,
-        lineId: this.lineData.id,
-        quantity: this.countingData.number,
-        warehouse: "暂无",
-        location: "暂无"
-      }
-      if(this.countingData.number === ''){
-        this.$message({
-            message: '点收数量不能为空',
-            type: 'error'
-          })
-          return
-      }
-      postCounting(param).then(res => {
-        if (res.errorCode === 0) {
-          this.add = false
-          this.$message({
-            message: '点收成功',
-            type: 'success'
-          })
-        }
-         this.getStockInLine();
-         this.fetchData();
-      })
-      this.counting = false;
-      this.countingData.number = '';
-       } else {
+          if(this.countingData.number>this.countingData.quantity-this.countingData.quantityRegister){
+             this.$message({
+              message: "点收数量异常",
+              type: "warning"
+            });
+            return;
+          }
+          let param = {
+            batchNumber: this.lineData.batchNumber,
+            itemId: this.lineData.itemId,
+            itemName: this.lineData.itemName,
+            itemUnit: this.lineData.itemUnit,
+            lineId: this.lineData.id,
+            quantity: this.countingData.number,
+            warehouse: "暂无",
+            location: "暂无"
+          };
+          postCounting(param).then(res => {
+            if (res.errorCode === 0) {
+              this.add = false;
+              this.$message({
+                message: "点收成功",
+                type: "success"
+              });
+            }
+            this.getStockInLine();
+            this.fetchData();
+          });
+          this.counting = false;
+          this.countingData.number = "";
+        } else {
           this.$message.error("请完善信息!");
           return false;
         }
       });
     },
     //点收弹窗
-    countingHandleClick(e){
+    countingHandleClick(e) {
       this.lineData = e;
       this.countingData.quantity = e.quantity;
       this.countingData.quantityRegister = e.quantityRegister;
@@ -856,9 +981,12 @@ export default {
       this.counting = true;
     },
     //跳转点收页面
-     turnToStockDetail(e){
+    turnToStockDetail(e) {
+      sessionStorage.setItem("getStockDetailItemName", e.itemName);
+      sessionStorage.setItem("getStockDetailItemUnit", e.itemUnit);
+      sessionStorage.setItem("getStockDetailBatchNumber", e.batchNumber);
       sessionStorage.setItem("getStockDetail", e.id);
-      this.$router.push({ name: 'stockInDetail'})
+      this.$router.push({ name: "stockInDetail" });
     },
     //新增取消
     addCancelHandleClick() {
@@ -876,29 +1004,19 @@ export default {
     },
     // curd
     addHandleClick(formName) {
-      let bill = {};
-      bill = this.setRemote.find((item)=>{
-      return item.value == this.addData.billType
-      })
-      let billNumber = JSON.stringify(bill.label);
-      let billNumberData = JSON.parse(billNumber);
       this.$refs[formName].validate(valid => {
         if (valid) {
           let param = {
             billType: this.addData.billType,
-            billNumber: billNumberData,
+            billNumber: this.addData.billNumber,
             vendorId: this.addData.vendorId,
             vendorName: this.addData.vendorName,
-            state: this.addData.state,
+            state: this.addData.state
           };
-         postHeader(param).then(res => {
+          postHeader(param).then(res => {
             if (res.errorCode === 0) {
               this.add = false;
-              this.addData.billType = "";
-              this.addData.billNumber = "";
-              this.addData.vendorId = "";
-              this.addData.vendorName = "";
-              this.addData.state = "";
+             this.resetForm(formName);
               this.$message({
                 message: "添加成功",
                 type: "success"
@@ -936,12 +1054,12 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           const param = {
-            id:this.editData.id,
+            id: this.editData.id,
             billType: this.editData.billType,
             billNumber: this.editData.billNumber,
             vendorId: this.editData.vendorId,
             vendorName: this.editData.vendorName,
-            state: this.editData.state,
+            state: this.editData.state
           };
           putHeader(param).then(res => {
             if (res.errorCode === 0) {
@@ -969,21 +1087,21 @@ export default {
     //对某一行展开或者关闭的时候会触发该事件
     expandChange(row, expandedRows) {
       this.loading = true;
-      this.line.headerId=row.id;
+      this.line.headerId = row.id;
       this.line.status = row.status;
       //sessionStorage.setItem("headerId", row.id);
-        if (expandedRows.length > 1) {
-          expandedRows.shift()
-        }
-        if (row) {
-          let params = {
-            headerId: row.id
-          };
-          this.getStockInLine(params);
-        }
+      if (expandedRows.length > 1) {
+        expandedRows.shift();
+      }
+      if (row) {
+        let params = {
+          headerId: row.id
+        };
+        this.getStockInLine(params);
+      }
     },
     //获取行数据
-    getStockInLine(e){
+    getStockInLine(e) {
       this.LineData = [];
       getStockInLine(e).then(res => {
         this.LineData = res.result.list;
@@ -991,7 +1109,7 @@ export default {
       });
       this.LineData = [];
     },
-     //获取外部单据类型
+    //获取外部单据类型
     getTypeAllFnc() {
       getTypeAllFnc().then(res => {
         this.setRemote = res.result.map(item => {
@@ -1007,30 +1125,30 @@ export default {
       this.page.current = val;
       this.fetchData();
     },
-        // 获取全部物料
+    // 获取全部物料
     getItemAllFnc() {
       getItemAllFnc().then(res => {
         this.item = res.result.map(item => {
-          return { value: item.id, label: item.id }
-        })
-      })
+          return { value: item.id, label: item.id };
+        });
+      });
     },
-        // 获取全部单位
+    // 获取全部单位
     getUnitAll() {
       getUnitAll().then(res => {
         this.unit = res.result.map(item => {
-          return { value: item.id, label: item.unit }
-        })
-      })
+          return { value: item.id, label: item.unit };
+        });
+      });
     },
     // 获取全部批次
-    getAllinvBatchList() {
-      getAllinvBatchList().then(res => {
+    getAllinvBatchList(e) {
+      getAllinvBatchList(e).then(res => {
         this.batchNumber = res.result.map(item => {
-          return { value: item.id, label: item.batchNumber }
-        })
-      })
-    },
+          return { value: item.id, label: item.batchNumber };
+        });
+      });
+    }
   }
 };
 </script>

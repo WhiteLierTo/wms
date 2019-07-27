@@ -1,25 +1,44 @@
 <template>
   <div>
     <div class="body">
-      <div style="margin-left:20px">
-          <el-form :inline="true" :model="lineData" class="demo-form-inline">
-             <el-form-item label="入库数量">
-              <el-input size="medium " readonly style="width:150px"  v-model="lineData.quantity" placeholder="上架数量"></el-input>
-            </el-form-item>
-            <el-form-item label="点收数量">
-              <el-input size="medium " readonly style="width:150px"  v-model="lineData.quantityRegister" placeholder="点收数量"></el-input>
-            </el-form-item>
-            <el-form-item label="上架数量">
-              <el-input size="medium " readonly style="width:150px"  v-model="lineData.quantityReceive" placeholder="上架数量"></el-input>
-            </el-form-item>
-            <el-form-item label="状态">
-              <el-input size="medium " readonly style="width:150px"  v-model="headerStatus" placeholder="状态"></el-input>
-            </el-form-item>
-        <!--     <el-form-item>
-                  <el-button size="medium" type="primary"  @click="InventoryCheck = true">点收</el-button>
-            </el-form-item> -->
-          </el-form>
-      </div>
+           <el-row :gutter="12">
+              <el-col :span="4">
+                <el-card  shadow="never">
+                  <div class="title">物料名称</div>
+                  <div class="cotent">{{publichData.itemName}}</div>
+                </el-card>
+              </el-col>
+              <el-col :span="4">
+                <el-card shadow="never">
+                  <div class="title">捡货单位</div>
+                  <div class="cotent">{{publichData.itemUnit}}</div>
+                </el-card>
+              </el-col>
+              <el-col :span="4">
+                <el-card  shadow="always">
+                  <div class="title">出库数量</div>
+                  <div class="cotent">{{lineData.quantity}}</div>
+                </el-card>
+              </el-col>
+              <el-col :span="4">
+                <el-card shadow="hover">
+                   <div class="title">捡货数量</div>
+                  <div class="cotent">{{lineData.quantityPick}}</div>
+                </el-card>
+              </el-col>
+              <el-col :span="4">
+                <el-card  shadow="never">
+                  <div class="title">出库数量</div>
+                  <div class="cotent">{{lineData.quantityShipping}}</div>
+                </el-card>
+              </el-col>
+               <el-col :span="4">
+                <el-card shadow="never">
+                  <div class="title">当前状态</div>
+                  <div class="cotent">{{headerStatus}}</div>
+                </el-card>
+              </el-col>
+            </el-row>
       <div class="border">
       </div>
       <el-card class="box-card">
@@ -29,26 +48,23 @@
           </div>
           <!--列表-->
           <el-table border :data="listData" style="width: 100%">
-            <el-table-column  width="150" prop="id" label="明细ID" />
-            <el-table-column  width="150" prop="itemName" label="物料名称" />
-            <el-table-column  width="150" prop="itemUnit" label="入库单位"></el-table-column>
-            <el-table-column  width="150" prop="batchNumber" label="物料批次" />
-            <el-table-column  width="150" prop="warehouse" label="上架库房" />
-            <el-table-column  width="150" prop="location" label="上架库位" />
-            <el-table-column  width="150" prop="quantity" label="数量" />
-            <el-table-column  width="150" prop="type" label="类型">
+            <el-table-column  prop="id" label="明细ID" />
+            <el-table-column   prop="warehouse" label="出库库房" />
+            <el-table-column   prop="location" label="出库库位" />
+            <el-table-column   prop="quantity" label="数量" />
+            <el-table-column   prop="type" label="类型">
               <template slot-scope="scope">
-                <div v-if="scope.row.type==1" style="color:#3c763d">register</div>
-                <div v-if="scope.row.type==2" style="color:#dd001b">stock in</div>
+                <div v-if="scope.row.type==1" style="color:#3c763d">picking</div>
+                <div v-if="scope.row.type==2" style="color:#dd001b">stock out</div>
               </template>
             </el-table-column>
-            <el-table-column  width="200" prop="inboundDate" label="入库日期" />
-            <el-table-column  fixed="right" label="操作" width="150">
+            <el-table-column  width="200" prop="outboundDate" label="捡货日期" />
+            <el-table-column  label="操作">
               <template slot-scope="scope">
                 <div v-show="headerStatus != 'close'">
-                <el-button  v-show="scope.row.type==1" type="text" size="small" @click="putDetailHandleClick(scope.row)">取消点收</el-button>
-                <el-button  v-show="scope.row.type==1" type="text" size="small"  @click="shelvesHandleClick(scope.row)" >上架</el-button>
-                <el-button  v-show="scope.row.type==2" type="text" size="small"  @click="putCheckHandleClick(scope.row)" >取消上架</el-button>
+                <el-button  v-show="scope.row.type==1" type="text" size="small" @click="putDetailHandleClick(scope.row)">取消捡货</el-button>
+                <el-button  v-show="scope.row.type==1" type="text" size="small"  @click="shelvesHandleClick(scope.row)" >出库</el-button>
+                <el-button  v-show="scope.row.type==2" type="text" size="small"  @click="putCheckHandleClick(scope.row)" >取消出库</el-button>
                 </div>
               </template>
             </el-table-column>
@@ -68,35 +84,12 @@
     </div>
 
 
-    <!--点收-->
-    <div>
-      <el-dialog title="点收" :visible.sync="InventoryCheck" width="30%">
-        <el-form
-          :model="InventoryCheckEdit"
-          ref="ruleForm"
-          :label-width="formLabelWidth"
-          class="demo-ruleForm"
-        >
-          <el-form-item label="点收数量" prop="number"
-           :rules="[
-                  { required: true, message: '点收数量不能为空'},
-            ]">
-            <el-input v-model="InventoryCheckEdit.number"></el-input>
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="InventoryCheck = false">取 消</el-button>
-          <el-button type="primary" @click="postCheckHandleClick()">确 定</el-button>
-        </span>
-      </el-dialog>
-    </div>
-
-    <!--上架-->
+    <!--出库-->
       <div>
-      <el-dialog title="上架" :visible.sync="shelves">
+      <el-dialog title="出库" :visible.sync="shelves">
         <el-form
           :model="shelvesData"
-          ref="ruleForm"
+          ref="shelvesData"
           :label-width="formLabelWidth"
           class="demo-ruleForm"
         >
@@ -106,21 +99,8 @@
                 prop="warehouse"
                 label="仓库"
                 :label-width="formLabelWidth"
-                :rules="[{ required: true, message: '请选择仓库', trigger: 'blur' }]"
               >
-                <el-select
-                  v-model="shelvesData.warehouse"
-                  placeholder="请选择仓库"
-                  style="width:100%"
-                  @change="warehouseChange"
-                >
-                  <el-option
-                    v-for="item in warehouseList"
-                    :key="item.id"
-                    :label="item.warehouseName"
-                    :value="item.id"
-                  />
-                </el-select>
+                 <el-input disabled  v-model="detailData.warehouse"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -128,33 +108,30 @@
                 prop="location"
                 label="库位"
                 :label-width="formLabelWidth"
-                :rules="[{ required: true, message: '请选择库位', trigger: 'blur' }]"
               >
-                <el-select v-model="shelvesData.location" placeholder="请选择库位" style="width:100%">
-                  <el-option
-                    v-for="item in locationList"
-                    :key="item.id"
-                    :label="item.location"
-                    :value="item.location"
-                  />
-                </el-select>
+                 <el-input disabled v-model="detailData.location"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
-          <el-form-item label="上架数量" prop="quantity"
+              <el-form-item label="数量">
+              <el-input  disabled  v-model="detailData.quantity" ></el-input>
+            </el-form-item>
+            </el-col>
+            <el-col :span="12">
+          <el-form-item label="出库数量" prop="quantity"
            :rules="[
-                  { required: true, message: '上架数量不能为空'},
+                  { required: true, message: '出库数量不能为空'},
             ]">
-            <el-input v-model="shelvesData.quantity"></el-input>
+            <el-input type="number" v-model="shelvesData.quantity"></el-input>
           </el-form-item>
           </el-col>
           </el-row>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="shelvesCancleHandleClick()">取 消</el-button>
-          <el-button type="primary" @click="postShelvesHandleClick()">确 定</el-button>
+          <el-button type="primary" @click="postStockoutHandleClick('shelvesData')">确 定</el-button>
         </span>
       </el-dialog>
     </div>
@@ -162,13 +139,15 @@
 </template>
 
 <script>
-import { getStockDetailFnc, getStockInLineOne,postStockInDetail,putStockInDetail,putCounting,postCounting,
-postShelves,putShelves,getHeaderStatus } from "@/api/stock";
+import { getStockOutDetail, getStockOutLineOne,postStockInDetail,putStockInDetail,putStockOutCounting,
+postStockout,putStockout,getStockOutHeaderStatus } from "@/api/stock";
 import { getWarehouseAll,getLocationAll} from '@/api/baseData'
+import { positiveNumber } from "@/utils/validate";
 export default {
   name:"stockout-detail",
   data() {
     return {
+        detailData:{},
         headerId:'',
         formLabelWidth: '80px',
         locationList:[],  //库位数据
@@ -177,15 +156,15 @@ export default {
         locationObj: {   //库房Id
         wid: ''
       },
-      InventoryCheck: false, //点收弹窗
-      shelves:false,//上架弹窗
-      shelvesData:{   //上架数据
+      InventoryCheck: false, //捡货弹窗
+      shelves:false,//出库弹窗
+      shelvesData:{   //出库数据
         quantity:"",
         warehouse:"",
         location:''
       },
       InventoryCheckEdit: {
-        //点收修改
+        //捡货修改
         number: ""
       },
       line: {
@@ -200,59 +179,86 @@ export default {
         size: 10,
         deleted: false
       },
-      listData: []
+      listData: [],
+      publichData:{
+        itemName:'',
+        itemUnit:'',
+        batchNumber:''
+      },
     };
   },
   methods: {
-    //上架取消，数据清除
+    //出库取消，数据清除
     shelvesCancleHandleClick(){
       this.shelves = false;
       this.shelvesData.quantity = "";
       this.shelvesData.warehouse = "";
       this.shelvesData.location = "";
     },
-    //打开上架弹窗
+    //打开出库弹窗
     shelvesHandleClick(e){
       this.shelves = true;
       this.detailId = e.id;  //明细ID
+      this.detailData = e;
     },
-     //插入上架明细
-    postShelvesHandleClick(){
-      let param = {
-        id: this.detailId,
-        quantity: this.shelvesData.quantity,
-        warehouse: this.shelvesData.warehouse,
-        location: this.shelvesData.location
-      }
-      postShelves(param).then(res => {
+     //插入出库明细
+    postStockoutHandleClick(formName){
+        this.$refs[formName].validate(valid => {
+        if (valid) {
+        if (positiveNumber(this.shelvesData.quantity) == false) {
+            this.$message({
+              message: "数量应为有效正整数",
+              type: "warning"
+            });
+            return;
+          }
+          if(this.shelvesData.quantity>this.detailData.quantity){
+             this.$message({
+              message: "出库数量异常",
+              type: "warning"
+            });
+            return;
+          }
+          let param = {
+          id: this.detailId,
+          quantity: this.shelvesData.quantity,
+          warehouse: this.detailData.warehouse,
+          location: this.detailData.location
+        }
+      postStockout(param).then(res => {
         if (res.errorCode === 0) {
           this.shelves = false
           this.$message({
-            message: '上架成功',
+            message: '出库成功',
             type: 'success'
           })
         }
         this.shelvesData.quantity = '';
         this.shelvesData.warehouse='';
         this.shelvesData.location='';
-         this.getLine();
-         this.fetchData();
+        this.getLine();
+        this.fetchData();
       })
       this.InventoryCheck = false;
       this.InventoryCheckEdit.number = '';
+       } else {
+          this.$message.error("请完善信息!");
+          return false;
+        }
+      });
     },
-     //取消上架
+     //取消出库
      putCheckHandleClick(e) {
        let param = {
          id:e.id
        }
-      this.$confirm('此操作将取消该笔上架, 是否继续?', '提示', {
+      this.$confirm('此操作将取消该笔出库, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(async() => {
-          putShelves(param).then(res => {
+          putStockout(param).then(res => {
             if (res.errorCode === 0) {
               this.add = false
               this.$message({
@@ -266,54 +272,22 @@ export default {
         })
         .catch(() => {})
     },
-    //插入点收明细
-    postCheckHandleClick(){
-      let param = {
-        batchNumber: this.lineData.batchNumber,
-        itemId: this.lineData.itemId,
-        itemName: this.lineData.itemName,
-        itemUnit: this.lineData.itemUnit,
-        lineId: this.lineData.id,
-        quantity: this.InventoryCheckEdit.number,
-        warehouse: "暂无",
-        location: "暂无"
-      }
-      if(this.InventoryCheckEdit.number === ''){
-        this.$message({
-            message: '点收数量不能为空',
-            type: 'error'
-          })
-          return
-      }
-      postCounting(param).then(res => {
-        if (res.errorCode === 0) {
-          this.add = false
-          this.$message({
-            message: '点收成功',
-            type: 'success'
-          })
-        }
-         this.getLine();
-         this.fetchData();
-      })
-      this.InventoryCheck = false;
-      this.InventoryCheckEdit.number = '';
-    },
-    //获取入库单行
+  
+    //获取捡货单行
     getLine() {
-      getStockInLineOne(this.line).then(res => {
+      getStockOutLineOne(this.line).then(res => {
         this.lineData = res.result;
-        this.getHeaderStatus(res.result);
+        this.getStockOutHeaderStatus(res.result);
       });
      
     },
     //获取单头状态
-    getHeaderStatus(e){
+    getStockOutHeaderStatus(e){
       this.headerId = e.headerId;
       let param = {
         id :e.headerId,
       }
-      getHeaderStatus(param).then(res => {
+      getStockOutHeaderStatus(param).then(res => {
          if(res.result.status == 1){
           this.headerStatus = 'create'
         }
@@ -321,28 +295,28 @@ export default {
           this.headerStatus = 'confirm'
         }
          if(res.result.status == 3){
-          this.headerStatus = 'register'
+          this.headerStatus = 'picking'
         }
          if(res.result.status == 4){
-           this.headerStatus = 'receive'
+           this.headerStatus = 'shipping'
         }
         if(res.result.status == 5){
            this.headerStatus = 'close'
         }
       });
     },
-    //取消点收
+    //取消捡货
      putDetailHandleClick(e) {
        let param = {
          id:e.id
        }
-      this.$confirm('此操作将取消该笔点收, 是否继续?', '提示', {
+      this.$confirm('此操作将取消该笔捡货, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(async() => {
-          putCounting(param).then(res => {
+          putStockOutCounting(param).then(res => {
             if (res.errorCode === 0) {
               this.add = false
               this.$message({
@@ -356,9 +330,9 @@ export default {
         })
         .catch(() => {})
     },
-    //获取入库明细
+    //获取捡货明细
     fetchData() {
-      getStockDetailFnc(this.page).then(res => {
+      getStockOutDetail(this.page).then(res => {
         this.listData = res.result.list;
         this.page.total = res.result.total;
       });
@@ -395,6 +369,9 @@ export default {
     }
   },
   mounted() {
+    this.publichData.itemName =  sessionStorage.getItem("getStockDetailItemName");
+    this.publichData.itemUnit =  sessionStorage.getItem("getStockDetailItemUnit");
+    this.publichData.batchNumber =  sessionStorage.getItem("getStockDetailBatchNumber");
     this.page.lineId = sessionStorage.getItem("getStockDetail");
     this.line.id = sessionStorage.getItem("getStockDetail");
     // 获取所有的仓库
@@ -414,15 +391,26 @@ width:100%;
 margin:0 auto;
 border: 0;
 height: 0;
-border-top: 1px solid rgba(0, 0, 0, 0.1);
-border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+
 margin-bottom: 30px;
 }
 .body {
-  margin: 20px 0px 0px 2%;
+  margin: 20px 1% 0px 1%;
 }
 .box-card {
   width: 98%;
+}
+.title{
+  color:#b5b5b5;
+  font-size:12px;
+  text-align: center
+}
+.cotent{
+  text-align: center;
+  padding-top: 4px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 </style>
 

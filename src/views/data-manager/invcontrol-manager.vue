@@ -7,19 +7,22 @@
             <!--工具条-->
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
               <el-form :inline="true" :model="page">
-                <el-form-item>
+               <el-form-item>
                   <el-select
-                    v-model="page.batchNumber"
+                    v-model="page.id"
                     filterable
+                    clearable
                     remote
                     reserve-keyword
-                    placeholder="批次编号"
-                    :remote-method="remoteMethod"
-                    :loading="loading"
+                    placeholder="物料名称"
                     size="small"
-                    clearable
                   >
-                    <el-option v-for="item in options" :key="item" :label="item" :value="item" />
+                    <el-option
+                      v-for="item in item"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -38,11 +41,21 @@
           </div>
 
           <!--列表-->
-          <el-table :data="listData" style="width: 100%" border>
+          <el-table  @expand-change="expandChange" :data="listData" style="width: 100%" border>
+             <el-table-column type="expand">
+              <!--单行信息-->
+              <template>
+                <el-table v-loading="loading" border :data="InvControlData" style="width: 100%">
+                  <el-table-column prop="warehouse" label="仓库" />
+                  <el-table-column prop="location" label="库位" />
+                  <el-table-column prop="quantity" label="数量"></el-table-column>
+                  <el-table-column prop="createAt" label="创建时间" />
+                </el-table>
+              </template>
+            </el-table-column>
             <el-table-column prop="itemId" label="物料编号" />
-            <el-table-column prop="batchNumber" label="批次编号" />
-            <el-table-column prop="warehouse" label="仓库" />
-            <el-table-column prop="location" label="库位" />
+            <el-table-column prop="itemName" label="物料名称" />
+            <el-table-column prop="itemUnit" label="物料单位" />
             <el-table-column prop="quantity" label="库存数量" />
             <!-- <el-table-column prop="createAt" label="创建时间" /> -->
           </el-table>
@@ -155,7 +168,9 @@ import {
   updateInvControlList,
   addInvControlList,
   getWarehouseAll,
-  getLocationAll
+  getLocationAll,
+  getInvControl,
+  getItemAllFnc
 } from '@/api/baseData'
 export default {
   name: 'InvcontrolManager',
@@ -163,6 +178,7 @@ export default {
     return {
       add: false,
       formLabelWidth: '120px',
+      item:[], //物料数据
       addData: {
         // 新增数据
         batchNumber: '',
@@ -175,9 +191,9 @@ export default {
       page: {
         batchNumber: '',
         current: 1,
+        id:'',
         size: 10,
-        sort: 'create_at',
-        deleted: false
+        deleted:false
       },
       listData: [],
       total: 0, // 总数
@@ -185,6 +201,7 @@ export default {
       options: [],
       loading: false,
       updateVal: {},
+      InvControlData:[],
       warehouseList: [],
       locationList: [],
       locationObj: {
@@ -201,8 +218,23 @@ export default {
     this.getWarehouseAllFnc()
     // 获取所有的库位
     this.getLocationAllFnc()
+    //获取所有物料
+     this.getItemAllFnc()
   },
   methods: {
+       //对某一行展开或者关闭的时候会触发该事件
+    expandChange(row, expandedRows) {
+      this.loading = true;
+      if (expandedRows.length > 1) {
+        expandedRows.shift();
+      }
+      if (row) {
+        let params = {
+          itemId: row.itemId
+        };
+        this.getInvControl(params);
+      }
+    },
     // 查询
     referHandleClick() {
       // 初始化库存列表
@@ -270,11 +302,26 @@ export default {
         this.total = res.result.total
       })
     },
+     // 分页获取批次列表
+    getInvControl(e) {
+      getInvControl(e).then(res => {
+        this.InvControlData = res.result.list;
+        this.loading = false;
+      })
+    },
     // 获取所有批次列表
     getAllInvControlFnc() {
       getAllInvControlList().then(res => {
         const AlllistData = res.result
         this.batchNumberList = AlllistData.map(v => v.batchNumber)
+      })
+    },
+     // 获取全部物料
+    getItemAllFnc() {
+      getItemAllFnc().then(res => {
+        this.item = res.result.map(item => {
+          return { value: item.id, label: item.itemName }
+        })
       })
     },
     // 更新列表（是否需要卡控）

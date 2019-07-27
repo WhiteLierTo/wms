@@ -145,15 +145,16 @@
                 :label-width="formLabelWidth"
                 :rules="[
                   { required: true, message: '请选择所属仓库',trigger: 'change'}
-                ]">
-                  <el-select style="width:100%" v-model="addData.wid" clearable placeholder="请选择">
-                    <el-option
-                      v-for="item in warehouse"
-                      :key="item.id"
-                      :label="item.warehouseName"
-                      :value="item.id">
-                    </el-option>
-                  </el-select>
+                ]"
+              >
+                <el-select v-model="addData.wid" style="width:100%" clearable placeholder="请选择">
+                  <el-option
+                    v-for="item in warehouse"
+                    :key="item.id"
+                    :label="item.warehouseName"
+                    :value="item.id"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -365,31 +366,30 @@ export default {
         this.remote = []
       }
     },
-    //curd
+    // curd
     addHandleClick(formName) {
       if (!this.addData.wid || !this.addData.location) {
         this.$message({
           showClose: true,
-          message: "请完善信息",
-          type: "warning"
-        });
-        return;
-      } 
-       this.postLocationFnc();
-    /*   this.$refs[formName].validate(valid => {
-        if (valid) {       
+          message: '请完善信息',
+          type: 'warning'
+        })
+        return
+      }
+      this.postLocationFnc()
+      /*   this.$refs[formName].validate(valid => {
+        if (valid) {
           this.postLocationFnc();
         } else {
           this.$message.error('请完善信息!')
           return false
         }
       }) */
-
     },
-    postLocationFnc(){
-      let param = {
-        wid:this.addData.wid,
-        location:this.addData.location,
+    postLocationFnc() {
+      const param = {
+        wid: this.addData.wid,
+        location: this.addData.location,
         warehouseName: this.addData.warehouseName,
         tempUpperLimit: this.addData.tempUpperLimit,
         tempLowerLimit: this.addData.tempLowerLimit,
@@ -400,14 +400,14 @@ export default {
         locationLock: this.addData.locationLock
       }
       postLocation(param).then(res => {
-        if (res.errorCode == 0) {
-          this.add = false;
-              this.$message({
-                message: "添加成功",
-                type: "success"
-              });
-            }
-          });
+        if (res.errorCode === 0) {
+          this.add = false
+          this.$message({
+            message: '添加成功',
+            type: 'success'
+          })
+        }
+      })
     },
     deleteHandleClick() {
       this.$confirm('此操作将永久删除该仓库, 是否继续?', '提示', {
@@ -432,8 +432,8 @@ export default {
         })
         return
       }
-      let param = {
-        wid:this.editData.wid,
+      const param = {
+        wid: this.editData.wid,
         tempUpperLimit: this.editData.tempUpperLimit,
         tempLowerLimit: this.editData.tempLowerLimit,
         humidityUpperLimit: this.editData.humidityUpperLimit,

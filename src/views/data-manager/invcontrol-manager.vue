@@ -176,8 +176,8 @@ export default {
         batchNumber: '',
         current: 1,
         size: 10,
-        sort:'create_at',
-        deleted:false
+        sort: 'create_at',
+        deleted: false
       },
       listData: [],
       total: 0, // 总数

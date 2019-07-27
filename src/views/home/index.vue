@@ -6,7 +6,13 @@
 
 <script>
 export default {
-  name: 'Home'
+  name: 'Home',
+  mounted() {
+    const obj = { name: 'Lee', age: 24 }
+    const [{ name: a1, age: b1 }] = [obj]
+    console.log('a', a1)
+    console.log('b', b1)
+  }
 }
 </script>
 

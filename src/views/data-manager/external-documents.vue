@@ -354,9 +354,11 @@ export default {
         this.add = false
         this.addData = {}
         this.$message({
-          message: '删除成功',
+          message: '添加成功',
           type: 'success'
         })
+        // 初始化外部单据列表
+        this.getbdExternalBillTypeListFnc()
       })
     },
     // 修改外部单据

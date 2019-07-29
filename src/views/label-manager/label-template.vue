@@ -293,9 +293,9 @@ import {
   deleteTemplate,
   addTemplate,
   updateTemplate
-} from '@/api/label';
+} from '@/api/label'
 export default {
-  name: 'LabelPainter',
+  name: 'LabelTemplate',
   data() {
     return {
       page: {

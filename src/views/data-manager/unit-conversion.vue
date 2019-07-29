@@ -466,10 +466,5 @@ export default {
 </script>
 
 <style scoped>
-.body {
-  margin: 20px 0px 0px 2%;
-}
-.box-card {
-  width: 98%;
-}
+
 </style>

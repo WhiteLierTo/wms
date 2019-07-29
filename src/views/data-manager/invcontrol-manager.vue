@@ -7,7 +7,7 @@
             <!--工具条-->
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
               <el-form :inline="true" :model="page">
-               <el-form-item>
+                <el-form-item>
                   <el-select
                     v-model="page.id"
                     filterable
@@ -41,14 +41,14 @@
           </div>
 
           <!--列表-->
-          <el-table  @expand-change="expandChange" :data="listData" style="width: 100%" border>
-             <el-table-column type="expand">
+          <el-table :data="listData" @expand-change="expandChange" style="width: 100%" border>
+            <el-table-column type="expand">
               <!--单行信息-->
               <template>
                 <el-table v-loading="loading" border :data="InvControlData" style="width: 100%">
                   <el-table-column prop="warehouse" label="仓库" />
                   <el-table-column prop="location" label="库位" />
-                  <el-table-column prop="quantity" label="数量"></el-table-column>
+                  <el-table-column prop="quantity" label="数量"/>
                   <el-table-column prop="createAt" label="创建时间" />
                 </el-table>
               </template>
@@ -178,7 +178,7 @@ export default {
     return {
       add: false,
       formLabelWidth: '120px',
-      item:[], //物料数据
+      item: [], // 物料数据
       addData: {
         // 新增数据
         batchNumber: '',
@@ -191,9 +191,9 @@ export default {
       page: {
         batchNumber: '',
         current: 1,
-        id:'',
+        id: '',
         size: 10,
-        deleted:false
+        deleted: false
       },
       listData: [],
       total: 0, // 总数
@@ -201,7 +201,7 @@ export default {
       options: [],
       loading: false,
       updateVal: {},
-      InvControlData:[],
+      InvControlData: [],
       warehouseList: [],
       locationList: [],
       locationObj: {
@@ -218,21 +218,21 @@ export default {
     this.getWarehouseAllFnc()
     // 获取所有的库位
     this.getLocationAllFnc()
-    //获取所有物料
-     this.getItemAllFnc()
+    // 获取所有物料
+    this.getItemAllFnc()
   },
   methods: {
-       //对某一行展开或者关闭的时候会触发该事件
+    // 对某一行展开或者关闭的时候会触发该事件
     expandChange(row, expandedRows) {
-      this.loading = true;
+      this.loading = true
       if (expandedRows.length > 1) {
-        expandedRows.shift();
+        expandedRows.shift()
       }
       if (row) {
-        let params = {
+        const params = {
           itemId: row.itemId
-        };
-        this.getInvControl(params);
+        }
+        this.getInvControl(params)
       }
     },
     // 查询
@@ -302,11 +302,11 @@ export default {
         this.total = res.result.total
       })
     },
-     // 分页获取批次列表
+    // 分页获取批次列表
     getInvControl(e) {
       getInvControl(e).then(res => {
-        this.InvControlData = res.result.list;
-        this.loading = false;
+        this.InvControlData = res.result.list
+        this.loading = false
       })
     },
     // 获取所有批次列表
@@ -316,7 +316,7 @@ export default {
         this.batchNumberList = AlllistData.map(v => v.batchNumber)
       })
     },
-     // 获取全部物料
+    // 获取全部物料
     getItemAllFnc() {
       getItemAllFnc().then(res => {
         this.item = res.result.map(item => {
@@ -363,26 +363,5 @@ export default {
 </script>
 
 <style scoped>
-.body {
-  margin: 20px 0px 0px 2%;
-}
-.box-card {
-  width: 98%;
-}
-.demo-table-expand {
-  font-size: 0;
-}
-.demo-table-expand label {
-  width: 90px;
-}
-.el-form--inline .el-form-item__label {
-  color: #99a9bf;
-  float: none;
-  display: inline-block;
-}
-.demo-table-expand .el-form-item {
-  margin-right: 0;
-  margin-bottom: 0;
-  width: 50%;
-}
+
 </style>

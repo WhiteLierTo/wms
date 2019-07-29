@@ -9,7 +9,7 @@
           <!--列表-->
           <el-table border :data="listData" style="width: 100%">
             <el-table-column prop="itemName" label="物料名称" />
-            <el-table-column prop="itemUnit" label="入库单位"></el-table-column>
+            <el-table-column prop="itemUnit" label="入库单位"/>
             <el-table-column prop="batchNumber" label="物料批次" />
             <el-table-column prop="quantity" label="入库数量" />
             <el-table-column prop="quantityRegister" label="点收数量" />
@@ -47,24 +47,30 @@
 </template>
 
 <script>
-import { getStockInLine, getStockInHeaderOne } from "@/api/stock";
+import { getStockInLine, getStockInHeaderOne } from '@/api/stock';
 export default {
-   name: "stockIn-Line",
+  name: 'stockIn-Line',
   data() {
     return {
       header: {},
       headerData: {
-        id: ""
+        id: ''
       },
       page: {
-        headerId: "",
+        headerId: '',
         total: 10,
         current: 1,
         size: 10,
         deleted: false
       },
       listData: []
-    };
+    }
+  },
+  mounted() {
+    this.headerData.id =  sessionStorage.getItem("getStockLine");
+    this.page.headerId =  sessionStorage.getItem("getStockLine");
+    this.fetchData();
+    this.getHeader();
   },
   methods: {
     turnToStockDetail(e){
@@ -90,24 +96,11 @@ export default {
       this.page.current = val;
       this.fetchData();
     }
-  },
-  mounted() {
-    this.headerData.id =  sessionStorage.getItem("getStockLine");
-    this.page.headerId =  sessionStorage.getItem("getStockLine");
-    this.fetchData();
-    this.getHeader();
   }
-};
+}
 </script>
 
 <style scoped>
-.body {
-  margin: 20px 0px 0px 2%;
-}
-.box-card {
-  width: 98%;
-}
+
 </style>
-
-
 

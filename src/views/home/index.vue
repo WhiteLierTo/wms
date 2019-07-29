@@ -5,14 +5,29 @@
 </template>
 
 <script>
+import { getValFnc } from '@/utils/validate'
 export default {
   name: 'Home',
+  data() {
+    return {
+      jsonObj: {
+        创维电视: 50,
+        卡萨帝北京: 40,
+        家电: 40,
+        松下: 30,
+        格力: 200,
+        海尔: 20,
+        海尔商城: 20,
+        海尔客服: 1220,
+        美的: 120,
+        美菱: 100
+      }
+    }
+  },
   mounted() {
-    const obj = { name: 'Lee', age: 24 }
-    const [{ name: a1, age: b1 }] = [obj]
-    console.log('a', a1)
-    console.log('b', b1)
-  }
+    console.log('根据key获取value:' + getValFnc(this.jsonObj, '海尔客服'))
+  },
+  methods: {}
 }
 </script>
 

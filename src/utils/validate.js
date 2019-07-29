@@ -7,7 +7,7 @@
  * @returns {Boolean}
  */
 export function isExternal(path) {
-  return /^(https?:|mailto:|tel:)/.test(path)
+    return /^(https?:|mailto:|tel:)/.test(path)
 }
 
 /**
@@ -15,18 +15,29 @@ export function isExternal(path) {
  * @returns {Boolean}
  */
 export function validUsername(str) {
-  const valid_map = ['admin', 'editor']
-  return valid_map.indexOf(str.trim()) >= 0
+    const valid_map = ['admin', 'editor']
+    return valid_map.indexOf(str.trim()) >= 0
 }
 
 export function dateFnc(time) {
-  var dateee = new Date(time).toJSON()
-  var date = new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
-  return date
+    var dateee = new Date(time).toJSON()
+    var date = new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
+    return date
 }
 
 // 非负数
 export function positiveNumber(number) {
-  var reg = /^\+?[1-9]\d*$/
-  return reg.test(number)
+    var reg = /^\+?[1-9]\d*$/
+    return reg.test(number)
+}
+
+// 对象通过key查value
+export function getValFnc(obj, k) {
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            return obj[k]
+        } else {
+            throw Error
+        }
+    }
 }

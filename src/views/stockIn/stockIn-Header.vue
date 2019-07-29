@@ -55,14 +55,14 @@
             </el-col>
           </div>
           <!--列表-->
-          <el-table @expand-change="expandChange" :data="listData" style="width: 100%">
+          <el-table :data="listData" @expand-change="expandChange" style="width: 100%">
             <el-table-column type="expand">
               <!--单行信息-->
               <template>
                 <el-table v-loading="loading" border :data="LineData" style="width: 100%">
                   <el-table-column prop="itemId" label="物料编号" />
                   <el-table-column prop="itemName" label="物料名称" />
-                  <el-table-column prop="itemUnit" label="入库单位"></el-table-column>
+                  <el-table-column prop="itemUnit" label="入库单位"/>
                   <el-table-column prop="batchNumber" label="物料批次" />
                   <el-table-column prop="quantity" label="入库数量" />
                   <el-table-column prop="quantityRegister" label="点收数量" />
@@ -169,19 +169,19 @@
           <el-row>
             <el-col :span="11">
               <el-form-item prop="quantity" label="入库数量" :label-width="formLabelWidth">
-                <el-input readonly v-model="countingData.quantity" autocomplete="off" />
+                <el-input v-model="countingData.quantity" readonly autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
               <el-form-item prop="quantityRegister" label="总点收数量" :label-width="formLabelWidth">
-                <el-input readonly v-model="countingData.quantityRegister" autocomplete="off" />
+                <el-input v-model="countingData.quantityRegister" readonly autocomplete="off" />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="11">
               <el-form-item prop="quantityReceive" label="上架数量" :label-width="formLabelWidth">
-                <el-input readonly v-model="countingData.quantityReceive" autocomplete="off" />
+                <el-input v-model="countingData.quantityReceive" readonly autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
@@ -190,10 +190,10 @@
                 label="点收数量"
                 :label-width="formLabelWidth"
                 :rules="[
-                { required: true, message: '点收数量不能为空'}
-            ]"
+                  { required: true, message: '点收数量不能为空'}
+                ]"
               >
-                <el-input type="number" v-model="countingData.number" autocomplete="off" />
+                <el-input v-model="countingData.number" type="number" autocomplete="off" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -354,19 +354,19 @@
           <el-row>
             <el-col :span="11">
               <el-form-item prop="itemName" label="入库名称" :label-width="formLabelWidth">
-                <el-input disabled v-model="addLineData.itemName"></el-input>
+                <el-input v-model="addLineData.itemName" disabled/>
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
               <el-form-item prop="itemUnit" label="入库单位" :label-width="formLabelWidth">
-                <el-input disabled v-model="addLineData.itemUnit"></el-input>
+                <el-input v-model="addLineData.itemUnit" disabled/>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="11">
               <el-form-item prop="producedDate" label="生产日期" :label-width="formLabelWidth">
-                <el-input disabled v-model="addLineData.producedDate" autocomplete="off" />
+                <el-input v-model="addLineData.producedDate" disabled autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
@@ -396,7 +396,7 @@
     <div>
       <el-dialog title="编辑入库单行" :visible.sync="editLine">
         <el-form ref="editLineData" :model="editLineData" class="demo-ruleForm">
-           <el-row>
+          <el-row>
             <el-col :span="11">
               <el-form-item
                 prop="itemId"
@@ -434,8 +434,8 @@
                   v-model="editLineData.batchNumber"
                   filterable
                   placeholder="物料批次"
-                  @change="itemEditBatchChange"                
-                  >
+                  @change="itemEditBatchChange"
+                >
                   <el-option
                     v-for="item in batchNumber"
                     :key="item.value"
@@ -449,19 +449,19 @@
           <el-row>
             <el-col :span="11">
               <el-form-item prop="itemName" label="入库名称" :label-width="formLabelWidth">
-                <el-input disabled v-model="editLineData.itemName"></el-input>
+                <el-input v-model="editLineData.itemName" disabled/>
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
               <el-form-item prop="itemUnit" label="入库单位" :label-width="formLabelWidth">
-                <el-input disabled v-model="editLineData.itemUnit"></el-input>
+                <el-input v-model="editLineData.itemUnit" disabled/>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="11">
               <el-form-item prop="producedDate" label="生产日期" :label-width="formLabelWidth">
-                <el-input disabled v-model="editLineData.producedDate" autocomplete="off" />
+                <el-input v-model="editLineData.producedDate" disabled autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
@@ -588,69 +588,69 @@ import {
   postLine,
   putLine,
   deleteLine
-} from "@/api/stock";
+} from '@/api/stock';
 import {
   getAllinvBatchList,
   getUnitAll,
   getItemAllFnc,
   getItemOne,
   getBatchOne
-} from "@/api/baseData";
-import { positiveNumber } from "@/utils/validate";
+} from '@/api/baseData';
+import { positiveNumber } from '@/utils/validate';
 export default {
-  name: "stockIn-Header",
+  name: 'stockIn-Header',
   data() {
     return {
       remote: [],
       loading: false,
       setRemote: [],
-      billType:[],
-      billName:[],
+      billType: [],
+      billName: [],
       add: false,
       edit: false,
-      counting: false, //点收弹窗
-      addLine: false, //新增单行弹窗
-      editLine: false, //编辑单行弹窗
-      lineData: {}, //行数据
+      counting: false, // 点收弹窗
+      addLine: false, // 新增单行弹窗
+      editLine: false, // 编辑单行弹窗
+      lineData: {}, // 行数据
       countingData: {
-        //点收数据
-        quantity: "",
-        quantityRegister: "",
-        quantityReceive: "",
-        number: ""
+        // 点收数据
+        quantity: '',
+        quantityRegister: '',
+        quantityReceive: '',
+        number: ''
       },
-      formLabelWidth: "100px",
+      formLabelWidth: '100px',
       addData: {
         // 新增数据
-        vendorId: "",
-        vendorName: "",
-        state: "",
-        billType: "",
-        billNumber:''
+        vendorId: '',
+        vendorName: '',
+        state: '',
+        billType: '',
+        billNumber: ''
       },
       addLineData: {
-        //新增单行数据
-        headerId: "",
-        itemId: "",
-        itemName: "",
-        itemUnit: "",
-        batchNumber: "",
-        quantity: "",
-        producedDate: ""
+        // 新增单行数据
+        headerId: '',
+        itemId: '',
+        itemName: '',
+        itemUnit: '',
+        batchNumber: '',
+        quantity: '',
+        producedDate: ''
       },
       editLineData: [],
       editData: {},
       page: {
         // 查询条件
-        billType: "",
-        status:'',
+        billType: '',
+        status: '',
         total: 40,
         current: 1,
-        sort: "create_at",
+        sort: 'create_at',
         size: 10,
         deleted: false
       },
-      headerStatus:[
+      headerStatus: [
         {
           value: '1',
           label: 'create'
@@ -671,79 +671,79 @@ export default {
       listData: [],
       LineData: [],
       line: {
-        headerId: "",
-        status: ""
+        headerId: '',
+        status: ''
       },
-      item: [], //物料下拉
-      unit: [], //单位下拉
-      batchNumber: [] //批次下拉
-    };
+      item: [], // 物料下拉
+      unit: [], // 单位下拉
+      batchNumber: [] // 批次下拉
+    }
   },
   mounted() {
-    this.fetchData();
+    this.fetchData()
     //获取全部批次
-    this.getAllinvBatchList();
+    this.getAllinvBatchList()
     //获取全部单位
-    this.getUnitAll();
+    this.getUnitAll()
     //获取全部物料
-    this.getItemAllFnc();
+    this.getItemAllFnc()
   },
   methods: {
-    //单行取消
-    editLineCancle(){
-      this.editLine = false;
-      this.fetchData();
+    // 单行取消
+    editLineCancle() {
+      this.editLine = false
+      this.fetchData()
     },
-    //表单置空
-     resetForm(formName) {
-        this.$refs[formName].resetFields();
+    // 表单置空
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
       },
-    //点收取消清除数据
-    countingCancle(){
-      this.counting = false;
-      this.countingData.number = '';
+    // 点收取消清除数据
+    countingCancle() {
+      this.counting = false
+      this.countingData.number = ''
     },
-    //物料删除，联动清除
+    // 物料删除，联动清除
     itemClearFnc() {
-      this.addLineData.itemName = "";
-      this.addLineData.itemUnit = "";
-      this.addLineData.batchNumber = "";
-      this.addLineData.producedDate = "";
+      this.addLineData.itemName = '';
+      this.addLineData.itemUnit = '';
+      this.addLineData.batchNumber = '';
+      this.addLineData.producedDate = '';
     },
-    //批次删除，联动清除
+    // 批次删除，联动清除
     batchClearFnc() {
-      this.addLineData.producedDate = "";
+      this.addLineData.producedDate = '';
     },
-    //删除单行数据
+    // 删除单行数据
     deleteLineFnc(e) {
-      this.$confirm("此操作将永久删除该笔单行, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+      this.$confirm('此操作将永久删除该笔单行, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
-        .then(async () => {
+        .then(async() => {
           deleteLine(e).then(res => {
             if (res.errorCode === 0) {
-              this.add = false;
+              this.add = false
               this.$message({
-                message: "删除成功",
-                type: "success"
-              });
+                message: '删除成功',
+                type: 'success'
+              })
             }
-            this.fetchData();
-          });
+            this.fetchData()
+          })
         })
-        .catch(() => {});
+        .catch(() => {})
     },
-    //编辑单行确定
+    // 编辑单行确定
     editLineHandleClick(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (positiveNumber(this.editLineData.quantity) == false) {
             this.$message({
-              message: "数量应为有效正整数",
-              type: "warning"
-            });
+              message: '数量应为有效正整数',
+              type: 'warning'
+            })
             return;
           }
           const param = {
@@ -753,302 +753,302 @@ export default {
             itemUnit: this.editLineData.itemUnit,
             batchNumber: this.editLineData.batchNumber,
             quantity: this.editLineData.quantity
-          };
+          }
           putLine(param).then(res => {
             if (res.errorCode === 0) {
               this.$message({
-                message: "编辑成功",
-                type: "success"
-              });
-              this.editLine = false;
+                message: '编辑成功',
+                type: 'success'
+              })
+              this.editLine = false
             }
-          });
+          })
         } else {
-          this.$message.error("请完善信息!");
-          return false;
+          this.$message.error('请完善信息!')
+          return false
         }
-      });
+      })
     },
-    //编辑单行弹窗
+    // 编辑单行弹窗
     editLineFnc(e) {
-      this.editLine = true;
-      this.editLineData = e;
+      this.editLine = true
+      this.editLineData = e
     },
-    //新增选择批次后查询生产日期
+    // 新增选择批次后查询生产日期
     itemBatchChange() {
       if (this.addLineData.batchNumber) {
-        let param = {
+        const param = {
           batchNumber: this.addLineData.batchNumber
-        };
+        }
         getBatchOne(param).then(res => {
-          this.addLineData.producedDate = res.result.producedDate;
-        });
+          this.addLineData.producedDate = res.result.producedDate
+        })
       } else {
-        return;
+        return
       }
     },
-       //编辑选择批次后查询生产日期
+    // 编辑选择批次后查询生产日期
     itemEditBatchChange() {
       if (this.editLineData.batchNumber) {
-        let param = {
+        const param = {
           batchNumber: this.editLineData.batchNumber
-        };
+        }
         getBatchOne(param).then(res => {
-          this.editLineData.producedDate = res.result.producedDate;
-        });
+          this.editLineData.producedDate = res.result.producedDate
+        })
       } else {
-        return;
+        return
       }
     },
-    //单行新增选择物料下拉数据，用物料ID查询物料名称
+    // 单行新增选择物料下拉数据，用物料ID查询物料名称
     itemAddChange() {
       if (this.addLineData.itemId) {
-        let param = {
+        const param = {
           id: this.addLineData.itemId
-        };
-        this.getAllinvBatchList(param);
+        }
+        this.getAllinvBatchList(param)
         getItemOne(param).then(res => {
-          this.addLineData.itemName = res.result.itemName;
-          this.addLineData.itemUnit = res.result.itemUnit;
-        });
+          this.addLineData.itemName = res.result.itemName
+          this.addLineData.itemUnit = res.result.itemUnit
+        })
       } else {
-        return;
+        return
       }
     },
-    //单行编辑选择物料下拉数据，用物料ID查询物料名称
+    // 单行编辑选择物料下拉数据，用物料ID查询物料名称
     itemEditChange() {
-      this.editLineData.batchNumber='';
-      this.editLineData.producedDate='';
+      this.editLineData.batchNumber = ''
+      this.editLineData.producedDate = ''
        if (this.editLineData.itemId) {
-        let param = {
+        const param = {
           id: this.editLineData.itemId
-        };
-        this.getAllinvBatchList(param);
+        }
+        this.getAllinvBatchList(param)
         getItemOne(param).then(res => {
-          this.editLineData.itemName = res.result.itemName;
-          this.editLineData.itemUnit = res.result.itemUnit;
-        });
+          this.editLineData.itemName = res.result.itemName
+          this.editLineData.itemUnit = res.result.itemUnit
+        })
       } else {
-        return;
+        return
       }
     },
-    //新增单行数据
+    // 新增单行数据
     postLineHandleClick(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (positiveNumber(this.addLineData.quantity) == false) {
             this.$message({
-              message: "数量应为有效正整数",
-              type: "warning"
-            });
+              message: '数量应为有效正整数',
+              type: 'warning'
+            })
             return;
           }
-          let param = {
+          const param = {
             headerId: this.addLineData.headerId,
             itemId: this.addLineData.itemId,
             itemUnit: this.addLineData.itemUnit,
             itemName: this.addLineData.itemName,
             batchNumber: this.addLineData.batchNumber,
             quantity: this.addLineData.quantity
-          };
+          }
           postLine(param).then(res => {
             if (res.errorCode === 0) {
-              this.resetForm(formName);
-              this.addLine = false;
+              this.resetForm(formName)
+              this.addLine = false
               this.$message({
-                message: "添加成功",
-                type: "success"
-              });
+                message: '添加成功',
+                type: 'success'
+              })
             }
-            this.fetchData();
-            this.getStockInLine();
-          });
+            this.fetchData()
+            this.getStockInLine()
+          })
         } else {
-          this.$message.error("请完善信息!");
-          return false;
+          this.$message.error('请完善信息!')
+          return false
         }
-      });
+      })
     },
-    //新增单行弹框
+    // 新增单行弹框
     LineHandleClick(e) {
-      this.addLine = true;
-      this.addLineData.headerId = e.id;
+      this.addLine = true
+      this.addLineData.headerId = e.id
     },
-    //单头确认
+    // 单头确认
     confirmHandleClick(e) {
-      let param = {
+      const param = {
         id: e.id,
         status: 2
-      };
-      this.$confirm("单头确认后将不可再进行修改、删除操作, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "info "
+      }
+      this.$confirm('单头确认后将不可再进行修改、删除操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'info '
       })
-        .then(async () => {
+        .then(async() => {
           putHeaderStatus(param).then(res => {
             if (res.errorCode === 0) {
-              this.add = false;
+              this.add = false
               this.$message({
-                message: "单头确认成功",
-                type: "success"
-              });
+                message: '单头确认成功',
+                type: 'success'
+              })
             }
-            this.fetchData();
-          });
+            this.fetchData()
+          })
         })
-        .catch(() => {});
+        .catch(() => {})
     },
-    //单头确认关闭
+    // 单头确认关闭
     closeHandleClick(e) {
-      let param = {
+      const param = {
         id: e.id,
         status: 5,
         completed: false
-      };
-      this.$confirm("单头关闭后将不可再操作, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "info "
+      }
+      this.$confirm('单头关闭后将不可再操作, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'info '
       })
-        .then(async () => {
+        .then(async() => {
           putHeaderStatus(param).then(res => {
             if (res.errorCode === 0) {
-              this.add = false;
+              this.add = false
               this.$message({
-                message: "单头关闭成功",
-                type: "success"
-              });
+                message: '单头关闭成功',
+                type: 'success'
+              })
             }
-            this.fetchData();
-          });
+            this.fetchData()
+          })
         })
-        .catch(() => {});
+        .catch(() => {})
     },
-    //插入点收明细
+    // 插入点收明细
     postCheckHandleClick(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           if (positiveNumber(this.countingData.number) == false) {
             this.$message({
-              message: "数量应为有效正整数",
-              type: "warning"
-            });
+              message: '数量应为有效正整数',
+              type: 'warning'
+            })
             return;
           }
-          if(this.countingData.number>this.countingData.quantity-this.countingData.quantityRegister){
-             this.$message({
-              message: "点收数量异常",
-              type: "warning"
-            });
+          if (this.countingData.number >  this.countingData.quantity - this.countingData.quantityRegister) {
+            this.$message({
+              message: '点收数量异常',
+              type: 'warning'
+            })
             return;
           }
-          let param = {
+          const param = {
             batchNumber: this.lineData.batchNumber,
             itemId: this.lineData.itemId,
             itemName: this.lineData.itemName,
             itemUnit: this.lineData.itemUnit,
             lineId: this.lineData.id,
             quantity: this.countingData.number,
-            warehouse: "暂无",
-            location: "暂无"
-          };
+            warehouse: '暂无',
+            location: '暂无'
+          }
           postCounting(param).then(res => {
             if (res.errorCode === 0) {
-              this.add = false;
+              this.add = false
               this.$message({
-                message: "点收成功",
-                type: "success"
-              });
+                message: '点收成功',
+                type: 'success'
+              })
             }
-            this.getStockInLine();
-            this.fetchData();
-          });
-          this.counting = false;
-          this.countingData.number = "";
+            this.getStockInLine()
+            this.fetchData()
+          })
+          this.counting = false
+          this.countingData.number = '';
         } else {
-          this.$message.error("请完善信息!");
-          return false;
+          this.$message.error('请完善信息!')
+          return false
         }
-      });
+      })
     },
-    //点收弹窗
+    // 点收弹窗
     countingHandleClick(e) {
-      this.lineData = e;
-      this.countingData.quantity = e.quantity;
-      this.countingData.quantityRegister = e.quantityRegister;
-      this.countingData.quantityReceive = e.quantityReceive;
-      this.counting = true;
+      this.lineData = e
+      this.countingData.quantity = e.quantity
+      this.countingData.quantityRegister = e.quantityRegister
+      this.countingData.quantityReceive = e.quantityReceive
+      this.counting = true
     },
-    //跳转点收页面
+    // 跳转点收页面
     turnToStockDetail(e) {
-      sessionStorage.setItem("getStockDetailItemName", e.itemName);
-      sessionStorage.setItem("getStockDetailItemUnit", e.itemUnit);
-      sessionStorage.setItem("getStockDetailBatchNumber", e.batchNumber);
-      sessionStorage.setItem("getStockDetail", e.id);
-      this.$router.push({ name: "stockInDetail" });
+      sessionStorage.setItem('getStockDetailItemName', e.itemName)
+      sessionStorage.setItem('getStockDetailItemUnit', e.itemUnit)
+      sessionStorage.setItem('getStockDetailBatchNumber', e.batchNumber)
+      sessionStorage.setItem('getStockDetail', e.id)
+      this.$router.push({ name: 'stockInDetail' })
     },
-    //新增取消
+    // 新增取消
     addCancelHandleClick() {
-      (this.add = false), (this.addData.unit = "");
-      this.addData.description = " ";
+      (this.add = false), (this.addData.unit = '')
+      this.addData.description = ' ';
     },
     // 查询
     queryHandleClick() {
-      this.fetchData();
+      this.fetchData()
     },
     // 弹出修改页面并赋值
     editHandleClick(e) {
-      this.edit = true;
-      this.editData = e;
+      this.edit = true
+      this.editData = e
     },
     // curd
     addHandleClick(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          let param = {
+          const param = {
             billType: this.addData.billType,
             billNumber: this.addData.billNumber,
             vendorId: this.addData.vendorId,
             vendorName: this.addData.vendorName,
             state: this.addData.state
-          };
+          }
           postHeader(param).then(res => {
             if (res.errorCode === 0) {
-              this.add = false;
-             this.resetForm(formName);
+              this.add = false
+             this.resetForm(formName)
               this.$message({
-                message: "添加成功",
-                type: "success"
-              });
+                message: '添加成功',
+                type: 'success'
+              })
             }
-            this.fetchData();
-          });
+            this.fetchData()
+          })
         } else {
-          this.$message.error("请完善信息!");
-          return false;
+          this.$message.error('请完善信息!')
+          return false
         }
-      });
+      })
     },
     deleteHandleClick(e) {
-      this.$confirm("此操作将永久删除该入库单头, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+      this.$confirm('此操作将永久删除该入库单头, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
-        .then(async () => {
+        .then(async() => {
           deleteHeader(e).then(res => {
             if (res.errorCode === 0) {
-              this.add = false;
+              this.add = false
               this.$message({
-                message: "删除成功",
-                type: "success"
-              });
+                message: '删除成功',
+                type: 'success'
+              })
             }
-            this.fetchData();
-          });
+            this.fetchData()
+          })
         })
-        .catch(() => {});
+        .catch(() => {})
     },
     editSubmit(formName) {
       this.$refs[formName].validate(valid => {
@@ -1060,104 +1060,99 @@ export default {
             vendorId: this.editData.vendorId,
             vendorName: this.editData.vendorName,
             state: this.editData.state
-          };
+          }
           putHeader(param).then(res => {
             if (res.errorCode === 0) {
               this.$message({
-                message: "编辑成功",
-                type: "success"
-              });
-              this.edit = false;
+                message: '编辑成功',
+                type: 'success'
+              })
+              this.edit = false
             }
-          });
+          })
         } else {
-          this.$message.error("请完善信息!");
-          return false;
+          this.$message.error('请完善信息!')
+          return false
         }
-      });
+      })
     },
-    //获取单头列表
+    // 获取单头列表
     fetchData() {
       getStockInHeader(this.page).then(res => {
-        this.listData = res.result.list;
-        this.page.total = res.result.total;
-      });
-      this.getTypeAllFnc();
+        this.listData = res.result.list
+        this.page.total = res.result.total
+      })
+      this.getTypeAllFnc()
     },
-    //对某一行展开或者关闭的时候会触发该事件
+    // 对某一行展开或者关闭的时候会触发该事件
     expandChange(row, expandedRows) {
-      this.loading = true;
-      this.line.headerId = row.id;
-      this.line.status = row.status;
+      this.loading = true
+      this.line.headerId = row.id
+      this.line.status = row.status
       //sessionStorage.setItem("headerId", row.id);
       if (expandedRows.length > 1) {
-        expandedRows.shift();
+        expandedRows.shift()
       }
       if (row) {
-        let params = {
+        const params = {
           headerId: row.id
-        };
-        this.getStockInLine(params);
+        }
+        this.getStockInLine(params)
       }
     },
-    //获取行数据
+    // 获取行数据
     getStockInLine(e) {
-      this.LineData = [];
+      this.LineData = []
       getStockInLine(e).then(res => {
-        this.LineData = res.result.list;
-        this.loading = false;
-      });
-      this.LineData = [];
+        this.LineData = res.result.list
+        this.loading = false
+      })
+      this.LineData = []
     },
-    //获取外部单据类型
+    // 获取外部单据类型
     getTypeAllFnc() {
       getTypeAllFnc().then(res => {
         this.setRemote = res.result.map(item => {
-          return { value: item.id, label: item.typeName };
-        });
-      });
+          return { value: item.id, label: item.typeName }
+        })
+      })
     },
     handleSizeChange(val) {
-      this.page.size = val;
-      this.fetchData();
+      this.page.size = val
+      this.fetchData()
     },
     handleCurrentChange(val) {
-      this.page.current = val;
-      this.fetchData();
+      this.page.current = val
+      this.fetchData()
     },
     // 获取全部物料
     getItemAllFnc() {
       getItemAllFnc().then(res => {
         this.item = res.result.map(item => {
-          return { value: item.id, label: item.id };
-        });
-      });
+          return { value: item.id, label: item.id }
+        })
+      })
     },
     // 获取全部单位
     getUnitAll() {
       getUnitAll().then(res => {
         this.unit = res.result.map(item => {
-          return { value: item.id, label: item.unit };
-        });
-      });
+          return { value: item.id, label: item.unit }
+        })
+      })
     },
     // 获取全部批次
     getAllinvBatchList(e) {
       getAllinvBatchList(e).then(res => {
         this.batchNumber = res.result.map(item => {
-          return { value: item.id, label: item.batchNumber };
-        });
-      });
+          return { value: item.id, label: item.batchNumber }
+        })
+      })
     }
   }
-};
+}
 </script>
 
 <style scoped>
-.body {
-  margin: 20px 0px 0px 2%;
-}
-.box-card {
-  width: 98%;
-}
+
 </style>

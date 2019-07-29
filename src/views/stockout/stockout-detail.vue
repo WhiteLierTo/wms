@@ -1,46 +1,45 @@
 <template>
   <div>
     <div class="body">
-           <el-row :gutter="12">
-              <el-col :span="4">
-                <el-card  shadow="never">
-                  <div class="title">物料名称</div>
-                  <div class="cotent">{{publichData.itemName}}</div>
-                </el-card>
-              </el-col>
-              <el-col :span="4">
-                <el-card shadow="never">
-                  <div class="title">捡货单位</div>
-                  <div class="cotent">{{publichData.itemUnit}}</div>
-                </el-card>
-              </el-col>
-              <el-col :span="4">
-                <el-card  shadow="always">
-                  <div class="title">出库数量</div>
-                  <div class="cotent">{{lineData.quantity}}</div>
-                </el-card>
-              </el-col>
-              <el-col :span="4">
-                <el-card shadow="hover">
-                   <div class="title">捡货数量</div>
-                  <div class="cotent">{{lineData.quantityPick}}</div>
-                </el-card>
-              </el-col>
-              <el-col :span="4">
-                <el-card  shadow="never">
-                  <div class="title">出库数量</div>
-                  <div class="cotent">{{lineData.quantityShipping}}</div>
-                </el-card>
-              </el-col>
-               <el-col :span="4">
-                <el-card shadow="never">
-                  <div class="title">当前状态</div>
-                  <div class="cotent">{{headerStatus}}</div>
-                </el-card>
-              </el-col>
-            </el-row>
-      <div class="border">
-      </div>
+      <el-row :gutter="12">
+        <el-col :span="4">
+          <el-card shadow="never">
+            <div class="title">物料名称</div>
+            <div class="cotent">{{ publichData.itemName }}</div>
+          </el-card>
+        </el-col>
+        <el-col :span="4">
+          <el-card shadow="never">
+            <div class="title">捡货单位</div>
+            <div class="cotent">{{ publichData.itemUnit }}</div>
+          </el-card>
+        </el-col>
+        <el-col :span="4">
+          <el-card shadow="always">
+            <div class="title">出库数量</div>
+            <div class="cotent">{{ lineData.quantity }}</div>
+          </el-card>
+        </el-col>
+        <el-col :span="4">
+          <el-card shadow="hover">
+            <div class="title">捡货数量</div>
+            <div class="cotent">{{ lineData.quantityPick }}</div>
+          </el-card>
+        </el-col>
+        <el-col :span="4">
+          <el-card shadow="never">
+            <div class="title">出库数量</div>
+            <div class="cotent">{{ lineData.quantityShipping }}</div>
+          </el-card>
+        </el-col>
+        <el-col :span="4">
+          <el-card shadow="never">
+            <div class="title">当前状态</div>
+            <div class="cotent">{{ headerStatus }}</div>
+          </el-card>
+        </el-col>
+      </el-row>
+      <div class="border"/>
       <el-card class="box-card">
         <section>
           <div style="float:right">
@@ -48,23 +47,23 @@
           </div>
           <!--列表-->
           <el-table border :data="listData" style="width: 100%">
-            <el-table-column  prop="id" label="明细ID" />
-            <el-table-column   prop="warehouse" label="出库库房" />
-            <el-table-column   prop="location" label="出库库位" />
-            <el-table-column   prop="quantity" label="数量" />
-            <el-table-column   prop="type" label="类型">
+            <el-table-column prop="id" label="明细ID" />
+            <el-table-column prop="warehouse" label="出库库房" />
+            <el-table-column prop="location" label="出库库位" />
+            <el-table-column prop="quantity" label="数量" />
+            <el-table-column prop="type" label="类型">
               <template slot-scope="scope">
                 <div v-if="scope.row.type==1" style="color:#3c763d">picking</div>
                 <div v-if="scope.row.type==2" style="color:#dd001b">stock out</div>
               </template>
             </el-table-column>
-            <el-table-column  width="200" prop="outboundDate" label="捡货日期" />
-            <el-table-column  label="操作">
+            <el-table-column width="200" prop="outboundDate" label="捡货日期" />
+            <el-table-column label="操作">
               <template slot-scope="scope">
                 <div v-show="headerStatus != 'close'">
-                <el-button  v-show="scope.row.type==1" type="text" size="small" @click="putDetailHandleClick(scope.row)">取消捡货</el-button>
-                <el-button  v-show="scope.row.type==1" type="text" size="small"  @click="shelvesHandleClick(scope.row)" >出库</el-button>
-                <el-button  v-show="scope.row.type==2" type="text" size="small"  @click="putCheckHandleClick(scope.row)" >取消出库</el-button>
+                  <el-button v-show="scope.row.type==1" type="text" size="small" @click="putDetailHandleClick(scope.row)">取消捡货</el-button>
+                  <el-button v-show="scope.row.type==1" type="text" size="small" @click="shelvesHandleClick(scope.row)">出库</el-button>
+                  <el-button v-show="scope.row.type==2" type="text" size="small" @click="putCheckHandleClick(scope.row)">取消出库</el-button>
                 </div>
               </template>
             </el-table-column>
@@ -83,24 +82,23 @@
       </el-card>
     </div>
 
-
     <!--出库-->
-      <div>
+    <div>
       <el-dialog title="出库" :visible.sync="shelves">
         <el-form
-          :model="shelvesData"
           ref="shelvesData"
+          :model="shelvesData"
           :label-width="formLabelWidth"
           class="demo-ruleForm"
         >
-            <el-row>
-               <el-col :span="12">
+          <el-row>
+            <el-col :span="12">
               <el-form-item
                 prop="warehouse"
                 label="仓库"
                 :label-width="formLabelWidth"
               >
-                 <el-input disabled  v-model="detailData.warehouse"></el-input>
+                <el-input v-model="detailData.warehouse"  disabled/>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -109,24 +107,27 @@
                 label="库位"
                 :label-width="formLabelWidth"
               >
-                 <el-input disabled v-model="detailData.location"></el-input>
+                <el-input v-model="detailData.location" disabled/>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
               <el-form-item label="数量">
-              <el-input  disabled  v-model="detailData.quantity" ></el-input>
-            </el-form-item>
+                <el-input v-model="detailData.quantity"  disabled/>
+              </el-form-item>
             </el-col>
             <el-col :span="12">
-          <el-form-item label="出库数量" prop="quantity"
-           :rules="[
-                  { required: true, message: '出库数量不能为空'},
-            ]">
-            <el-input type="number" v-model="shelvesData.quantity"></el-input>
-          </el-form-item>
-          </el-col>
+              <el-form-item
+label="出库数量"
+prop="quantity"
+                            :rules="[
+                              { required: true, message: '出库数量不能为空'},
+                            ]"
+>
+                <el-input v-model="shelvesData.quantity" type="number"/>
+              </el-form-item>
+            </el-col>
           </el-row>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -139,53 +140,67 @@
 </template>
 
 <script>
-import { getStockOutDetail, getStockOutLineOne,postStockInDetail,putStockInDetail,putStockOutCounting,
-postStockout,putStockout,getStockOutHeaderStatus } from "@/api/stock";
-import { getWarehouseAll,getLocationAll} from '@/api/baseData'
-import { positiveNumber } from "@/utils/validate";
+import { getStockOutDetail, getStockOutLineOne, postStockInDetail, putStockInDetail, putStockOutCounting,
+  postStockout, putStockout, getStockOutHeaderStatus } from '@/api/stock';
+import { getWarehouseAll, getLocationAll } from '@/api/baseData'
+import { positiveNumber } from '@/utils/validate';
 export default {
-  name:"stockout-detail",
+  name: 'stockout-detail',
   data() {
     return {
-        detailData:{},
-        headerId:'',
-        formLabelWidth: '80px',
-        locationList:[],  //库位数据
-        warehouseList:[], //库房数据
-        detailId:'',
-        locationObj: {   //库房Id
+      detailData: {},
+      headerId: '',
+      formLabelWidth: '80px',
+      locationList: [], // 库位数据
+      warehouseList: [], // 库房数据
+      detailId: '',
+      locationObj: { // 库房Id
         wid: ''
       },
-      InventoryCheck: false, //捡货弹窗
-      shelves:false,//出库弹窗
-      shelvesData:{   //出库数据
-        quantity:"",
-        warehouse:"",
-        location:''
+      InventoryCheck: false, // 捡货弹窗
+      shelves: false, // 出库弹窗
+      shelvesData: { // 出库数据
+        quantity: '',
+        warehouse: '',
+        location: ''
       },
       InventoryCheckEdit: {
-        //捡货修改
-        number: ""
+        // 捡货修改
+        number: ''
       },
       line: {
-        id: ""
+        id: ''
       },
       lineData: {},
-      headerStatus:'create',
+      headerStatus: 'create',
       page: {
-        lineId: "",
+        lineId: '',
         total: 10,
         current: 1,
         size: 10,
         deleted: false
       },
       listData: [],
-      publichData:{
-        itemName:'',
-        itemUnit:'',
-        batchNumber:''
-      },
-    };
+      publichData: {
+        itemName: '',
+        itemUnit: '',
+        batchNumber: ''
+      }
+    }
+  },
+  mounted() {
+    this.publichData.itemName =  sessionStorage.getItem("getStockDetailItemName");
+    this.publichData.itemUnit =  sessionStorage.getItem("getStockDetailItemUnit");
+    this.publichData.batchNumber =  sessionStorage.getItem("getStockDetailBatchNumber");
+    this.page.lineId = sessionStorage.getItem("getStockDetail");
+    this.line.id = sessionStorage.getItem("getStockDetail");
+    // 获取所有的仓库
+    this.getWarehouseAllFnc()
+    // 获取所有的库位
+    this.getLocationAllFnc()
+    this.fetchData();
+     // 获取单行信息
+    this.getLine();
   },
   methods: {
     //出库取消，数据清除
@@ -367,22 +382,8 @@ export default {
       this.page.current = val;
       this.fetchData();
     }
-  },
-  mounted() {
-    this.publichData.itemName =  sessionStorage.getItem("getStockDetailItemName");
-    this.publichData.itemUnit =  sessionStorage.getItem("getStockDetailItemUnit");
-    this.publichData.batchNumber =  sessionStorage.getItem("getStockDetailBatchNumber");
-    this.page.lineId = sessionStorage.getItem("getStockDetail");
-    this.line.id = sessionStorage.getItem("getStockDetail");
-    // 获取所有的仓库
-    this.getWarehouseAllFnc()
-    // 获取所有的库位
-    this.getLocationAllFnc()
-    this.fetchData();
-     // 获取单行信息
-    this.getLine();
   }
-};
+}
 </script>
 
 <style scoped>
@@ -397,9 +398,7 @@ margin-bottom: 30px;
 .body {
   margin: 20px 1% 0px 1%;
 }
-.box-card {
-  width: 98%;
-}
+
 .title{
   color:#b5b5b5;
   font-size:12px;
@@ -413,6 +412,4 @@ margin-bottom: 30px;
   white-space:nowrap;
 }
 </style>
-
-
 

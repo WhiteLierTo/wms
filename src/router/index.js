@@ -195,6 +195,34 @@ export const constantRoutes = [{
       noCache: true
     },
     children: []
+  }, {
+    path: 'label-manager',
+    component: () =>
+    import('@/views/label-manager/label-manager'),
+    name: 'labelManager',
+    meta: { title: '标签管理', noCache: true },
+    children: []
+  }, {
+    path: 'printer-manager',
+    component: () =>
+    import('@/views/label-manager/printer-manager'),
+    name: 'printerManager',
+    meta: { title: '打印机管理', noCache: true },
+    children: []
+  }, {
+    path: 'labelOperationLog',
+    component: () =>
+    import('@/views/label-manager/labelOperationLog'),
+    name: 'labelOperationLog',
+    meta: { title: '扫描操作日志', noCache: true },
+    children: []
+  }, {
+    path: 'labelData',
+    component: () =>
+    import('@/views/label-manager/labelData'),
+    name: 'labelData',
+    meta: { title: '标签打印数据', noCache: true },
+    children: []
   }]
 },
 // 404 page must be placed at the end !!!

@@ -1,7 +1,7 @@
 // 基础数据接口
 import request from '@/utils/request'
 const baseURL = 'http://116.62.212.169:8100/wms-main/'
-// const baseURL = 'http://172.16.28.17:8100/wms/'
+// const baseURL = 'http://172.16.28.17:8100/wms-main/'
 
 // 获取库房列表
 export function getWarehouseList(params) {
@@ -360,7 +360,7 @@ export function getHistoricalRecordList(params) {
     params
   })
 }
-// 分页获取出入库历史
+// 删除出入库历史
 export function deleteHistoricalRecord(id) {
   return request({
     baseURL,
@@ -384,5 +384,49 @@ export function getBatchOne(params) {
     url: 'bdBatch/one',
     method: 'get',
     params
+  })
+}
+// 获取通用字典列表
+export function getDictionaryList(params) {
+  return request({
+    baseURL,
+    url: 'syDictionary/list',
+    method: 'get',
+    params
+  })
+}
+// 修改通用字典
+export function putDictionary(data) {
+  return request({
+    baseURL,
+    url: 'syDictionary',
+    method: 'put',
+    data
+  })
+}
+// 新增通用字典列表
+export function postDictionary(data) {
+  return request({
+    baseURL,
+    url: 'syDictionary',
+    method: 'post',
+    data
+  })
+}
+// 获取所有通用字典数据
+export function getDictionaryAll(params) {
+  return request({
+    baseURL,
+    url: 'syDictionary/all',
+    method: 'get',
+    params
+  })
+}
+// 删除字典
+export function deleteDictionary(id) {
+  return request({
+    baseURL,
+    url: `syDictionary/${id}`,
+    method: 'delete'
   })
 }

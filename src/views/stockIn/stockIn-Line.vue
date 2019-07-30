@@ -17,11 +17,11 @@
             <el-table-column prop="producedDate" label="生产日期" />
             <el-table-column prop="status" label="状态">
               <template slot-scope="scope">
-                <div v-if="scope.row.status==1" style="color:#3c763d">create</div>
-                <div v-if="scope.row.status==2" style="color:#3c763d">confirm</div>
-                <div v-if="scope.row.status==3" style="color:#3c763d">register</div>
-                <div v-if="scope.row.status==4" style="color:#3c763d">receive</div>
-                <div v-if="scope.row.status==5" style="color:#3c763d">close</div>
+                <div v-if="scope.row.status===1" style="color:#3c763d">create</div>
+                <div v-if="scope.row.status===2" style="color:#3c763d">confirm</div>
+                <div v-if="scope.row.status===3" style="color:#3c763d">register</div>
+                <div v-if="scope.row.status===4" style="color:#3c763d">receive</div>
+                <div v-if="scope.row.status===5" style="color:#3c763d">close</div>
               </template>
             </el-table-column>
             <el-table-column label="操作" width="150">

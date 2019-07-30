@@ -62,32 +62,32 @@
                 <el-table v-loading="loading" border :data="LineData" style="width: 100%">
                   <el-table-column prop="itemId" label="物料编号" />
                   <el-table-column prop="itemName" label="物料名称" />
-                  <el-table-column prop="itemUnit" label="出库单位"/>
+                  <el-table-column prop="itemUnit" label="出库单位" />
                   <el-table-column prop="quantity" label="出库数量" />
                   <el-table-column prop="quantityPick" label="捡货数量" />
                   <el-table-column prop="quantityShipping" label="出货数量" />
                   <el-table-column label="操作" width="150">
                     <template slot-scope="scope">
                       <el-button
-                        v-show="line.status == 1"
+                        v-show="line.status === 1"
                         type="text"
                         size="small"
                         @click="editLineFnc(scope.row)"
                       >编辑</el-button>
                       <el-button
-                        v-show="line.status == 1"
+                        v-show="line.status === 1"
                         type="text"
                         size="small"
                         @click="deleteLineFnc(scope.row.id)"
                       >删除</el-button>
                       <el-button
-                        v-show="line.status == 3 || line.status == 2"
+                        v-show="line.status === 3 || line.status === 2"
                         type="text"
                         size="small"
                         @click="countingHandleClick(scope.row)"
                       >捡货</el-button>
                       <el-button
-                        v-show="line.status != 1"
+                        v-show="line.status !== 1"
                         type="text"
                         size="small"
                         @click="turnToStockDetail(scope.row)"
@@ -104,41 +104,41 @@
             <el-table-column prop="state" label="出库单说明" />
             <el-table-column prop="status" label="状态">
               <template slot-scope="scope">
-                <div v-if="scope.row.status==1" style="color:#3c763d">create</div>
-                <div v-if="scope.row.status==2" style="color:#2472c8">confirm</div>
-                <div v-if="scope.row.status==3" style="color:#2dd671">picking</div>
-                <div v-if="scope.row.status==4" style="color:#ff605b">shipping</div>
-                <div v-if="scope.row.status==5" style="color:#808080">close</div>
+                <div v-if="scope.row.status===1" style="color:#3c763d">create</div>
+                <div v-if="scope.row.status===2" style="color:#2472c8">confirm</div>
+                <div v-if="scope.row.status===3" style="color:#2dd671">picking</div>
+                <div v-if="scope.row.status===4" style="color:#ff605b">shipping</div>
+                <div v-if="scope.row.status===5" style="color:#808080">close</div>
               </template>
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="200">
               <template slot-scope="scope">
                 <el-button
-                  v-show="scope.row.completed==true"
+                  v-show="scope.row.completed===true"
                   type="text"
                   size="small"
                   @click="closeHandleClick(scope.row)"
                 >关闭</el-button>
                 <el-button
-                  v-show="scope.row.status==1"
+                  v-show="scope.row.status===1"
                   type="text"
                   size="small"
                   @click="LineHandleClick(scope.row)"
                 >添加单行</el-button>
                 <el-button
-                  v-show="scope.row.status==1"
+                  v-show="scope.row.status===1"
                   type="text"
                   size="small"
                   @click="confirmHandleClick(scope.row)"
                 >确认</el-button>
                 <el-button
-                  v-show="scope.row.status==1"
+                  v-show="scope.row.status===1"
                   type="text"
                   size="small"
                   @click="editHandleClick(scope.row)"
                 >编辑</el-button>
                 <el-button
-                  v-show="scope.row.status==1"
+                  v-show="scope.row.status===1"
                   type="text"
                   size="small"
                   @click="deleteHandleClick(scope.row.id)"
@@ -172,18 +172,21 @@
             </el-col>
             <el-col :span="11">
               <el-form-item
-prop="warehouse"
-label="库房" :label-width="formLabelWidth"
-                            :rules="[
+                prop="warehouse"
+                label="库房"
+                :label-width="formLabelWidth"
+               
+                :rules="[
                               { required: true, message: '库房不能为空'}
                             ]"
->
+              >
                 <el-select
                   v-model="countingData.warehouse"
                   clearable
                   filterable
                   placeholder="库房"
                   @change="warehouseChange"
+                  @clear="warehouseClearFnc"
                 >
                   <el-option
                     v-for="item in warehouse"
@@ -194,24 +197,24 @@ label="库房" :label-width="formLabelWidth"
                 </el-select>
               </el-form-item>
             </el-col>
-
           </el-row>
           <el-row>
-
             <el-col :span="11">
               <el-form-item
-prop="location"
-label="库位" :label-width="formLabelWidth"
-                            :rules="[
+                prop="location"
+                label="库位"
+                :label-width="formLabelWidth"
+                :rules="[
                               { required: true, message: '库位不能为空'}
                             ]"
->
+              >
                 <el-select
                   v-model="countingData.location"
                   clearable
                   filterable
                   placeholder="库位"
                   @change="locationChange"
+                  @clear="locationClearFnc"
                 >
                   <el-option
                     v-for="item in location"
@@ -223,27 +226,52 @@ label="库位" :label-width="formLabelWidth"
               </el-form-item>
             </el-col>
             <el-col :span="11">
-              <el-form-item prop="quantity" label="出库数量" :label-width="formLabelWidth">
-                <el-input v-model="countingData.quantity" readonly autocomplete="off" />
+              <el-form-item
+                prop="batchNumber"
+                label="批次"
+                :label-width="formLabelWidth"
+                :rules="[
+                { required: true, message: '批次不能为空'}
+              ]"
+              >
+                <el-select
+                  v-model="countingData.batchNumber"
+                  clearable
+                  filterable
+                  placeholder="批次"
+                  @change="batchNumberChange"
+                >
+                  <el-option
+                    v-for="item in batchNumber"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
+            <el-col :span="11">
+              <el-form-item prop="quantity" label="出库数量" :label-width="formLabelWidth">
+                <el-input v-model="countingData.quantity" readonly autocomplete="off" />
+              </el-form-item>
+            </el-col>
             <el-col :span="11">
               <el-form-item prop="quantityPick" label="总捡货数量" :label-width="formLabelWidth">
                 <el-input v-model="countingData.quantityPick" readonly autocomplete="off" />
               </el-form-item>
             </el-col>
-            <el-col :span="11">
-              <el-form-item prop="quantityShipping" label="出货数量" :label-width="formLabelWidth">
-                <el-input v-model="countingData.quantityShipping" readonly autocomplete="off" />
-              </el-form-item>
-            </el-col>
           </el-row>
           <el-row>
             <el-col :span="11">
-              <el-form-item label="可捡收数量" :label-width="formLabelWidth">
-                <el-input v-model="inventory.quantity" readonly autocomplete="off" />
+              <el-form-item label="可捡货数量" :label-width="formLabelWidth">
+                <el-input readonly v-model="inventory.quantity" autocomplete="off" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item prop="quantityShipping" label="已出库数量" :label-width="formLabelWidth">
+                <el-input readonly v-model="countingData.quantityShipping" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col :span="11">
@@ -402,12 +430,12 @@ label="库位" :label-width="formLabelWidth"
           <el-row>
             <el-col :span="11">
               <el-form-item prop="itemName" label="出库名称" :label-width="formLabelWidth">
-                <el-input v-model="addLineData.itemName" disabled/>
+                <el-input v-model="addLineData.itemName" disabled />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
               <el-form-item prop="itemUnit" label="出库单位" :label-width="formLabelWidth">
-                <el-input v-model="addLineData.itemUnit" disabled/>
+                <el-input v-model="addLineData.itemUnit" disabled />
               </el-form-item>
             </el-col>
           </el-row>
@@ -466,12 +494,12 @@ label="库位" :label-width="formLabelWidth"
           <el-row>
             <el-col :span="11">
               <el-form-item prop="itemName" label="出库名称" :label-width="formLabelWidth">
-                <el-input v-model="editLineData.itemName" disabled/>
+                <el-input v-model="editLineData.itemName" disabled />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
               <el-form-item prop="itemUnit" label="出库单位" :label-width="formLabelWidth">
-                <el-input v-model="editLineData.itemUnit" disabled/>
+                <el-input v-model="editLineData.itemUnit" disabled />
               </el-form-item>
             </el-col>
           </el-row>
@@ -586,7 +614,7 @@ import {
   postStockOutLine,
   putStockOutLine,
   deleteStockOutLine
-} from '@/api/stock';
+} from "@/api/stock";
 import {
   getAllinvBatchList,
   getUnitAll,
@@ -594,11 +622,13 @@ import {
   getItemOne,
   getBatchOne,
   getInvControl,
-  getInvControlOne
-} from '@/api/baseData';
-import { positiveNumber } from '@/utils/validate';
+  getInvControlOne,
+  getWarehouseAll,
+  getLocationAll
+} from "@/api/baseData";
+import { positiveNumber } from "@/utils/validate";
 export default {
-  name: 'stockout-Header',
+  name: "stockout-Header",
   data() {
     return {
       remote: [],
@@ -614,153 +644,170 @@ export default {
       lineData: {}, // 行数据
       countingData: {
         // 捡货数据
-        itemId: '',
-        batchNumber: '',
-        quantity: '',
-        location: '',
-        warehouse: '',
-        quantityPick: '',
-        quantityShipping: '',
-        number: ''
+        itemId: "",
+        batchNumber: "",
+        quantity: "",
+        location: "",
+        warehouse: "",
+        quantityPick: "",
+        quantityShipping: "",
+        number: ""
       },
-      formLabelWidth: '100px',
+      formLabelWidth: "100px",
       addData: {
         // 新增数据
-        customerId: '',
-        customerName: '',
-        state: '',
-        billType: '',
-        billNumber: ''
+        customerId: "",
+        customerName: "",
+        state: "",
+        billType: "",
+        billNumber: ""
       },
       addLineData: {
-        // 新增单行数据
-        headerId: '',
-        itemId: '',
-        itemName: '',
-        itemUnit: '',
-        batchNumber: '',
-        quantity: '',
-        producedDate: ''
+        //新增单行数据
+        headerId: "",
+        itemId: "",
+        itemName: "",
+        itemUnit: "",
+        quantity: "",
+        producedDate: ""
       },
       editLineData: [],
       editData: {},
       page: {
         // 查询条件
-        billType: '',
-        status: '',
+        billType: "",
+        status: "",
         total: 40,
         current: 1,
-        sort: 'create_at',
+        sort: "create_at",
         size: 10,
         deleted: false
       },
       headerStatus: [
         {
-          value: '1',
-          label: 'create'
-        }, {
-          value: '2',
-          label: 'confirm'
-        }, {
-          value: '3',
-          label: 'picking'
-        }, {
-          value: '4',
-          label: 'shipping'
-        }, {
-          value: '5',
-          label: 'close'
+          value: "1",
+          label: "create"
+        },
+        {
+          value: "2",
+          label: "confirm"
+        },
+        {
+          value: "3",
+          label: "picking"
+        },
+        {
+          value: "4",
+          label: "shipping"
+        },
+        {
+          value: "5",
+          label: "close"
         }
       ],
       listData: [],
       LineData: [],
       line: {
-        headerId: '',
-        status: ''
+        headerId: "",
+        status: ""
       },
-      item: [], // 物料下拉
-      unit: [], // 单位下拉
-      batchNumber: [], // 批次下拉
+      item: [], //物料下拉
+      unit: [], //单位下拉
+      batchNumber: [], //批次下拉
       warehouse: [],
       location: [],
-      inventory: {} // 单个库存
-    }
+      inventory: {}, //单个库存
+      result: [],
+      locationResulit: []
+    };
   },
   mounted() {
-    this.fetchData()
+    this.fetchData();
     //获取全部批次
-    this.getAllinvBatchList()
+    this.getAllinvBatchList();
     //获取全部单位
-    this.getUnitAll()
+    this.getUnitAll();
     //获取全部物料
-    this.getItemAllFnc()
+    this.getItemAllFnc();
   },
   methods: {
     // 捡货取消
     countingCancle() {
-      this.counting = false
-      this.countingData.warehouse = ''
-      this.countingData.location = ''
-      this.countingData.number = ''
+      this.counting = false;
+      this.countingData.warehouse = "";
+      this.countingData.location = "";
+      this.countingData.number = "";
     },
-    // 库房下拉改变
+    //库位下拉改变
     locationChange() {
-      this.getInvControlOne()
+      this.getInvControlList();
+    },
+    //批次下拉改变
+    batchNumberChange() {
+      this.getInvControlOne();
     },
     // 库房下拉改变
     warehouseChange() {
-      this.getInvControlList()
+      this.getInvControlList();
     },
     // 单行取消
     editLineCancle() {
-      this.editLine = false
-      this.fetchData()
+      this.editLine = false;
+      this.fetchData();
     },
     // 表单置空
     resetForm(formName) {
-      this.$refs[formName].resetFields()
-      },
+      this.$refs[formName].resetFields();
+    },
+    // 库房删除，联动清除
+    warehouseClearFnc(){
+      this.countingData.batchNumber = '';
+      this.countingData.location = '';
+    },
+     // 库房删除，联动清除
+    locationClearFnc(){
+      this.countingData.batchNumber = '';
+    },
     // 物料删除，联动清除
     itemClearFnc() {
-      this.addLineData.itemName = '';
-      this.addLineData.itemUnit = '';
-      this.addLineData.batchNumber = '';
-      this.addLineData.producedDate = '';
+      this.addLineData.itemName = "";
+      this.addLineData.itemUnit = "";
+      this.addLineData.producedDate = "";
     },
     // 批次删除，联动清除
     batchClearFnc() {
-      this.addLineData.producedDate = '';
+      this.addLineData.producedDate = "";
     },
     // 删除单行数据
     deleteLineFnc(e) {
-      this.$confirm('此操作将永久删除该笔单行, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+      this.$confirm("此操作将永久删除该笔单行, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       })
-        .then(async() => {
-          putStockOutLine(e).then(res => {
+        .then(async () => {
+          deleteStockOutLine(e).then(res => {
             if (res.errorCode === 0) {
-              this.add = false
+              this.add = false;
               this.$message({
-                message: '删除成功',
-                type: 'success'
-              })
+                message: "删除成功",
+                type: "success"
+              });
             }
-            this.fetchData()
-          })
+            this.fetchData();
+          });
         })
-        .catch(() => {})
+        .catch(() => {});
     },
     // 编辑单行确定
     editLineHandleClick(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          if (positiveNumber(this.editLineData.quantity) == false) {
+          if (positiveNumber(this.editLineData.quantity) === false) {
             this.$message({
-              message: '数量应为有效正整数',
-              type: 'warning'
-            })
+              message: "数量应为有效正整数",
+              type: "warning"
+            });
             return;
           }
           const param = {
@@ -769,94 +816,69 @@ export default {
             itemName: this.editLineData.itemName,
             itemUnit: this.editLineData.itemUnit,
             quantity: this.editLineData.quantity
-          }
+          };
           putStockOutLine(param).then(res => {
             if (res.errorCode === 0) {
               this.$message({
-                message: '编辑成功',
-                type: 'success'
-              })
-              this.editLine = false
+                message: "编辑成功",
+                type: "success"
+              });
+              this.editLine = false;
             }
-          })
+          });
         } else {
-          this.$message.error('请完善信息!')
-          return false
+          this.$message.error("请完善信息!");
+          return false;
         }
-      })
+      });
     },
     // 编辑单行弹窗
     editLineFnc(e) {
-      this.editLine = true
-      this.editLineData = e
+      this.editLine = true;
+      this.editLineData = e;
     },
-    // 新增选择批次后查询生产日期
-    itemBatchChange() {
-      if (this.addLineData.batchNumber) {
-        const param = {
-          batchNumber: this.addLineData.batchNumber
-        }
-        getBatchOne(param).then(res => {
-          this.addLineData.producedDate = res.result.producedDate
-        })
-      } else {
-        return
-      }
-    },
-    // 编辑选择批次后查询生产日期
-    itemEditBatchChange() {
-      if (this.editLineData.batchNumber) {
-        const param = {
-          batchNumber: this.editLineData.batchNumber
-        }
-        getBatchOne(param).then(res => {
-          this.editLineData.producedDate = res.result.producedDate
-        })
-      } else {
-        return
-      }
-    },
-    // 单行新增选择物料下拉数据，用物料ID查询物料名称
+
+    //单行新增选择物料下拉数据，用物料ID查询物料名称
     itemAddChange() {
       if (this.addLineData.itemId) {
         const param = {
           id: this.addLineData.itemId
-        }
-        this.getAllinvBatchList(param)
+        };
+        this.getAllinvBatchList(param);
         getItemOne(param).then(res => {
-          this.addLineData.itemName = res.result.itemName
-          this.addLineData.itemUnit = res.result.itemUnit
-        })
+          this.addLineData.itemName = res.result.itemName;
+          this.addLineData.itemUnit = res.result.itemUnit;
+        });
       } else {
-        return
+        return;
       }
     },
     // 单行编辑选择物料下拉数据，用物料ID查询物料名称
     itemEditChange() {
-      this.editLineData.batchNumber = ''
-      this.editLineData.producedDate = ''
-       if (this.editLineData.itemId) {
+      this.editLineData.batchNumber = "";
+      this.editLineData.producedDate = "";
+      if (this.editLineData.itemId) {
         const param = {
           id: this.editLineData.itemId
-        }
-        this.getAllinvBatchList(param)
+        };
+        this.getAllinvBatchList(param);
         getItemOne(param).then(res => {
-          this.editLineData.itemName = res.result.itemName
-          this.editLineData.itemUnit = res.result.itemUnit
-        })
+          this.editLineData.itemName = res.result.itemName;
+          this.editLineData.itemUnit = res.result.itemUnit;
+        });
       } else {
-        return
+        return;
       }
     },
     // 新增单行数据
     postLineHandleClick(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          if (positiveNumber(this.addLineData.quantity) == false) {
+          if (positiveNumber(this.addLineData.quantity) === false) {
             this.$message({
-              message: '数量应为有效正整数',
-              type: 'warning'
-            })
+              message: "数量应为有效正整数",
+              type: "warning"
+            });
             return;
           }
           const param = {
@@ -865,54 +887,54 @@ export default {
             itemUnit: this.addLineData.itemUnit,
             itemName: this.addLineData.itemName,
             quantity: this.addLineData.quantity
-          }
+          };
           postStockOutLine(param).then(res => {
             if (res.errorCode === 0) {
-              this.addLine = false
-              this.resetForm(formName)
+              this.addLine = false;
+              this.resetForm(formName);
               this.$message({
-                message: '添加成功',
-                type: 'success'
-              })
+                message: "添加成功",
+                type: "success"
+              });
             }
-            this.fetchData()
-            this.getStockOutLineList()
-          })
+            this.fetchData();
+            this.getStockOutLineList();
+          });
         } else {
-          this.$message.error('请完善信息!')
-          return false
+          this.$message.error("请完善信息!");
+          return false;
         }
-      })
+      });
     },
     // 新增单行弹框
     LineHandleClick(e) {
-      this.addLine = true
-      this.addLineData.headerId = e.id
+      this.addLine = true;
+      this.addLineData.headerId = e.id;
     },
     // 单头确认
     confirmHandleClick(e) {
       const param = {
         id: e.id,
         status: 2
-      }
-      this.$confirm('单头确认后将不可再进行修改、删除操作, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'info '
+      };
+      this.$confirm("单头确认后将不可再进行修改、删除操作, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "info "
       })
-        .then(async() => {
+        .then(async () => {
           putStockOutHeaderStatus(param).then(res => {
             if (res.errorCode === 0) {
-              this.add = false
+              this.add = false;
               this.$message({
-                message: '单头确认成功',
-                type: 'success'
-              })
+                message: "单头确认成功",
+                type: "success"
+              });
             }
-            this.fetchData()
-          })
+            this.fetchData();
+          });
         })
-        .catch(() => {})
+        .catch(() => {});
     },
     // 单头确认关闭
     closeHandleClick(e) {
@@ -920,46 +942,49 @@ export default {
         id: e.id,
         status: 5,
         completed: false
-      }
-      this.$confirm('单头关闭后将不可再操作, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'info '
+      };
+      this.$confirm("单头关闭后将不可再操作, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "info "
       })
-        .then(async() => {
+        .then(async () => {
           putStockOutHeaderStatus(param).then(res => {
             if (res.errorCode === 0) {
-              this.add = false
+              this.add = false;
               this.$message({
-                message: '单头关闭成功',
-                type: 'success'
-              })
+                message: "单头关闭成功",
+                type: "success"
+              });
             }
-            this.fetchData()
-          })
+            this.fetchData();
+          });
         })
-        .catch(() => {})
+        .catch(() => {});
     },
     // 插入捡货明细
     postCheckHandleClick(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          if (positiveNumber(this.countingData.number) == false) {
+          if (positiveNumber(this.countingData.number) === false) {
             this.$message({
-              message: '数量应为有效正整数',
-              type: 'warning'
-            })
+              message: "数量应为有效正整数",
+              type: "warning"
+            });
             return;
           }
-          if (this.countingData.number >  this.inventory.quantity) {
+          if (
+            this.countingData.number >
+            this.countingData.quantity - this.countingData.quantityPick
+          ) {
             this.$message({
-              message: '捡货数量异常',
-              type: 'warning'
-            })
+              message: "捡货数量异常",
+              type: "warning"
+            });
             return;
           }
-          const param = {
-            batchNumber: this.lineData.batchNumber,
+          let param = {
+            batchNumber: this.countingData.batchNumber,
             itemId: this.lineData.itemId,
             itemName: this.lineData.itemName,
             itemUnit: this.lineData.itemUnit,
@@ -967,58 +992,59 @@ export default {
             quantity: this.countingData.number,
             warehouse: this.countingData.warehouse,
             location: this.countingData.location
-          }
+          };
           postStockOutCounting(param).then(res => {
             if (res.errorCode === 0) {
-              this.add = false
+              this.add = false;
+              this.resetForm(formName);
               this.$message({
-                message: '捡货成功',
-                type: 'success'
-              })
+                message: "捡货成功",
+                type: "success"
+              });
             }
-            this.getStockOutLineList()
-            this.fetchData()
-          })
-          this.counting = false
-          this.countingData.number = '';
+            this.getStockOutLineList();
+            this.fetchData();
+          });
+          this.counting = false;
+          this.countingData.number = "";
         } else {
-          this.$message.error('请完善信息!')
-          return false
+          this.$message.error("请完善信息!");
+          return false;
         }
-      })
+      });
     },
     // 捡货弹窗
     countingHandleClick(e) {
-      this.lineData = e
-      this.countingData.quantity = e.quantity
-      this.countingData.quantityPick = e.quantityPick
-      this.countingData.quantityShipping = e.quantityShipping
-      this.countingData.itemId = e.itemId
-      this.countingData.batchNumber = e.batchNumber
-      this.counting = true
-      this.getInvControlList()
+      this.lineData = e;
+      this.countingData.quantity = e.quantity;
+      this.countingData.quantityPick = e.quantityPick;
+      this.countingData.quantityShipping = e.quantityShipping;
+      this.countingData.itemId = e.itemId;
+      this.countingData.batchNumber = e.batchNumber;
+      this.counting = true;
+      this.getInvControlList();
     },
     // 跳转捡货页面
     turnToStockDetail(e) {
-      sessionStorage.setItem('getStockDetailItemName', e.itemName)
-      sessionStorage.setItem('getStockDetailItemUnit', e.itemUnit)
-      sessionStorage.setItem('getStockDetailBatchNumber', e.batchNumber)
-      sessionStorage.setItem('getStockDetail', e.id)
-      this.$router.push({ name: 'stockoutDetail' })
+      sessionStorage.setItem("getStockDetailItemName", e.itemName);
+      sessionStorage.setItem("getStockDetailItemUnit", e.itemUnit);
+      sessionStorage.setItem("getStockDetailBatchNumber", e.batchNumber);
+      sessionStorage.setItem("getStockDetail", e.id);
+      this.$router.push({ name: "stockoutDetail" });
     },
     // 新增取消
     addCancelHandleClick() {
-      (this.add = false), (this.addData.unit = '')
-      this.addData.description = ' ';
+      (this.add = false), (this.addData.unit = "");
+      this.addData.description = " ";
     },
     // 查询
     queryHandleClick() {
-      this.fetchData()
+      this.fetchData();
     },
     // 弹出修改页面并赋值
     editHandleClick(e) {
-      this.edit = true
-      this.editData = e
+      this.edit = true;
+      this.editData = e;
     },
     // curd
     addHandleClick(formName) {
@@ -1030,43 +1056,43 @@ export default {
             customerId: this.addData.customerId,
             customerName: this.addData.customerName,
             state: this.addData.state
-          }
+          };
           postStockOutHeader(param).then(res => {
             if (res.errorCode === 0) {
-              this.add = false
-              this.resetForm(formName)
+              this.add = false;
+              this.resetForm(formName);
               this.$message({
-                message: '添加成功',
-                type: 'success'
-              })
+                message: "添加成功",
+                type: "success"
+              });
             }
-            this.fetchData()
-          })
+            this.fetchData();
+          });
         } else {
-          this.$message.error('请完善信息!')
-          return false
+          this.$message.error("请完善信息!");
+          return false;
         }
-      })
+      });
     },
     deleteHandleClick(e) {
-      this.$confirm('此操作将永久删除该出库单头, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+      this.$confirm("此操作将永久删除该出库单头, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       })
-        .then(async() => {
+        .then(async () => {
           deleteStockOutHeader(e).then(res => {
             if (res.errorCode === 0) {
-              this.add = false
+              this.add = false;
               this.$message({
-                message: '删除成功',
-                type: 'success'
-              })
+                message: "删除成功",
+                type: "success"
+              });
             }
-            this.fetchData()
-          })
+            this.fetchData();
+          });
         })
-        .catch(() => {})
+        .catch(() => {});
     },
     editSubmit(formName) {
       this.$refs[formName].validate(valid => {
@@ -1078,29 +1104,29 @@ export default {
             customerId: this.editData.customerId,
             customerName: this.editData.customerName,
             state: this.editData.state
-          }
+          };
           putStockOutHeader(param).then(res => {
             if (res.errorCode === 0) {
               this.$message({
-                message: '编辑成功',
-                type: 'success'
-              })
-              this.edit = false
+                message: "编辑成功",
+                type: "success"
+              });
+              this.edit = false;
             }
-          })
+          });
         } else {
-          this.$message.error('请完善信息!')
-          return false
+          this.$message.error("请完善信息!");
+          return false;
         }
-      })
+      });
     },
     // 获取单头列表
     fetchData() {
       getStockOutHeaderList(this.page).then(res => {
-        this.listData = res.result.list
-        this.page.total = res.result.total
-      })
-      this.getTypeAllFnc()
+        this.listData = res.result.list;
+        this.page.total = res.result.total;
+      });
+      this.getTypeAllFnc();
     },
     // 获取库存
     getInvControlList() {
@@ -1109,15 +1135,33 @@ export default {
         warehouse: this.countingData.warehouse,
         location: this.countingData.location,
         batchNumber: this.countingData.batchNumber
-      }
+      };
       getInvControl(param).then(res => {
         this.warehouse = res.result.list.map(item => {
-          return { value: item.warehouse, label: item.warehouse }
-        })
+          return { value: item.warehouse, label: item.warehouse };
+        });
+        var obj = {};
+        this.warehouse = this.warehouse.reduce(function(item, next) {
+          obj[next.value] ? "" : (obj[next.value] = true && item.push(next));
+          return item;
+        }, []);
         this.location = res.result.list.map(item => {
-          return { value: item.location, label: item.location }
-        })
-      })
+          return { value: item.location, label: item.location };
+        });
+        var obj1 = {};
+        this.location = this.location.reduce(function(item, next) {
+          obj1[next.value] ? "" : (obj1[next.value] = true && item.push(next));
+          return item;
+        }, []);
+        var obj2 = {};
+        this.batchNumber = res.result.list.map(item => {
+          return { value: item.batchNumber, label: item.batchNumber };
+        });
+        this.batchNumber = this.batchNumber.reduce(function(item, next) {
+          obj2[next.value] ? "" : (obj2[next.value] = true && item.push(next));
+          return item;
+        }, []);
+      });
     },
     // 获取库存数量
     getInvControlOne() {
@@ -1126,80 +1170,79 @@ export default {
         warehouse: this.countingData.warehouse,
         location: this.countingData.location,
         batchNumber: this.countingData.batchNumber
-      }
+      };
       getInvControlOne(param).then(res => {
-        this.inventory = res.result
-      })
+        this.inventory = res.result;
+      });
     },
     // 对某一行展开或者关闭的时候会触发该事件
     expandChange(row, expandedRows) {
-      this.loading = true
-      this.line.headerId = row.id
-      this.line.status = row.status
+      this.loading = true;
+      this.line.headerId = row.id;
+      this.line.status = row.status;
       //sessionStorage.setItem("headerId", row.id);
       if (expandedRows.length > 1) {
-        expandedRows.shift()
+        expandedRows.shift();
       }
       if (row) {
         const params = {
           headerId: row.id
-        }
-        this.getStockOutLineList(params)
+        };
+        this.getStockOutLineList(params);
       }
     },
     // 获取行数据
     getStockOutLineList(e) {
-      this.LineData = []
+      this.LineData = [];
       getStockOutLineList(e).then(res => {
-        this.LineData = res.result.list
-        this.loading = false
-      })
-      this.LineData = []
+        this.LineData = res.result.list;
+        this.loading = false;
+      });
+      this.LineData = [];
     },
     // 获取外部单据类型
     getTypeAllFnc() {
       getTypeAllFnc().then(res => {
         this.setRemote = res.result.map(item => {
-          return { value: item.id, label: item.typeName }
-        })
-      })
+          return { value: item.id, label: item.typeName };
+        });
+      });
     },
     handleSizeChange(val) {
-      this.page.size = val
-      this.fetchData()
+      this.page.size = val;
+      this.fetchData();
     },
     handleCurrentChange(val) {
-      this.page.current = val
-      this.fetchData()
+      this.page.current = val;
+      this.fetchData();
     },
     // 获取全部物料
     getItemAllFnc() {
       getItemAllFnc().then(res => {
         this.item = res.result.map(item => {
-          return { value: item.id, label: item.id }
-        })
-      })
+          return { value: item.id, label: item.id };
+        });
+      });
     },
     // 获取全部单位
     getUnitAll() {
       getUnitAll().then(res => {
         this.unit = res.result.map(item => {
-          return { value: item.id, label: item.unit }
-        })
-      })
+          return { value: item.id, label: item.unit };
+        });
+      });
     },
     // 获取全部批次
     getAllinvBatchList(e) {
       getAllinvBatchList(e).then(res => {
         this.batchNumber = res.result.map(item => {
-          return { value: item.id, label: item.batchNumber }
-        })
-      })
+          return { value: item.batchNumber, label: item.batchNumber };
+        });
+      });
     }
   }
-}
+};
 </script>
 
 <style scoped>
-
 </style>

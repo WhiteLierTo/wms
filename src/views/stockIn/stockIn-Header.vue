@@ -71,25 +71,25 @@
                   <el-table-column label="操作" width="150">
                     <template slot-scope="scope">
                       <el-button
-                        v-show="line.status == 1"
+                        v-show="line.status === 1"
                         type="text"
                         size="small"
                         @click="editLineFnc(scope.row)"
                       >编辑</el-button>
                       <el-button
-                        v-show="line.status == 1"
+                        v-show="line.status === 1"
                         type="text"
                         size="small"
                         @click="deleteLineFnc(scope.row.id)"
                       >删除</el-button>
                       <el-button
-                        v-show="line.status == 3 || line.status == 2"
+                        v-show="line.status === 3 || line.status === 2"
                         type="text"
                         size="small"
                         @click="countingHandleClick(scope.row)"
                       >点收</el-button>
                       <el-button
-                        v-show="line.status != 1"
+                        v-show="line.status !== 1"
                         type="text"
                         size="small"
                         @click="turnToStockDetail(scope.row)"
@@ -106,41 +106,41 @@
             <el-table-column prop="state" label="入库单说明" />
             <el-table-column prop="status" label="状态">
               <template slot-scope="scope">
-                <div v-if="scope.row.status==1" style="color:#3c763d">create</div>
-                <div v-if="scope.row.status==2" style="color:#2472c8">confirm</div>
-                <div v-if="scope.row.status==3" style="color:#2dd671">register</div>
-                <div v-if="scope.row.status==4" style="color:#ff605b">receive</div>
-                <div v-if="scope.row.status==5" style="color:#808080">close</div>
+                <div v-if="scope.row.status===1" style="color:#3c763d">create</div>
+                <div v-if="scope.row.status===2" style="color:#2472c8">confirm</div>
+                <div v-if="scope.row.status===3" style="color:#2dd671">register</div>
+                <div v-if="scope.row.status===4" style="color:#ff605b">receive</div>
+                <div v-if="scope.row.status===5" style="color:#808080">close</div>
               </template>
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="200">
               <template slot-scope="scope">
                 <el-button
-                  v-show="scope.row.completed==true"
+                  v-show="scope.row.completed===true"
                   type="text"
                   size="small"
                   @click="closeHandleClick(scope.row)"
                 >关闭</el-button>
                 <el-button
-                  v-show="scope.row.status==1"
+                  v-show="scope.row.status===1"
                   type="text"
                   size="small"
                   @click="LineHandleClick(scope.row)"
                 >添加单行</el-button>
                 <el-button
-                  v-show="scope.row.status==1"
+                  v-show="scope.row.status===1"
                   type="text"
                   size="small"
                   @click="confirmHandleClick(scope.row)"
                 >确认</el-button>
                 <el-button
-                  v-show="scope.row.status==1"
+                  v-show="scope.row.status===1"
                   type="text"
                   size="small"
                   @click="editHandleClick(scope.row)"
                 >编辑</el-button>
                 <el-button
-                  v-show="scope.row.status==1"
+                  v-show="scope.row.status===1"
                   type="text"
                   size="small"
                   @click="deleteHandleClick(scope.row.id)"
@@ -674,15 +674,16 @@ export default {
         headerId: '',
         status: ''
       },
-      item: [], // 物料下拉
-      unit: [], // 单位下拉
-      batchNumber: [] // 批次下拉
-    }
+      item: [], //物料下拉
+      unit: [], //单位下拉
+      batchNumber: [], //批次下拉
+      linkage:{
+        itemId:''
+      }
+    };
   },
   mounted() {
-    this.fetchData()
-    //获取全部批次
-    this.getAllinvBatchList()
+    this.fetchData();
     //获取全部单位
     this.getUnitAll()
     //获取全部物料
@@ -739,7 +740,7 @@ export default {
     editLineHandleClick(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          if (positiveNumber(this.editLineData.quantity) == false) {
+          if (positiveNumber(this.editLineData.quantity) === false) {
             this.$message({
               message: '数量应为有效正整数',
               type: 'warning'
@@ -805,8 +806,11 @@ export default {
       if (this.addLineData.itemId) {
         const param = {
           id: this.addLineData.itemId
-        }
-        this.getAllinvBatchList(param)
+        };
+        let params = {
+          itemId: this.addLineData.itemId
+        };
+        this.getAllinvBatchList(params);
         getItemOne(param).then(res => {
           this.addLineData.itemName = res.result.itemName
           this.addLineData.itemUnit = res.result.itemUnit
@@ -822,8 +826,11 @@ export default {
        if (this.editLineData.itemId) {
         const param = {
           id: this.editLineData.itemId
-        }
-        this.getAllinvBatchList(param)
+        };
+        let params = {
+          itemId: this.editLineData.itemId
+        };
+        this.getAllinvBatchList(params);
         getItemOne(param).then(res => {
           this.editLineData.itemName = res.result.itemName
           this.editLineData.itemUnit = res.result.itemUnit
@@ -836,7 +843,7 @@ export default {
     postLineHandleClick(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          if (positiveNumber(this.addLineData.quantity) == false) {
+          if (positiveNumber(this.addLineData.quantity) === false) {
             this.$message({
               message: '数量应为有效正整数',
               type: 'warning'
@@ -929,7 +936,7 @@ export default {
     postCheckHandleClick(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          if (positiveNumber(this.countingData.number) == false) {
+          if (positiveNumber(this.countingData.number) === false) {
             this.$message({
               message: '数量应为有效正整数',
               type: 'warning'

@@ -1,45 +1,46 @@
 <template>
   <div>
     <div class="body">
-      <el-row :gutter="12">
-        <el-col :span="4">
-          <el-card shadow="never">
-            <div class="title">物料名称</div>
-            <div class="cotent">{{ publichData.itemName }}</div>
-          </el-card>
-        </el-col>
-        <el-col :span="4">
-          <el-card shadow="never">
-            <div class="title">捡货单位</div>
-            <div class="cotent">{{ publichData.itemUnit }}</div>
-          </el-card>
-        </el-col>
-        <el-col :span="4">
-          <el-card shadow="always">
-            <div class="title">出库数量</div>
-            <div class="cotent">{{ lineData.quantity }}</div>
-          </el-card>
-        </el-col>
-        <el-col :span="4">
-          <el-card shadow="hover">
-            <div class="title">捡货数量</div>
-            <div class="cotent">{{ lineData.quantityPick }}</div>
-          </el-card>
-        </el-col>
-        <el-col :span="4">
-          <el-card shadow="never">
-            <div class="title">出库数量</div>
-            <div class="cotent">{{ lineData.quantityShipping }}</div>
-          </el-card>
-        </el-col>
-        <el-col :span="4">
-          <el-card shadow="never">
-            <div class="title">当前状态</div>
-            <div class="cotent">{{ headerStatus }}</div>
-          </el-card>
-        </el-col>
-      </el-row>
-      <div class="border"/>
+           <el-row :gutter="12">
+              <el-col :span="4">
+                <el-card  shadow="never">
+                  <div class="title">物料名称</div>
+                  <div class="cotent">{{publichData.itemName}}</div>
+                </el-card>
+              </el-col>
+              <el-col :span="4">
+                <el-card shadow="never">
+                  <div class="title">捡货单位</div>
+                  <div class="cotent">{{publichData.itemUnit}}</div>
+                </el-card>
+              </el-col>
+              <el-col :span="4">
+                <el-card  shadow="always">
+                  <div class="title">出库数量</div>
+                  <div class="cotent">{{lineData.quantity}}</div>
+                </el-card>
+              </el-col>
+              <el-col :span="4">
+                <el-card shadow="hover">
+                   <div class="title">捡货数量</div>
+                  <div class="cotent">{{lineData.quantityPick}}</div>
+                </el-card>
+              </el-col>
+              <el-col :span="4">
+                <el-card  shadow="never">
+                  <div class="title">已出库数量</div>
+                  <div class="cotent">{{lineData.quantityShipping}}</div>
+                </el-card>
+              </el-col>
+               <el-col :span="4">
+                <el-card shadow="never">
+                  <div class="title">当前状态</div>
+                  <div class="cotent">{{headerStatus}}</div>
+                </el-card>
+              </el-col>
+            </el-row>
+      <div class="border">
+      </div>
       <el-card class="box-card">
         <section>
           <div style="float:right">
@@ -47,23 +48,24 @@
           </div>
           <!--列表-->
           <el-table border :data="listData" style="width: 100%">
-            <el-table-column prop="id" label="明细ID" />
-            <el-table-column prop="warehouse" label="出库库房" />
-            <el-table-column prop="location" label="出库库位" />
-            <el-table-column prop="quantity" label="数量" />
-            <el-table-column prop="type" label="类型">
+            <el-table-column  prop="id" label="明细ID" />
+            <el-table-column   prop="warehouse" label="出库库房" />
+            <el-table-column   prop="location" label="出库库位" />
+            <el-table-column   prop="quantity" label="数量" />
+            <el-table-column   prop="batchNumber" label="批次" />
+            <el-table-column   prop="type" label="类型">
               <template slot-scope="scope">
-                <div v-if="scope.row.type==1" style="color:#3c763d">picking</div>
-                <div v-if="scope.row.type==2" style="color:#dd001b">stock out</div>
+                <div v-if="scope.row.type===1" style="color:#3c763d">picking</div>
+                <div v-if="scope.row.type===2" style="color:#dd001b">stock out</div>
               </template>
             </el-table-column>
             <el-table-column width="200" prop="outboundDate" label="捡货日期" />
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <div v-show="headerStatus != 'close'">
-                  <el-button v-show="scope.row.type==1" type="text" size="small" @click="putDetailHandleClick(scope.row)">取消捡货</el-button>
-                  <el-button v-show="scope.row.type==1" type="text" size="small" @click="shelvesHandleClick(scope.row)">出库</el-button>
-                  <el-button v-show="scope.row.type==2" type="text" size="small" @click="putCheckHandleClick(scope.row)">取消出库</el-button>
+                <div v-show="headerStatus !== 'close'">
+                  <el-button v-show="scope.row.type===1" type="text" size="small" @click="putDetailHandleClick(scope.row)">取消捡货</el-button>
+                  <el-button v-show="scope.row.type===1" type="text" size="small" @click="shelvesHandleClick(scope.row)">出库</el-button>
+                  <el-button v-show="scope.row.type===2" type="text" size="small" @click="putCheckHandleClick(scope.row)">取消出库</el-button>
                 </div>
               </template>
             </el-table-column>
@@ -181,15 +183,16 @@ export default {
         deleted: false
       },
       listData: [],
-      publichData: {
-        itemName: '',
-        itemUnit: '',
-        batchNumber: ''
-      }
-    }
+      batchNumber:'',
+      publichData:{
+        itemName:'',
+        itemUnit:'',
+        batchNumber:''
+      },
+    };
   },
-  mounted() {
-    this.publichData.itemName =  sessionStorage.getItem("getStockDetailItemName");
+  mounted(){
+     this.publichData.itemName =  sessionStorage.getItem("getStockDetailItemName");
     this.publichData.itemUnit =  sessionStorage.getItem("getStockDetailItemUnit");
     this.publichData.batchNumber =  sessionStorage.getItem("getStockDetailBatchNumber");
     this.page.lineId = sessionStorage.getItem("getStockDetail");
@@ -214,13 +217,14 @@ export default {
     shelvesHandleClick(e){
       this.shelves = true;
       this.detailId = e.id;  //明细ID
+      this.batchNumber =  e.batchNumber;
       this.detailData = e;
     },
      //插入出库明细
     postStockoutHandleClick(formName){
         this.$refs[formName].validate(valid => {
         if (valid) {
-        if (positiveNumber(this.shelvesData.quantity) == false) {
+        if (positiveNumber(this.shelvesData.quantity) === false) {
             this.$message({
               message: "数量应为有效正整数",
               type: "warning"
@@ -238,7 +242,8 @@ export default {
           id: this.detailId,
           quantity: this.shelvesData.quantity,
           warehouse: this.detailData.warehouse,
-          location: this.detailData.location
+          location: this.detailData.location,
+          batchNumber:this.batchNumber
         }
       postStockout(param).then(res => {
         if (res.errorCode === 0) {
@@ -303,16 +308,16 @@ export default {
         id :e.headerId,
       }
       getStockOutHeaderStatus(param).then(res => {
-         if(res.result.status == 1){
+         if(res.result.status === 1){
           this.headerStatus = 'create'
         }
-         if(res.result.status == 2){
+         if(res.result.status === 2){
           this.headerStatus = 'confirm'
         }
-         if(res.result.status == 3){
+         if(res.result.status === 3){
           this.headerStatus = 'picking'
         }
-         if(res.result.status == 4){
+         if(res.result.status === 4){
            this.headerStatus = 'shipping'
         }
         if(res.result.status == 5){

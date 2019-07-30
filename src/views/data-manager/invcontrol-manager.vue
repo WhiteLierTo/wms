@@ -48,8 +48,9 @@
                 <el-table v-loading="loading" border :data="InvControlData" style="width: 100%">
                   <el-table-column prop="warehouse" label="仓库" />
                   <el-table-column prop="location" label="库位" />
-                  <el-table-column prop="quantity" label="数量"/>
-                  <el-table-column prop="createAt" label="创建时间" />
+                  <el-table-column prop="batchNumber" label="批次" />
+                  <el-table-column prop="quantity" label="数量"></el-table-column>
+                  <el-table-column prop="modifyAt" label="创建时间" />
                 </el-table>
               </template>
             </el-table-column>
@@ -229,10 +230,11 @@ export default {
         expandedRows.shift()
       }
       if (row) {
-        const params = {
-          itemId: row.itemId
-        }
-        this.getInvControl(params)
+        let params = {
+          itemId: row.itemId,
+          sort:'modify_at'
+        };
+        this.getInvControl(params);
       }
     },
     // 查询

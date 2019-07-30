@@ -62,17 +62,17 @@
             <el-table-column prop="quantity" label="数量" />
             <el-table-column prop="type" label="类型">
               <template slot-scope="scope">
-                <div v-if="scope.row.type==1" style="color:#3c763d">register</div>
-                <div v-if="scope.row.type==2" style="color:#dd001b">stock in</div>
+                <div v-if="scope.row.type===1" style="color:#3c763d">register</div>
+                <div v-if="scope.row.type===2" style="color:#dd001b">stock in</div>
               </template>
             </el-table-column>
             <el-table-column width="200" prop="inboundDate" label="入库日期" />
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <div v-show="headerStatus != 'close'">
-                  <el-button v-show="scope.row.type==1" type="text" size="small" @click="putDetailHandleClick(scope.row)">取消点收</el-button>
-                  <el-button v-show="scope.row.type==1" type="text" size="small" @click="shelvesHandleClick(scope.row)">上架</el-button>
-                  <el-button v-show="scope.row.type==2" type="text" size="small" @click="putCheckHandleClick(scope.row)">取消上架</el-button>
+                <div v-show="headerStatus !== 'close'">
+                  <el-button v-show="scope.row.type===1" type="text" size="small" @click="putDetailHandleClick(scope.row)">取消点收</el-button>
+                  <el-button v-show="scope.row.type===1" type="text" size="small" @click="shelvesHandleClick(scope.row)">上架</el-button>
+                  <el-button v-show="scope.row.type===2" type="text" size="small" @click="putCheckHandleClick(scope.row)">取消上架</el-button>
                 </div>
               </template>
             </el-table-column>
@@ -250,7 +250,7 @@ export default {
     postShelvesHandleClick(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          if (positiveNumber(this.shelvesData.quantity) == false) {
+          if (positiveNumber(this.shelvesData.quantity) === false) {
             this.$message({
               message: '数量应为有效正整数',
               type: 'warning'
@@ -332,19 +332,19 @@ export default {
         id: e.headerId
       }
       getHeaderStatus(param).then(res => {
-        if (res.result.status == 1) {
+        if (res.result.status === 1) {
           this.headerStatus = 'create'
         }
-        if (res.result.status == 2) {
+        if (res.result.status === 2) {
           this.headerStatus = 'confirm'
         }
-        if (res.result.status == 3) {
+        if (res.result.status === 3) {
           this.headerStatus = 'register'
         }
-        if (res.result.status == 4) {
+        if (res.result.status === 4) {
           this.headerStatus = 'receive'
         }
-        if (res.result.status == 5) {
+        if (res.result.status === 5) {
           this.headerStatus = 'close'
         }
       })

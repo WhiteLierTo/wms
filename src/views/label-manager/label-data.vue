@@ -80,7 +80,7 @@
                   { required: true, message: '标签张数不能为空'}
                 ]"
               >
-                <el-input type="number" v-model="addData.number" autocomplete="off" />
+                <el-input v-model="addData.number" type="number" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
@@ -154,7 +154,7 @@ import {
   getLabelDataAll
 } from '@/api/label'
 export default {
-  name: 'LabelDataManager',
+  name: 'LabelData',
   data() {
     return {
       setRemote: [],
@@ -165,7 +165,7 @@ export default {
       addData: {
         // 新增数据
         number: '',
-        ext:''
+        ext: ''
       },
       editData: {},
       page: {
@@ -179,17 +179,17 @@ export default {
     }
   },
   mounted() {
-    this.fetchData();
-    this.getLabelDataAllFnc();
+    this.fetchData()
+    this.getLabelDataAllFnc()
   },
   methods: {
-      //表单置空
+    // 表单置空
     resetForm(formName) {
       this.$refs[formName].resetFields()
-      },
+    },
     // 新增取消
     addCancelHandleClick(formName) {
-      this.add = false;
+      this.add = false
       this.resetForm(formName)
     },
     // 查询
@@ -206,13 +206,13 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           const param = {
-            number:this.addData.number,
+            number: this.addData.number,
             ext: JSON.stringify(this.addData.ext)
           }
           postLabelData(param).then(res => {
             if (res.errorCode === 0) {
               this.add = false
-              this.resetForm(formName);
+              this.resetForm(formName)
               this.$message({
                 message: '添加成功',
                 type: 'success'
@@ -251,7 +251,7 @@ export default {
         if (valid) {
           const param = {
             id: this.editData.id,
-            number:this.editData.number,
+            number: this.editData.number,
             ext: JSON.stringify(this.editData.ext)
           }
           putLabelData(param).then(res => {

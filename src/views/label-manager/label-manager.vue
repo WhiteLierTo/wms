@@ -34,7 +34,7 @@
                     @click="queryHandleClick"
                   >{{ $t('header.query') }}</el-button>
                 </el-form-item>
-          <!--       <el-form-item>
+                <!--       <el-form-item>
                   <el-button size="small" type="primary" @click="add = true">{{ $t('header.add') }}</el-button>
                 </el-form-item> -->
               </el-form>
@@ -46,19 +46,19 @@
             <el-table-column width="150" prop="labelDataId" label="标签数据ID" />
             <el-table-column width="150" prop="templateId" label="标签模板ID" />
             <el-table-column width="150" prop="itemId" label="物料ID" />
-            <el-table-column width="150" prop="itemName" label="物料名称"/>
-            <el-table-column width="150" prop="itemUnit" label="物料单位"/>
+            <el-table-column width="150" prop="itemName" label="物料名称" />
+            <el-table-column width="150" prop="itemUnit" label="物料单位" />
             <el-table-column width="150" prop="batchNumber" label="批次号码" />
             <el-table-column width="150" prop="quantity" label="物料数量" />
-            <el-table-column width="150" prop="warehouse" label="仓库"/>
-            <el-table-column width="150" prop="location" label="库位"/>
-             <el-table-column prop="registered" label="是否已登记">
+            <el-table-column width="150" prop="warehouse" label="仓库" />
+            <el-table-column width="150" prop="location" label="库位" />
+            <el-table-column prop="registered" label="是否已登记">
               <template slot-scope="scope">
                 <div v-if="scope.row.registered===false" style="color:#cc0000">否</div>
                 <div v-if="scope.row.registered===true" style="color:#3c763d">是</div>
               </template>
             </el-table-column>
-             <el-table-column  fixed="right" prop="store" label="是否在库存中">
+            <el-table-column fixed="right" prop="store" label="是否在库存中">
               <template slot-scope="scope">
                 <div v-if="scope.row.store===false" style="color:#cc0000">否</div>
                 <div v-if="scope.row.store===true" style="color:#3c763d">是</div>
@@ -87,7 +87,7 @@ import {
   getLabelAll
 } from '@/api/label'
 export default {
-  name: 'labelManager',
+  name: 'LabelManager',
   data() {
     return {
       setRemote: [],
@@ -97,15 +97,15 @@ export default {
         id: '',
         total: 40,
         current: 1,
-        sort:'modify_at',
+        sort: 'modify_at',
         size: 10
       },
       listData: []
     }
   },
   mounted() {
-    this.fetchData();
-    this.getLabelAllAllFnc();
+    this.fetchData()
+    this.getLabelAllAllFnc()
   },
   methods: {
     // 查询

@@ -119,7 +119,7 @@
             <el-col style="margin-left:30px" :span="11">
               <el-form-item label="是否激活" prop="enabled">
                 <el-radio v-model="addData.enabled" :label="true" checked>开启</el-radio>
-                <el-radio v-model="addData.enabled" :label="false" >关闭</el-radio>
+                <el-radio v-model="addData.enabled" :label="false">关闭</el-radio>
               </el-form-item>
             </el-col>
           </el-row>
@@ -136,7 +136,7 @@
     <div>
       <el-dialog title="编辑打印机" :visible.sync="edit">
         <el-form ref="editData" :model="editData" class="demo-ruleForm">
-         <el-row>
+          <el-row>
             <el-col :span="11">
               <el-form-item
                 prop="printerName"
@@ -178,7 +178,7 @@
             <el-col style="margin-left:30px" :span="11">
               <el-form-item label="是否激活" prop="enabled">
                 <el-radio v-model="editData.enabled" :label="true" checked>开启</el-radio>
-                <el-radio v-model="editData.enabled" :label="false" >关闭</el-radio>
+                <el-radio v-model="editData.enabled" :label="false">关闭</el-radio>
               </el-form-item>
             </el-col>
           </el-row>
@@ -202,7 +202,7 @@ import {
   getPrinterAll
 } from '@/api/label'
 export default {
-  name: 'printerManager',
+  name: 'PrinterManager',
   data() {
     return {
       setRemote: [],
@@ -213,8 +213,8 @@ export default {
       addData: {
         // 新增数据
         printerName: '',
-        printerUrl:'',
-        enabled:true,
+        printerUrl: '',
+        enabled: true,
         description: ''
       },
       editData: {},
@@ -229,17 +229,17 @@ export default {
     }
   },
   mounted() {
-    this.fetchData();
-    this.getPrinterAllFnc();
+    this.fetchData()
+    this.getPrinterAllFnc()
   },
   methods: {
-      //表单置空
+    // 表单置空
     resetForm(formName) {
       this.$refs[formName].resetFields()
-      },
+    },
     // 新增取消
     addCancelHandleClick(formName) {
-      this.add = false;
+      this.add = false
       this.resetForm(formName)
     },
     // 查询
@@ -256,7 +256,7 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           const param = {
-            printerUrl:this.addData.printerUrl,
+            printerUrl: this.addData.printerUrl,
             enabled: this.addData.enabled,
             description: this.addData.description,
             printerName: this.addData.printerName
@@ -264,7 +264,7 @@ export default {
           postPrinter(param).then(res => {
             if (res.errorCode === 0) {
               this.add = false
-              this.resetForm(formName);
+              this.resetForm(formName)
               this.$message({
                 message: '添加成功',
                 type: 'success'
@@ -303,7 +303,7 @@ export default {
         if (valid) {
           const param = {
             id: this.editData.id,
-            printerUrl:this.editData.printerUrl,
+            printerUrl: this.editData.printerUrl,
             printerName: this.editData.printerName,
             enabled: this.editData.enabled,
             description: this.editData.description

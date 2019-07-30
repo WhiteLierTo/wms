@@ -46,7 +46,7 @@
             <el-table-column prop="operation" label="操作" />
             <el-table-column prop="content" label="操作内容" />
             <el-table-column prop="creator" label="创建者" />
-            <el-table-column prop="modifyAt" label="修改时间"/>
+            <el-table-column prop="modifyAt" label="修改时间" />
           </el-table>
         </section>
         <el-pagination
@@ -70,7 +70,7 @@ import {
   getOperationAll
 } from '@/api/label'
 export default {
-  name: 'labelOperationLog',
+  name: 'LabelOperationLog',
   data() {
     return {
       setRemote: [],
@@ -80,15 +80,15 @@ export default {
         id: '',
         total: 40,
         current: 1,
-        sort:'modify_at',
+        sort: 'modify_at',
         size: 10
       },
       listData: []
     }
   },
   mounted() {
-    this.fetchData();
-    this.getOperationAllFnc();
+    this.fetchData()
+    this.getOperationAllFnc()
   },
   methods: {
     // 查询

@@ -178,6 +178,31 @@ export const constantRoutes = [{
                 },
                 children: []
             }, {
+                path: 'element-template',
+                component: () =>
+                    import ('@/views/label-manager/element-template/index'),
+                name: 'FixedTemplate',
+                meta: {
+                    title: '元素模板'
+                },
+                children: [{
+                    path: 'fixed-template',
+                    component: () =>
+                        import ('@/views/label-manager/element-template/fixed-template'),
+                    name: 'FixedTemplate',
+                    meta: {
+                        title: '固定模板'
+                    }
+                }, {
+                    path: 'map-template',
+                    component: () =>
+                        import ('@/views/label-manager/element-template/map-template'),
+                    name: 'MapTemplate',
+                    meta: {
+                        title: '映射模板'
+                    }
+                }]
+            }, {
                 path: 'material-label',
                 component: () =>
                     import ('@/views/label-manager/material-label'),

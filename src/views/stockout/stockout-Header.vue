@@ -377,7 +377,7 @@
         </el-form>
 
         <div slot="footer" class="dialog-footer">
-          <el-button @click="addCancelHandleClick()">取 消</el-button>
+          <el-button @click="addCancelHandleClick('addData')">取 消</el-button>
           <el-button type="primary" @click="addHandleClick('addData')">确 定</el-button>
         </div>
       </el-dialog>
@@ -1033,9 +1033,9 @@ export default {
       this.$router.push({ name: "stockoutDetail" });
     },
     // 新增取消
-    addCancelHandleClick() {
-      (this.add = false), (this.addData.unit = "");
-      this.addData.description = " ";
+    addCancelHandleClick(formName) {
+      this.add = false, 
+      this.resetForm(formName)
     },
     // 查询
     queryHandleClick() {

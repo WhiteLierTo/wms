@@ -236,7 +236,7 @@ import {
   deleteDictionary
 } from "@/api/baseData";
 export default {
-  name: "dictionary",
+  name: "Dictionary",
   data() {
     return {
       setRemote: [],

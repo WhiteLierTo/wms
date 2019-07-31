@@ -170,3 +170,47 @@ export function getLabelAll(params) {
     params
   })
 }
+// 分页获取模板控件列表
+export function getTemplateWidgetList(params) {
+  return request({
+    baseURL,
+    url: 'labelTemplateWidget/list',
+    method: 'get',
+    params
+  })
+}
+// 修改模板控件
+export function putTemplateWidget(data) {
+  return request({
+    baseURL,
+    url: 'labelTemplateWidget',
+    method: 'put',
+    data
+  })
+}
+// 新增模板控件
+export function postTemplateWidget(data) {
+  return request({
+    baseURL,
+    url: 'labelTemplateWidget',
+    method: 'post',
+    data
+  })
+}
+// 删除模板控件
+export function deleteTemplateWidget(id) {
+  return request({
+    baseURL,
+    url: `labelTemplateWidget/${id}`,
+    method: 'delete'
+  })
+}
+// 获取全部模板控件
+export function getTemplateWidgetAll(params) {
+  return request({
+    baseURL,
+    url: 'labelTemplateWidget/all',
+    method: 'get',
+    params
+  })
+}

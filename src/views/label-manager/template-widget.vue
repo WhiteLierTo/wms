@@ -304,14 +304,12 @@ import {
   deleteTemplateWidget,
   getTemplateWidgetAll
 } from "@/api/label";
+import { getDictionaryText } from '@/utils/validate'
 import { getDictionaryAll } from "@/api/baseData";
 export default {
   name: "TemplateWidget",
   data() {
     return {
-      dt: {
-        "121": "jerry"
-      },
       setRemote: [],
       dictionary: [], //字典数据
       dictionaryValidated: [], //字典验证类型
@@ -446,6 +444,10 @@ export default {
     fetchData() {
       getTemplateWidgetList(this.page).then(res => {
         this.listData = res.result.list;
+        this.listData.forEach(v=>{
+            v.fieldType = getDictionaryText(v.fieldType)[0].text
+            v.validatedType = getDictionaryText(v.validatedType)[0].text
+        })
         this.page.total = res.result.total;
       });
     },

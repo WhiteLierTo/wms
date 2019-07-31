@@ -39,13 +39,21 @@
           <!--列表-->
           <el-table border :data="listData" style="width: 100%">
             <el-table-column type="expand">
-              <template slot-scope="props">
-                <el-form label-position="left" inline class="demo-table-expand">
-                  <el-form-item label="模板描述">
-                    <span>{{ props.row.description }}</span>
-                  </el-form-item>
-                </el-form>
-              </template>
+              <el-table :data="tableData" height="250" border style="width: 100%">
+                <el-table-column prop="x" label="x轴" width="180" />
+                <el-table-column prop="y" label="y轴" width="180" />
+                <el-table-column prop="width" label="宽度" width="180" />
+                <el-table-column prop="height" label="高度" width="180" />
+                <el-table-column label="操作">
+                  <template slot-scope="scope">
+                    <el-button
+                      type="text"
+                      size="small"
+                      @click="deleteEleHandleClick(scope.row.id)"
+                    >删除</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
             </el-table-column>
             <el-table-column prop="templateName" label="模板名称" />
             <el-table-column prop="width" label="标签宽度" />
@@ -58,8 +66,9 @@
                 <div v-else-if="scope.row.direction==true" style="color:#3c763d">横向</div>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="150">
+            <el-table-column label="操作" width="180">
               <template slot-scope="scope">
+                <el-button type="text" size="small" @click="addEleHandleClick(scope.row)">添加元素</el-button>
                 <el-button type="text" size="small" @click="editHandleClick(scope.row)">编辑</el-button>
                 <el-button type="text" size="small" @click="deleteHandleClick(scope.row.id)">删除</el-button>
               </template>
@@ -311,6 +320,7 @@ export default {
       id: '',
       add: false,
       edit: false,
+      addEle: false,
       formLabelWidth: '120px',
       addData: {
         templateName: '',
@@ -331,7 +341,21 @@ export default {
           label: '竖向'
         }
       ],
-      updateItem: {}
+      updateItem: {},
+      tableData: [
+        {
+          x: 10,
+          y: 15,
+          width: 80,
+          height: 60
+        },
+        {
+          x: 18,
+          y: 15,
+          width: 100,
+          height: 70
+        }
+      ]
     }
   },
   mounted() {
@@ -381,6 +405,13 @@ export default {
         }
       })
     },
+    // 添加元素
+    addEleHandleClick() {
+      // 路由跳转
+      this.$router.push({
+        name: 'AddElement'
+      })
+    },
     // 编辑
     editHandleClick(row) {
       this.updateItem = row
@@ -388,7 +419,6 @@ export default {
     },
     // 确认编辑
     editSureHandleClick() {
-      console.log('确认编辑:' + JSON.stringify(this.updateItem))
       this.updateTemplateFnc()
     },
     deleteHandleClick(id) {

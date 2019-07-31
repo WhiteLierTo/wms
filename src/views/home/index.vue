@@ -5,7 +5,8 @@
 </template>
 
 <script>
-import { getValFnc } from '@/utils/validate'
+import { getValFnc } from '@/utils/validate';
+import { getDictionaryAll } from '@/api/baseData';
 export default {
   name: 'Home',
   data() {
@@ -26,8 +27,16 @@ export default {
   },
   mounted() {
     console.log('根据key获取value:' + getValFnc(this.jsonObj, '海尔客服'))
+    // 获取通用字典
+    this.getDictionaryAllFnc()
   },
-  methods: {}
+  methods: {
+    getDictionaryAllFnc() {
+      getDictionaryAll().then(res => {
+        localStorage.setItem('dictionary', JSON.stringify(res.result))
+      })
+    }
+  }
 }
 </script>
 

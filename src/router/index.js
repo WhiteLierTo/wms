@@ -185,6 +185,7 @@ export const constantRoutes = [{
                 meta: {
                     title: '元素模板'
                 },
+                hidden: true,
                 children: [{
                     path: 'fixed-template',
                     component: () =>
@@ -270,6 +271,19 @@ export const constantRoutes = [{
                     title: '打印机管理',
                     noCache: true
                 },
+                children: []
+            },
+            {
+                path: 'add-element',
+                component: () =>
+                    import ('@/views/label-manager/add-element'),
+                name: 'AddElement',
+                // eslint-disable-next-line indent
+                meta: {
+                    title: '添加元素',
+                    noCache: true
+                },
+                hidden: true,
                 children: []
             }
         ]

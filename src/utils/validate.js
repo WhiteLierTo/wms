@@ -41,3 +41,11 @@ export function getValFnc(obj, k) {
         }
     }
 }
+
+// 通用字典
+export function getDictionary(dictGroup) {
+    const dictionary = JSON.parse(JSON.parse(localStorage.getItem('dictionary')))
+    return dictionary.filter(v => {
+        return v.dictGroup === dictGroup
+    })
+}

@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import { getValFnc } from '@/utils/validate';
-import { getDictionaryAll } from '@/api/baseData';
+import { getValFnc } from '@/utils/validate'
+import { getDictionaryAll } from '@/api/baseData'
 export default {
   name: 'Home',
   data() {

@@ -37,19 +37,32 @@
             </el-col>
           </div>
           <!--列表-->
-          <el-table border :data="listData" style="width: 100%">
+          <el-table border :data="listData" style="width: 100%" @expand-change="expandSelect">
             <el-table-column type="expand">
-              <el-table :data="tableData" height="250" border style="width: 100%">
-                <el-table-column prop="x" label="x轴" width="180" />
-                <el-table-column prop="y" label="y轴" width="180" />
-                <el-table-column prop="width" label="宽度" width="180" />
-                <el-table-column prop="height" label="高度" width="180" />
+              <el-table
+                v-loading="loading"
+                :data="tableData"
+                height="250"
+                border
+                style="width: 100%"
+              >
+                <el-table-column prop="x" label="x轴" width="120" />
+                <el-table-column prop="y" label="y轴" width="120" />
+                <el-table-column prop="width" label="宽度" width="120" />
+                <el-table-column prop="height" label="高度" width="120" />
+                <el-table-column prop="brushType" label="画笔类型" width="120" />
+                <el-table-column prop="fieldType" label="字段类型" width="120" />
+                <el-table-column prop="fieldName" label="字段名称" width="120" />
+                <el-table-column prop="labelName" label="标签值" width="120" />
+                <el-table-column prop="placeholder" label="占位符" width="120" />
+                <el-table-column prop="fontSize" label="字体大小" width="120" />
+                <el-table-column prop="fontName" label="字体名称" width="120" />
                 <el-table-column label="操作">
                   <template slot-scope="scope">
                     <el-button
                       type="text"
                       size="small"
-                      @click="deleteEleHandleClick(scope.row.id)"
+                      @click="deleteEleHandleClick(scope.row)"
                     >删除</el-button>
                   </template>
                 </el-table-column>
@@ -68,7 +81,7 @@
             </el-table-column>
             <el-table-column label="操作" width="180">
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="addEleHandleClick(scope.row)">添加元素</el-button>
+                <el-button type="text" size="small" @click="addEleHandleClick(scope.row.id)">添加元素</el-button>
                 <el-button type="text" size="small" @click="editHandleClick(scope.row)">编辑</el-button>
                 <el-button type="text" size="small" @click="deleteHandleClick(scope.row.id)">删除</el-button>
               </template>
@@ -301,7 +314,9 @@ import {
   getAllLabelTemplateList,
   deleteTemplate,
   addTemplate,
-  updateTemplate
+  updateTemplate,
+  getAllLabelTemplate,
+  deleteLabelTemplate
 } from '@/api/label'
 export default {
   name: 'LabelTemplate',
@@ -342,20 +357,10 @@ export default {
         }
       ],
       updateItem: {},
-      tableData: [
-        {
-          x: 10,
-          y: 15,
-          width: 80,
-          height: 60
-        },
-        {
-          x: 18,
-          y: 15,
-          width: 100,
-          height: 70
-        }
-      ]
+      tableData: [],
+      templateId: '',
+      loading: false,
+      eleId: ''
     }
   },
   mounted() {
@@ -363,6 +368,8 @@ export default {
     this.getLabelFnc()
     // 初始化所有标签列表
     this.getAllLabelTemplateListFnc()
+    // 初始化所有元素
+    this.getAllLabelTemplateFnc()
   },
   methods: {
     // 查询
@@ -406,10 +413,34 @@ export default {
       })
     },
     // 添加元素
-    addEleHandleClick() {
+    addEleHandleClick(id) {
       // 路由跳转
       this.$router.push({
-        name: 'AddElement'
+        name: 'AddElement',
+        params: { id: id }
+      })
+    },
+    // 展开或关闭
+    expandSelect(row, expandedRows) {
+      if (expandedRows.length > 1) {
+        expandedRows.shift()
+      }
+      this.loading = true
+      this.tableData.length = 0
+      this.templateId = row.id
+      // 初始化所有元素
+      this.getAllLabelTemplateFnc()
+    },
+    // 删除元素
+    deleteEleHandleClick(obj) {
+      this.eleId = obj.id
+      this.templateId = obj.templateId
+      this.$confirm('此操作将永久删除该元素, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.deleteLabelTemplateFnc()
       })
     },
     // 编辑
@@ -479,6 +510,27 @@ export default {
         })
         // 分页获取标签列表
         this.getLabelFnc()
+      })
+    },
+    // 获取所有元素
+    getAllLabelTemplateFnc() {
+      const params = {
+        templateId: this.templateId
+      }
+      getAllLabelTemplate(params).then(res => {
+        this.tableData = res.result
+        this.loading = false
+      })
+    },
+    // 删除元素
+    deleteLabelTemplateFnc() {
+      deleteLabelTemplate(this.eleId).then(res => {
+        // 获取所有元素
+        this.getAllLabelTemplateFnc()
+        this.$message({
+          message: '删除成功',
+          type: 'success'
+        })
       })
     }
   }

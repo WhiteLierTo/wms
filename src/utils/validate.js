@@ -44,14 +44,14 @@ export function getValFnc(obj, k) {
 
 // 通用字典
 export function getDictionary(dictGroup) {
-    const dictionary = JSON.parse(JSON.parse(localStorage.getItem('dictionary')))
+    const dictionary = JSON.parse(localStorage.getItem('dictionary'))
     return dictionary.filter(v => {
         return v.dictGroup === dictGroup
     })
 }
 // 通用字典代码获取
 export function getDictionaryText(code) {
-    const dictionary = JSON.parse(JSON.parse(localStorage.getItem('dictionary')))
+    const dictionary = JSON.parse(localStorage.getItem('dictionary'))
     return dictionary.filter(v => {
         return v.code === code
     })

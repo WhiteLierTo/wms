@@ -232,9 +232,9 @@
   </div>
 </template>
 <script>
-import { getDictionary, getDictionaryText } from '@/utils/validate';
-import { addlabelTemplateEle, getTemplateWidgetAll } from '@/api/label';
-import { constants } from 'crypto';
+import { getDictionary, getDictionaryText } from '@/utils/validate'
+import { addlabelTemplateEle, getTemplateWidgetAll } from '@/api/label'
+import { constants } from 'crypto'
 export default {
   name: 'AddElement',
   data() {
@@ -307,12 +307,10 @@ export default {
     // 生成元素
     eleHandleClick() {
       this.eleObj.templateId = sessionStorage.getItem('templateId')
-      console.log('李超:' + this.eleObj.templateId)
       this.addlabelTemplateEleFnc()
     },
     // 添加元素
     addlabelTemplateEleFnc() {
-      console.log('对象：' + JSON.stringify(this.eleObj))
       addlabelTemplateEle(this.eleObj).then(res => {
         // 置空
         Object.keys(this.eleObj).forEach(key => (this.eleObj[key] = ''))

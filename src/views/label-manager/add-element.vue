@@ -200,7 +200,7 @@
         </el-form>
         <div class="ele">
           <el-button type="primary" @click="eleHandleClick">生成元素</el-button>
-          <el-button type="danger">清空</el-button>
+          <el-button type="danger" @click="clearHandleClick">清空</el-button>
         </div>
       </el-card>
     </div>
@@ -232,9 +232,9 @@
   </div>
 </template>
 <script>
-import { getDictionary, getDictionaryText } from '@/utils/validate'
-import { addlabelTemplateEle, getTemplateWidgetAll } from '@/api/label'
-import { constants } from 'crypto'
+import { getDictionary, getDictionaryText } from '@/utils/validate';
+import { addlabelTemplateEle, getTemplateWidgetAll } from '@/api/label';
+import { constants } from 'crypto';
 export default {
   name: 'AddElement',
   data() {
@@ -303,6 +303,10 @@ export default {
       }
       this.eleObj = this.multipleSelection[0]
       this.add = false
+    },
+    // 清空
+    clearHandleClick() {
+      Object.keys(this.eleObj).forEach(key => (this.eleObj[key] = ''))
     },
     // 生成元素
     eleHandleClick() {

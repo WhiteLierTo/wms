@@ -211,6 +211,17 @@ export const constantRoutes = [{
       }
     }]
   }, {
+    path: 'general-label',
+    component: () =>
+                    import('@/views/label-manager/general-label'),
+    name: 'GeneralLabel',
+    // eslint-disable-next-line indent
+                meta: {
+      title: '通用标签',
+      noCache: true
+    },
+    children: []
+  }, {
     path: 'material-label',
     component: () =>
                     import('@/views/label-manager/material-label'),

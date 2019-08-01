@@ -254,7 +254,16 @@ export function getlabelTemplateOne(params) {
 export function printer(params) {
   return request({
     baseURL,
-    url: 'print/staticView',
+    url: 'print/view',
+    method: 'post',
+    params
+  })
+}
+// 预览接口
+export function printerView(params) {
+  return request({
+    baseURL,
+    url: 'print/preview',
     method: 'post',
     params
   })

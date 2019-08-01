@@ -430,3 +430,12 @@ export function deleteDictionary(id) {
     method: 'delete'
   })
 }
+// 获取单个库位信息
+export function getLocationOne(params) {
+  return request({
+    baseURL,
+    url: 'bdLocation/one',
+    method: 'get',
+    params
+  })
+}

@@ -70,10 +70,10 @@
                 prop="fieldValue"
                 label="字段值"
                 :label-width="formLabelWidth"
-                :rules="[
-                  { required: true, message: '字段值不能为空'}
-                ]"
               >
+                <!--  :rules="[
+                  { required: true, message: '字段值不能为空'}
+                ]"-->
                 <el-input v-model="eleObj.fieldValue" autocomplete="off" style="width:80%" />
               </el-form-item>
             </el-col>

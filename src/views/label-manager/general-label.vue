@@ -12,13 +12,13 @@
                 :label-width="formLabelWidth"
                 :rules="[{ required: true, message: '请选择打印模板', trigger: 'blur' }]"
               >
-                <el-select v-model="value" placeholder="请选择打印模板">
+                <el-select @change="templateChange"  v-model="value" placeholder="请选择打印模板">
                   <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
+                    v-for="item in tableData"
+                    :key="item.id"
+                    :label="item.templateName"
+                    :value="item.id"
+                     />
                 </el-select>
               </el-form-item>
             </el-form>
@@ -53,6 +53,9 @@
                   <el-input v-model="templateEle.direction" autocomplete="off" disabled />
                 </el-form-item>
               </el-col>
+               <el-col :span="8">
+                 <el-button>查看元素</el-button>
+              </el-col>
             </el-row>
           </el-form>
         </el-card>
@@ -65,7 +68,7 @@
                 :label-width="formLabelWidth"
                 :rules="[{ required: true, message: '请输入张数', trigger: 'blur' }]"
               >
-                <el-input v-model="templateEle.number" autocomplete="off" />
+                <el-input v-model="number" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col :span="11">
@@ -77,12 +80,12 @@
 
                   :rules="[{ required: true, message: '请选择打印机', trigger: 'blur' }]"
                 >
-                  <el-select v-model="templateEle.printerVal" placeholder="请选择打印机" style="width:100%">
+                  <el-select v-model="printer" placeholder="请选择打印机" style="width:100%">
                     <el-option
                       v-for="item in printerList"
-                      :key="item.id"
-                      :label="item.label"
-                      :value="item.id"
+                      :key="item.printerUrl"
+                      :label="item.printerUrl"
+                      :value="item.printerUrl"
                     />
                   </el-select>
                 </el-form-item>
@@ -92,67 +95,91 @@
         </el-form>
         <div class="btn">
           <el-button type="primary">预览</el-button>
-          <el-button type="primary">开始打印</el-button>
+          <el-button type="primary" @click="printHandleClick">开始打印</el-button>
         </div>
       </el-card>
     </div>
   </div>
 </template>
 <script>
+import { getAllLabelTemplateList,getlabelTemplateOne,getAllLabelTemplate,getPrinterAll,printer } from '@/api/label';
+import axios from 'axios'
+import qs from 'qs'
 export default {
   name: 'GeneralLabel',
   data() {
     return {
-      options: [
-        {
-          value: '选项1',
-          label: '黄金糕'
-        },
-        {
-          value: '选项2',
-          label: '双皮奶'
-        },
-        {
-          value: '选项3',
-          label: '蚵仔煎'
-        },
-        {
-          value: '选项4',
-          label: '龙须面'
-        },
-        {
-          value: '选项5',
-          label: '北京烤鸭'
-        }
-      ],
-      printerList: [
-        {
-          id: '1',
-          label: '打印机1'
-        }
-      ],
+      tableData: [],
+      printerList: [],
       value: '',
       formLabelWidth: '120px',
       input: '',
-      templateEle: {
-        x: '0',
-        y: '0',
-        width: '500',
-        height: '400',
-        direction: '横向',
-        quantity: '',
-        number: '1',
-        printerVal: ''
-      }
+      templateEle: {},  //模板元素
+      number:1,
+      printer:'',
+      element:[] //元素
     }
   },
+  mounted(){
+    //获取所有模板
+    this.getTemplateAll();
+    //获取所有打印机
+     this.getPrinterAll();
+  },
   methods: {
-    /* labelHandleClick() {
-      const url = 'demo.pdf'
-      window.open('/pdf/web/viewer.html?file=' + url)
-    }*/
+    //打印事件
+    printHandleClick(){
+      let ext ={
+          labelTemplate:this.templateEle,
+          labelTemplateElement:this.element
+      }
+      let param = {
+        ext:ext,
+        number:this.number,
+        printer:this.printer
+      }
+     /*  axios({
+        method:'post',
+        url:'http://192.18.1.149:8101/wms-label/print/staticView',
+        data:qs.stringify(param)
+      }) */ 
+       printer(param).then(res => {
+          if (res.errorCode === 0) {
+              this.$message({
+                message: '打印成功',
+                type: 'success'
+              })
+          }
+      })
+       .catch(() => {})
+    },
+    //选中模板，获取模板及元素数据
+    templateChange(e){
+      let param = {
+        id:e
+      }
+       let params = {
+        templateId:e
+      }
+       getlabelTemplateOne(param).then(res => {
+        this.templateEle = res.result
+      })
+      getAllLabelTemplate(params).then(res => {
+        this.element = res.result
+    })
+    },
+    // 查询所有打印机
+    getPrinterAll() {
+        getPrinterAll().then(res => {
+          this.printerList = res.result
+      })
+    },
     // 查询
-    referHandleClick() {}
+    getTemplateAll() {
+        getAllLabelTemplateList().then(res => {
+        this.tableData = res.result
+      })
+    }
   }
 }
 </script>

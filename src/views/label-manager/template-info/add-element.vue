@@ -230,9 +230,8 @@
   </div>
 </template>
 <script>
-import { getDictionary, getDictionaryText } from '@/utils/validate'
-import { addlabelTemplateEle, getTemplateWidgetAll } from '@/api/label'
-import { constants } from 'crypto'
+import { getDictionary } from '@/utils/validate';
+import { addlabelTemplateEle, getTemplateWidgetAll } from '@/api/label';
 export default {
   name: 'AddElement',
   data() {
@@ -325,15 +324,6 @@ export default {
     // 初始化所有控件
     getTemplateWidgetAllFnc() {
       getTemplateWidgetAll().then(res => {
-        /* const mVal = res.result.map(v => {
-          return getDictionaryText(v.validatedType)
-        })
-        const eleObj = Object.create(null)
-        for (const key in mVal) {
-          eleObj[key] = mVal[key]
-        }
-        console.log('我也不知道是什么:' + JSON.stringify(mVal))
-        console.log('我也不知道是什么2:' + JSON.stringify(eleObj))*/
         this.tableData = res.result
       })
     }

@@ -66,15 +66,13 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item
-                prop="fieldValue"
-                label="字段值"
-                :label-width="formLabelWidth"
-              >
-                <!--  :rules="[
-                  { required: true, message: '字段值不能为空'}
-                ]"-->
-                <el-input v-model="eleObj.fieldValue" autocomplete="off" style="width:80%" />
+              <el-form-item prop="fieldValue" label="字段值" :label-width="formLabelWidth">
+                <el-input
+                  v-model="eleObj.fieldValue"
+                  autocomplete="off"
+                  style="width:80%"
+                  :disabled="show"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -232,9 +230,9 @@
   </div>
 </template>
 <script>
-import { getDictionary, getDictionaryText } from '@/utils/validate';
-import { addlabelTemplateEle, getTemplateWidgetAll } from '@/api/label';
-import { constants } from 'crypto';
+import { getDictionary, getDictionaryText } from '@/utils/validate'
+import { addlabelTemplateEle, getTemplateWidgetAll } from '@/api/label'
+import { constants } from 'crypto'
 export default {
   name: 'AddElement',
   data() {

@@ -12,7 +12,7 @@
                 :label-width="formLabelWidth"
                 :rules="[{ required: true, message: '请选择打印模板', trigger: 'blur' }]"
               >
-                <el-select @change="templateChange" v-model="value" placeholder="请选择打印模板">
+                <el-select v-model="value" placeholder="请选择打印模板" @change="templateChange">
                   <el-option
                     v-for="item in tableData"
                     :key="item.id"
@@ -31,7 +31,7 @@
                 :label-width="formLabelWidth"
                 :rules="[{ required: true, message: '请选择库房', trigger: 'blur' }]"
               >
-                <el-select @change="warehouseChange" v-model="warehouseValue" placeholder="请选择库房">
+                <el-select v-model="warehouseValue" placeholder="请选择库房" @change="warehouseChange">
                   <el-option
                     v-for="item in warehouse"
                     :key="item.id"
@@ -51,7 +51,7 @@
                 filterable
                 :rules="[{ required: true, message: '请选择打印库位', trigger: 'blur' }]"
               >
-                <el-select @change="locationChange" v-model="locationValue" placeholder="请选择库位">
+                <el-select v-model="locationValue" placeholder="请选择库位" @change="locationChange">
                   <el-option
                     v-for="item in location"
                     :key="item.id"
@@ -98,12 +98,12 @@
 
         <div class="h-title1">模板元素</div>
         <el-card class="box-card">
-          <div style="margin:20px 0px 10px 0px " v-for="item in element" :key="item.id">
+          <div v-for="item in element" :key="item.id" style="margin:20px 0px 10px 0px ">
             <el-row>
               <el-col :span="5">
                 <el-row>
                   <el-col :span="8">
-                    <div style="margin-top:10px;font-size:14px;font-weight:600">{{item.labelName}}</div>
+                    <div style="margin-top:10px;font-size:14px;font-weight:600">{{ item.labelName }}</div>
                   </el-col>
                   <el-col :span="16">
                     <el-input
@@ -113,9 +113,9 @@
                       autocomplete="off"
                     />
                     <el-input
-                      disabled
-                      v-if="item.fieldType === '固定值' || item.fieldType === '字段映射'  || item.fieldType === 'mapped'  || item.fieldType === 'fixed'"
+                      v-if="item.fieldType === '固定值' || item.fieldType === '字段映射' || item.fieldType === 'mapped' || item.fieldType === 'fixed'"
                       v-model="item.fieldValue"
+                      disabled
                       :placeholder="item.placeholder"
                       autocomplete="off"
                     />
@@ -195,16 +195,12 @@
       </el-card>
     </div>
 
-      <el-dialog
-         title="标签预览"
-        :visible.sync="preview"
-         width="60%"
-        >
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="preview = false">取 消</el-button>
-          <el-button type="primary" @click="preview = false">确 定</el-button>
-        </span>
-      </el-dialog>
+    <el-dialog title="标签预览" :visible.sync="preview" width="60%">
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="preview = false">取 消</el-button>
+        <el-button type="primary" @click="preview = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -215,159 +211,161 @@ import {
   getPrinterAll,
   printer,
   printerView
-} from "@/api/label";
-import { getWarehouseAll, getLocationAll,getLocationOne } from "@/api/baseData";
-import { getDictionaryText, getDictionaryCode } from "@/utils/validate";
+} from '@/api/label';
+import {
+  getWarehouseAll,
+  getLocationAll,
+  getLocationOne
+} from '@/api/baseData';
+import { getDictionaryText, getDictionaryCode } from '@/utils/validate';
 export default {
-  name: "GeneralLabel",
+  name: 'GeneralLabel',
   data() {
     return {
       tableData: [],
       printerList: [],
-      value: "",
-      formLabelWidth: "120px",
-      input: "",
-      templateEle: {}, //模板元素
+      value: '',
+      formLabelWidth: '120px',
+      input: '',
+      templateEle: {}, // 模板元素
       number: 1,
-      printer: "",
+      printer: '',
       location: [],
-      locationValue: "",
-      warehouseValue: "",
-      warehouse: [], //库房库位数据
-      locationOne: {}, //单个库位信息
-      element: [], //元素
-      preview:false,
-    };
+      locationValue: '',
+      warehouseValue: '',
+      warehouse: [], // 库房库位数据
+      locationOne: {}, // 单个库位信息
+      element: [], // 元素
+      preview: false
+    }
   },
   mounted() {
-    //获取所有模板
-    this.getTemplateAll();
-    //获取所有打印机
-    this.getPrinterAll();
-    //获取所有库位
-    this.getLocationAll();
-    //获取所有库房
-    this.getWarehouseAll();
+    // 获取所有模板
+    this.getTemplateAll()
+    // 获取所有打印机
+    this.getPrinterAll()
+    // 获取所有库位
+    this.getLocationAll()
+    // 获取所有库房
+    this.getWarehouseAll()
   },
   methods: {
-    //标签预览
-    printerViewHandleClick(){
-      this.preview= true;
-      let ext = {
+    // 标签预览
+    printerViewHandleClick() {
+      this.preview = true
+      const ext = {
         labelTemplate: this.templateEle,
         labelTemplateElement: this.element
-      };
-      let param = {
+      }
+      const param = {
         ext: ext
-      };
+      }
       printerView(param)
         .then(res => {
-          debugger
-          if (res.errorCode === 0) {
-          }
+          console.log('res:' + res)
         })
-        .catch(() => {});
+        .catch(() => {})
     },
-    //库位选择后，映射字段
+    // 库位选择后，映射字段
     locationChange(e) {
-      let param = {
+      const param = {
         id: e
-      };
+      }
       getLocationOne(param).then(res => {
-         this.locationOne = res.result;
-          this.locationFnc();
-      });
+        this.locationOne = res.result
+        this.locationFnc()
+      })
     },
-    //库位改变,映射赋值
-    locationFnc(){
-       this.element.forEach(v => {
-        if (v.fieldType === "字段映射") {
-           v.fieldValue =  this.locationOne.location
+    // 库位改变,映射赋值
+    locationFnc() {
+      this.element.forEach(v => {
+        if (v.fieldType === '字段映射') {
+          v.fieldValue = this.locationOne.location
         }
-      });
+      })
     },
-    //库房下拉获取库位
+    // 库房下拉获取库位
     warehouseChange(e) {
-      this.getLocationAll(e);
+      this.getLocationAll(e)
     },
-    //打印事件
+    // 打印事件
     printHandleClick() {
       this.element.forEach(v => {
-        v.brushType = getDictionaryCode(v.brushType)[0].code;
-        v.fieldType = getDictionaryCode(v.fieldType)[0].code;
-      });
-      let ext = {
+        v.brushType = getDictionaryCode(v.brushType)[0].code
+        v.fieldType = getDictionaryCode(v.fieldType)[0].code
+      })
+      const ext = {
         labelTemplate: this.templateEle,
         labelTemplateElement: this.element
-      };
-      let param = {
+      }
+      const param = {
         ext: ext,
         number: this.number,
         printer: this.printer
-      };
+      }
       printer(param)
         .then(res => {
           if (res.errorCode === 0) {
             this.$message({
-              message: "打印成功",
-              type: "success"
-            });
+              message: '打印成功',
+              type: 'success'
+            })
           }
           this.element.forEach(v => {
-            v.brushType = getDictionaryText(v.brushType)[0].text;
-            v.fieldType = getDictionaryText(v.fieldType)[0].text;
-          });
+            v.brushType = getDictionaryText(v.brushType)[0].text
+            v.fieldType = getDictionaryText(v.fieldType)[0].text
+          })
         })
-        .catch(() => {});
+        .catch(() => {})
     },
-    //选中模板，获取模板及元素数据
+    // 选中模板，获取模板及元素数据
     templateChange(e) {
-      let param = {
+      const param = {
         id: e
-      };
-      let params = {
+      }
+      const params = {
         templateId: e
-      };
+      }
       getlabelTemplateOne(param).then(res => {
-        this.templateEle = res.result;
-      });
+        this.templateEle = res.result
+      })
       getAllLabelTemplate(params).then(res => {
-        this.element = res.result;
+        this.element = res.result
         this.element.forEach(v => {
-          v.brushType = getDictionaryText(v.brushType)[0].text;
-          v.fieldType = getDictionaryText(v.fieldType)[0].text;
-        });
-      });
+          v.brushType = getDictionaryText(v.brushType)[0].text
+          v.fieldType = getDictionaryText(v.fieldType)[0].text
+        })
+      })
     },
     // 查询所有打印机
     getPrinterAll() {
       getPrinterAll().then(res => {
-        this.printerList = res.result;
-      });
+        this.printerList = res.result
+      })
     },
     // 下拉查询库位列表
     getLocationAll(e) {
-      let param = {
+      const param = {
         wid: e
-      };
+      }
       getLocationAll(param).then(res => {
-        this.location = res.result;
-      });
+        this.location = res.result
+      })
     },
     // 下拉查询库房列表
     getWarehouseAll() {
       getWarehouseAll().then(res => {
-        this.warehouse = res.result;
-      });
+        this.warehouse = res.result
+      })
     },
     // 查询
     getTemplateAll() {
       getAllLabelTemplateList().then(res => {
-        this.tableData = res.result;
-      });
+        this.tableData = res.result
+      })
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .box-card {

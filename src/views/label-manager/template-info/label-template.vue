@@ -178,6 +178,25 @@
             </el-col>
           </el-row>
           <el-row>
+            <el-col :span="12">
+              <el-form-item
+                prop="labelType"
+                label="标签类型"
+                :label-width="formLabelWidth"
+                :rules="[{ required: true, message: '请选择标签类型', trigger: 'blur' }]"
+              >
+                <el-select v-model="addData.labelType" placeholder="请选择标签类型" style="width:100%">
+                  <el-option
+                    v-for="item in labelType"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
             <el-col>
               <el-form-item
                 prop="description"
@@ -236,6 +255,7 @@
               </el-form-item>
             </el-col>
           </el-row>
+
           <el-row>
             <el-col :span="12">
               <el-form-item
@@ -280,6 +300,7 @@
               </el-form-item>
             </el-col>
           </el-row>
+          <el-row></el-row>
           <el-row>
             <el-col>
               <el-form-item
@@ -316,8 +337,10 @@ import {
   addTemplate,
   updateTemplate,
   getAllLabelTemplate,
-  deleteLabelTemplate
+  deleteLabelTemplate,
 } from '@/api/label'
+import { createHash } from 'crypto';
+import {getDictionaryAll} from '@/api/baseData'
 export default {
   name: 'LabelTemplate',
   data() {
@@ -325,7 +348,9 @@ export default {
       page: {
         current: 1,
         size: 10,
-        templateName: ''
+        templateName: '',
+        sort:'create_at',
+        deleted:false
       },
       listData: [],
       total: 0, // 总数
@@ -344,6 +369,7 @@ export default {
         x: '',
         y: '',
         direction: '',
+        labelType:'',
         description: ''
       },
       directionList: [
@@ -358,6 +384,7 @@ export default {
       ],
       updateItem: {},
       tableData: [],
+      labelType:[],
       templateId: '',
       loading: false,
       eleId: ''
@@ -365,11 +392,13 @@ export default {
   },
   mounted() {
     // 初始化标签列表
-    this.getLabelFnc()
+    this.getLabelFnc();
     // 初始化所有标签列表
-    this.getAllLabelTemplateListFnc()
+    this.getAllLabelTemplateListFnc();
     // 初始化所有元素
-    this.getAllLabelTemplateFnc()
+    this.getAllLabelTemplateFnc();
+    //获取所有模板类型（字典）
+    this.getDictionaryAll();
   },
   methods: {
     // 查询
@@ -478,7 +507,11 @@ export default {
     },
     // 删除标签列表
     deleteTemplateFnc() {
-      deleteTemplate(this.id).then(res => {
+        let params = {
+          id:this.id,
+          deleted:true
+        }
+      updateTemplate(params).then(res => {
         // 分页获取标签列表
         this.getLabelFnc()
         this.$message({
@@ -511,6 +544,17 @@ export default {
         // 分页获取标签列表
         this.getLabelFnc()
       })
+    },
+    //获取所有标签类型（字典）
+    getDictionaryAll() {
+      let param = {
+        dictGroup:'label_type'
+      }
+      getDictionaryAll(param).then(res => {
+        this.labelType = res.result.map(item => {
+          return { value: item.code, label: item.text };
+        });
+      });
     },
     // 获取所有元素
     getAllLabelTemplateFnc() {

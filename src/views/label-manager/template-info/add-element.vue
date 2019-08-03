@@ -198,7 +198,7 @@
         </el-form>
         <div class="ele">
           <el-button type="primary" @click="eleHandleClick">生成元素</el-button>
-          <el-button type="danger" @click="clearHandleClick">清空</el-button>
+          <el-button type="danger" @click="clearHandleClick('eleObj')">清空</el-button>
         </div>
       </el-card>
     </div>
@@ -302,19 +302,25 @@ export default {
       this.add = false
     },
     // 清空
-    clearHandleClick() {
-      Object.keys(this.eleObj).forEach(key => (this.eleObj[key] = ''))
+    clearHandleClick(formName) {
+      this.$refs[formName].resetFields();
+      this.eleObj.brushType = '';
+      this.eleObj.fieldType = '';
+      //Object.keys(this.eleObj).forEach(key => (this.eleObj[key] = ''))
     },
     // 生成元素
     eleHandleClick() {
       this.eleObj.templateId = sessionStorage.getItem('templateId')
-      this.addlabelTemplateEleFnc()
+      this.addlabelTemplateEleFnc('eleObj')
     },
     // 添加元素
-    addlabelTemplateEleFnc() {
+    addlabelTemplateEleFnc(formName) {
       addlabelTemplateEle(this.eleObj).then(res => {
         // 置空
-        Object.keys(this.eleObj).forEach(key => (this.eleObj[key] = ''))
+        this.$refs[formName].resetFields();
+        this.eleObj.brushType = '';
+        this.eleObj.fieldType = '';
+        //Object.keys(this.eleObj).forEach(key => (this.eleObj[key] = ''))
         this.$message({
           message: '新建成功',
           type: 'success'

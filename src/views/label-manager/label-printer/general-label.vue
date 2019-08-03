@@ -57,60 +57,30 @@
           </el-form>
         </el-card>
 
-        <div class="h-title1">模板元素</div>
-        <el-card class="box-card">
-          <div v-for="item in element" :key="item.id" style="margin:20px 0px 10px 0px ">
-            <el-row>
-              <el-col :span="5">
-                <el-row>
-                  <el-col :span="8">
-                    <div style="margin-top:10px;font-size:14px;font-weight:600">{{ item.labelName }}</div>
+        <div v-show="elementShow">
+          <div class="h-title1">模板元素</div>
+          <el-card class="box-card">
+            <div>
+              <el-row>
+                <div v-for="item in element" :key="item.id" style="margin:20px 0px 10px 0px ">
+                  <el-col :span="4">
+                    <div
+                      style="margin:20px -5px 10px 20px;font-size:14px;font-weight:600"
+                    >{{ item.labelName }}</div>
                   </el-col>
-                  <el-col :span="16">
-                    <el-input v-if="item.fieldType === '用户输入' || item.fieldType === 'input'" v-model="item.fieldValue" :placeholder="item.placeholder" autocomplete="off" />
+                  <el-col style="margin-top:10px" :span="4">
                     <el-input
-                      v-if="item.fieldType === '固定值' || item.fieldType === '字段映射' || item.fieldType === 'mapped' || item.fieldType === 'fixed'"
                       v-model="item.fieldValue"
-                      disabled
+                      :disabled="item.show"
                       :placeholder="item.placeholder"
                       autocomplete="off"
                     />
                   </el-col>
-                </el-row>
-              </el-col>
-              <el-col style="margin-left:40px" :span="5">
-                <el-row>
-                  <el-col :span="8">
-                    <div style="margin-top:10px;font-size:14px;font-weight:600">映射字段</div>
-                  </el-col>
-                  <el-col :span="16">
-                    <el-input v-model="item.fieldName" autocomplete="off" disabled />
-                  </el-col>
-                </el-row>
-              </el-col>
-              <el-col style="margin-left:40px" :span="5">
-                <el-row>
-                  <el-col :span="8">
-                    <div style="margin-top:10px;font-size:14px;font-weight:600">字段类型</div>
-                  </el-col>
-                  <el-col :span="16">
-                    <el-input v-model="item.fieldType" autocomplete="off" disabled />
-                  </el-col>
-                </el-row>
-              </el-col>
-              <el-col style="margin-left:40px" :span="5">
-                <el-row>
-                  <el-col :span="8">
-                    <div style="margin-top:10px;font-size:14px;font-weight:600">画笔类型</div>
-                  </el-col>
-                  <el-col :span="16">
-                    <el-input v-model="item.brushType" autocomplete="off" disabled />
-                  </el-col>
-                </el-row>
-              </el-col>
-            </el-row>
-          </div>
-        </el-card>
+                </div>
+              </el-row>
+            </div>
+          </el-card>
+        </div>
         <el-form ref="templateEle" :model="templateEle" class="demo-ruleForm quantity">
           <el-row>
             <el-col :span="11">
@@ -145,11 +115,18 @@
           </el-row>
         </el-form>
         <div class="btn">
-          <el-button type="primary">预览</el-button>
+          <el-button type="primary" @click="printerViewHandleClick">预览</el-button>
           <el-button type="primary" @click="printHandleClick">开始打印</el-button>
         </div>
       </el-card>
     </div>
+    <el-dialog title="标签预览" :visible.sync="preview">
+      <el-carousel style="background:#f3f2f5" height="400px">
+        <el-carousel-item>
+          <img :src="src" style="max-width: 100%;max-height: 100%;display: block; margin: 0 auto;" />
+        </el-carousel-item>
+      </el-carousel>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -159,93 +136,104 @@ import {
   getAllLabelTemplate,
   getPrinterAll,
   printer
-} from '@/api/label'
-import { getDictionaryText, getDictionaryCode } from '@/utils/validate'
+} from "@/api/label";
+import { getDictionaryText, getDictionaryCode } from "@/utils/validate";
 export default {
-  name: 'GeneralLabel',
+  name: "GeneralLabel",
   data() {
     return {
       tableData: [],
       printerList: [],
-      value: '',
-      formLabelWidth: '120px',
-      input: '',
+      value: "",
+      formLabelWidth: "120px",
+      input: "",
       templateEle: {}, // 模板元素
       number: 1,
-      printer: '',
+      preview: false,
+      elementShow: false,
+      flowPic: "",
+      src: "",
+      printer: "",
+      template: {
+        deleted: false,
+        labelType: 1
+      },
       element: [] // 元素
-    }
+    };
   },
   mounted() {
     // 获取所有模板
-    this.getTemplateAll()
+    this.getTemplateAll();
     // 获取所有打印机
-    this.getPrinterAll()
+    this.getPrinterAll();
   },
   methods: {
+    //标签预览
+    printerViewHandleClick() {
+      this.preview = true;
+      this.src = `http://116.62.212.169:8101/wms-label/print/preview?id=${this.templateEle.id}`;
+    },
     // 打印事件
     printHandleClick() {
-      this.element.forEach(v => {
-        v.brushType = getDictionaryCode(v.brushType)[0].code
-        v.fieldType = getDictionaryCode(v.fieldType)[0].code
-      })
       const ext = {
         labelTemplate: this.templateEle,
         labelTemplateElement: this.element
-      }
+      };
       const param = {
         ext: ext,
         number: this.number,
         printer: this.printer
-      }
+      };
       printer(param)
         .then(res => {
           if (res.errorCode === 0) {
             this.$message({
-              message: '打印成功',
-              type: 'success'
-            })
+              message: "打印成功",
+              type: "success"
+            });
           }
-          this.element.forEach(v => {
-            v.brushType = getDictionaryText(v.brushType)[0].text
-            v.fieldType = getDictionaryText(v.fieldType)[0].text
-          })
         })
-        .catch(() => {})
+        .catch(() => {});
     },
     // 选中模板，获取模板及元素数据
     templateChange(e) {
       const param = {
         id: e
-      }
+      };
       const params = {
         templateId: e
-      }
+      };
       getlabelTemplateOne(param).then(res => {
-        this.templateEle = res.result
-      })
+        this.templateEle = res.result;
+      });
       getAllLabelTemplate(params).then(res => {
-        this.element = res.result
+        this.element = res.result;
+        if(res.result.length>0){
+          this.elementShow = true;
+        }
         this.element.forEach(v => {
-          v.brushType = getDictionaryText(v.brushType)[0].text
-          v.fieldType = getDictionaryText(v.fieldType)[0].text
-        })
-      })
+          if (v.fieldType === "input") {
+            v.show = false;
+          } else {
+            v.show = true;
+          }
+        });
+      });
     },
     // 查询所有打印机
     getPrinterAll() {
       getPrinterAll().then(res => {
-        this.printerList = res.result
-      })
+        this.printerList = res.result;
+      });
     },
-    // 查询
+    // 查询所有模板信息
     getTemplateAll() {
-      getAllLabelTemplateList().then(res => {
-        this.tableData = res.result
-      })
+      getAllLabelTemplateList(this.template).then(res => {
+        this.tableData = res.result;
+      });
     }
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 .box-card {
@@ -253,7 +241,7 @@ export default {
     padding: 10px 20px 40px;
     font-size: 16px;
   }
-    .h-title1 {
+  .h-title1 {
     padding: 40px 10px 40px 20px;
     font-size: 16px;
   }

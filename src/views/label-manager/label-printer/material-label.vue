@@ -71,65 +71,28 @@
             </el-row>
           </el-form>
         </el-card>
-        <div class="h-title">标签元素</div>
-        <el-card class="box-card">
-          <div v-for="item in tableData" :key="item.id" style="margin:20px 0px 10px 0px ">
-            <el-row>
-              <el-col :span="5">
-                <el-row>
-                  <el-col :span="8">
-                    <div style="margin-top:10px;font-size:14px;font-weight:600">{{ item.labelName }}</div>
+          <div v-show="elementShow">
+            <div class="h-title1">模板元素</div>
+                <el-card class="box-card">
+              <div>
+                <el-row >
+                  <div  v-for="item in tableData" :key="item.id" style="margin:20px 0px 10px 0px ">
+                  <el-col :span="4">
+                    <div style="margin:20px -5px 10px 20px;font-size:14px;font-weight:600">{{ item.labelName }}</div>
                   </el-col>
-                  <el-col :span="16">
+                  <el-col style="margin-top:10px" :span="4">
                     <el-input
-                      v-if="item.fieldType === '用户输入' || item.fieldType === 'input'"
                       v-model="item.fieldValue"
-                      :placeholder="item.placeholder"
-                      autocomplete="off"
-                    />
-                    <el-input
-                      v-if="item.fieldType === '固定值' || item.fieldType === '字段映射' || item.fieldType === 'mapped' || item.fieldType === 'fixed'"
-                      v-model="item.fieldValue"
-                      disabled
+                      :disabled="item.show"
                       :placeholder="item.placeholder"
                       autocomplete="off"
                     />
                   </el-col>
-                </el-row>
-              </el-col>
-              <el-col style="margin-left:40px" :span="5">
-                <el-row>
-                  <el-col :span="8">
-                    <div style="margin-top:10px;font-size:14px;font-weight:600">映射字段</div>
-                  </el-col>
-                  <el-col :span="16">
-                    <el-input v-model="item.fieldName" autocomplete="off" disabled />
-                  </el-col>
-                </el-row>
-              </el-col>
-              <el-col style="margin-left:40px" :span="5">
-                <el-row>
-                  <el-col :span="8">
-                    <div style="margin-top:10px;font-size:14px;font-weight:600">字段类型</div>
-                  </el-col>
-                  <el-col :span="16">
-                    <el-input v-model="item.fieldType" autocomplete="off" disabled />
-                  </el-col>
-                </el-row>
-              </el-col>
-              <el-col style="margin-left:40px" :span="5">
-                <el-row>
-                  <el-col :span="8">
-                    <div style="margin-top:10px;font-size:14px;font-weight:600">画笔类型</div>
-                  </el-col>
-                  <el-col :span="16">
-                    <el-input v-model="item.brushType" autocomplete="off" disabled />
-                  </el-col>
-                </el-row>
-              </el-col>
+                  </div>
             </el-row>
           </div>
         </el-card>
+    </div>
         <el-form ref="templateEle" :model="templateEle" class="demo-ruleForm quantity">
           <el-row>
             <el-col :span="9">
@@ -164,11 +127,21 @@
           </el-row>
         </el-form>
         <div class="btn">
-          <el-button type="primary">预览</el-button>
+          <el-button type="primary" @click="printerViewHandleClick">预览</el-button>
           <el-button type="primary" @click="printHandleClick">开始打印</el-button>
         </div>
       </el-card>
     </div>
+     <el-dialog
+    title="标签预览"
+    :visible.sync="preview"
+  >
+    <el-carousel style="background:#f3f2f5"  height="400px">
+      <el-carousel-item>
+        <img :src="src" style="max-width: 100%;max-height: 100%;display: block; margin: 0 auto;"/>
+      </el-carousel-item>
+    </el-carousel>
+  </el-dialog>
   </div>
 </template>
 <script>
@@ -203,6 +176,14 @@ export default {
       templateEle: {},
       params: {},
       templateId: '',
+      preview: false,
+      elementShow:false,
+      flowPic: "",
+      src:'',
+      template:{
+          deleted:false,
+          labelType:2
+      },
       tableData: []
     }
   },
@@ -210,13 +191,18 @@ export default {
     // 获取所有模板列表
     this.getAllLabelTemplateListFnc()
     // 获取所有打印机
-    this.getPrinterAllFnc()
+    this.getPrinterAllFnc();
   },
   methods: {
     /* labelHandleClick() {
       const url = 'demo.pdf'
       window.open('/pdf/web/viewer.html?file=' + url)
     }*/
+        //标签预览
+    printerViewHandleClick() {
+      this.preview = true;
+      this.src = `http://116.62.212.169:8101/wms-label/print/preview?id=${this.templateEle.id}`
+    },
     // 选择打印模板
     templateChange(val) {
       this.params.id = val
@@ -260,8 +246,8 @@ export default {
     },
     // 获取所有模板列表
     getAllLabelTemplateListFnc() {
-      getAllLabelTemplateList().then(res => {
-        this.options = res.result
+      getAllLabelTemplateList(this.template).then(res => {
+        this.options = res.result;
       })
     },
     // 获取单个模板
@@ -296,7 +282,10 @@ export default {
         templateId: this.templateId
       }
       getAllLabelTemplate(params).then(res => {
-        this.tableData = res.result
+        this.tableData = res.result;
+        if(res.result.length>0){
+          this.elementShow = true;
+        }
         console.log('tableData:' + JSON.stringify(this.tableData))
         this.tableData.forEach(v => {
           v.brushType = getDictionaryText(v.brushType)[0].text
@@ -309,6 +298,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 .box-card {
+    .h-title1 {
+    padding: 40px 10px 40px 20px;
+    font-size: 16px;
+  }
   .h-title {
     padding: 25px 20px;
     font-size: 16px;

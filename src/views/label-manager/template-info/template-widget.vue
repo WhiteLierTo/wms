@@ -187,7 +187,7 @@
     <div>
       <el-dialog title="编辑模板控件" :visible.sync="edit">
         <el-form ref="editData" :model="editData" class="demo-ruleForm">
-           <el-row>
+          <el-row>
             <el-col :span="11">
               <el-form-item
                 prop="widgetName"
@@ -303,64 +303,64 @@ import {
   putTemplateWidget,
   deleteTemplateWidget,
   getTemplateWidgetAll
-} from "@/api/label";
+} from '@/api/label'
 import { getDictionaryText } from '@/utils/validate'
-import { getDictionaryAll } from "@/api/baseData";
+import { getDictionaryAll } from '@/api/baseData'
 export default {
-  name: "TemplateWidget",
+  name: 'TemplateWidget',
   data() {
     return {
       setRemote: [],
-      dictionary: [], //字典数据
-      dictionaryValidated: [], //字典验证类型
+      dictionary: [], // 字典数据
+      dictionaryValidated: [], // 字典验证类型
       loading: false,
       add: false,
       edit: false,
-      formLabelWidth: "100px",
+      formLabelWidth: '100px',
       addData: {
         // 新增数据
-        widgetName: "",
-        labelName: "",
-        placeholder: "",
-        fieldType: "",
-        validatedType: "",
-        fieldName: "",
-        fieldValue: ""
+        widgetName: '',
+        labelName: '',
+        placeholder: '',
+        fieldType: '',
+        validatedType: '',
+        fieldName: '',
+        fieldValue: ''
       },
       editData: {},
       page: {
         // 查询条件
-        id: "",
+        id: '',
         total: 40,
         current: 1,
         size: 10
       },
       listData: []
-    };
+    }
   },
   mounted() {
-    this.fetchData();
-    this.getTemplateWidgetAllFnc();
-    this.getDictionaryAll();
+    this.fetchData()
+    this.getTemplateWidgetAllFnc()
+    this.getDictionaryAll()
   },
   methods: {
     // 表单置空
     resetForm(formName) {
-      this.$refs[formName].resetFields();
+      this.$refs[formName].resetFields()
     },
     // 新增取消
     addCancelHandleClick(formName) {
-      this.add = false;
-      this.resetForm(formName);
+      this.add = false
+      this.resetForm(formName)
     },
     // 查询
     queryHandleClick() {
-      this.fetchData();
+      this.fetchData()
     },
     // 弹出修改页面并赋值
     editHandleClick(e) {
-      this.edit = true;
-      this.editData = e;
+      this.edit = true
+      this.editData = e
     },
     // curd
     addHandleClick(formName) {
@@ -374,49 +374,49 @@ export default {
             validatedType: this.addData.validatedType,
             fieldName: this.addData.fieldName,
             fieldValue: this.addData.fieldValue
-          };
+          }
           postTemplateWidget(param).then(res => {
             if (res.errorCode === 0) {
-              this.add = false;
-              this.resetForm(formName);
+              this.add = false
+              this.resetForm(formName)
               this.$message({
-                message: "添加成功",
-                type: "success"
-              });
+                message: '添加成功',
+                type: 'success'
+              })
             }
-            this.fetchData();
-          });
+            this.fetchData()
+          })
         } else {
-          this.$message.error("请完善信息!");
-          return false;
+          this.$message.error('请完善信息!')
+          return false
         }
-      });
+      })
     },
     deleteHandleClick(e) {
-      this.$confirm("此操作将永久删除该模板控件, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+      this.$confirm('此操作将永久删除该模板控件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
-        .then(async () => {
+        .then(async() => {
           deleteTemplateWidget(e).then(res => {
             if (res.errorCode === 0) {
-              this.add = false;
+              this.add = false
               this.$message({
-                message: "删除成功",
-                type: "success"
-              });
+                message: '删除成功',
+                type: 'success'
+              })
             }
-            this.fetchData();
-          });
+            this.fetchData()
+          })
         })
-        .catch(() => {});
+        .catch(() => {})
     },
     editSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           const param = {
-            id:this.editData.id,
+            id: this.editData.id,
             widgetName: this.editData.widgetName,
             labelName: this.editData.labelName,
             placeholder: this.editData.placeholder,
@@ -424,74 +424,73 @@ export default {
             validatedType: this.editData.validatedType,
             fieldName: this.editData.fieldName,
             fieldValue: this.editData.fieldValue
-          };
+          }
           putTemplateWidget(param).then(res => {
             if (res.errorCode === 0) {
               this.$message({
-                message: "编辑成功",
-                type: "success"
-              });
-              this.edit = false;
+                message: '编辑成功',
+                type: 'success'
+              })
+              this.edit = false
             }
-          });
+          })
         } else {
-          this.$message.error("请完善信息!");
-          return false;
+          this.$message.error('请完善信息!')
+          return false
         }
-      });
+      })
     },
-    //获取模板控件列表
+    // 获取模板控件列表
     fetchData() {
       getTemplateWidgetList(this.page).then(res => {
-        this.listData = res.result.list;
-        this.listData.forEach(v=>{
-            v.fieldType = getDictionaryText(v.fieldType)[0].text
-            v.validatedType = getDictionaryText(v.validatedType)[0].text
+        this.listData = res.result.list
+        this.listData.forEach(v => {
+          v.fieldType = getDictionaryText(v.fieldType)[0].text
+          v.validatedType = getDictionaryText(v.validatedType)[0].text
         })
-        this.page.total = res.result.total;
-      });
+        this.page.total = res.result.total
+      })
     },
     getTemplateWidgetAllFnc() {
       getTemplateWidgetAll().then(res => {
         this.setRemote = res.result.map(item => {
-          return { value: item.id, label: item.widgetName };
-        });
-      });
+          return { value: item.id, label: item.widgetName }
+        })
+      })
     },
-    //获取字典查询
+    // 获取字典查询
     getDictionaryAll() {
-      let param = {
-        dictGroup: "field_type"
-      };
-      let params = {
-        dictGroup: "validated_type"
-      };
+      const param = {
+        dictGroup: 'field_type'
+      }
+      const params = {
+        dictGroup: 'validated_type'
+      }
       getDictionaryAll(params).then(res => {
         this.dictionaryValidated = res.result.map(item => {
-          return { value: item.code, label: item.text };
-        });
-      });
+          return { value: item.code, label: item.text }
+        })
+      })
       getDictionaryAll(param).then(res => {
         this.dictionary = res.result.map(item => {
-          if(item.code === 'fixed'){
-             return { value: item.code, label: item.text,disabled:true};
-          }else{
-            return { value: item.code, label: item.text };
+          if (item.code === 'fixed') {
+            return { value: item.code, label: item.text, disabled: true }
+          } else {
+            return { value: item.code, label: item.text }
           }
-           
-        });
-      });
+        })
+      })
     },
     handleSizeChange(val) {
-      this.page.size = val;
-      this.fetchData();
+      this.page.size = val
+      this.fetchData()
     },
     handleCurrentChange(val) {
-      this.page.current = val;
-      this.fetchData();
+      this.page.current = val
+      this.fetchData()
     }
   }
-};
+}
 </script>
 
 <style scoped>

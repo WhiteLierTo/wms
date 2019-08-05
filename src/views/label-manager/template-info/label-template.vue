@@ -38,36 +38,6 @@
           </div>
           <!--列表-->
           <el-table border :data="listData" style="width: 100%" @expand-change="expandSelect">
-            <el-table-column type="expand">
-              <el-table
-                v-loading="loading"
-                :data="tableData"
-                height="250"
-                border
-                style="width: 100%"
-              >
-                <el-table-column prop="x" label="x轴" width="120" />
-                <el-table-column prop="y" label="y轴" width="120" />
-                <el-table-column prop="width" label="宽度" width="120" />
-                <el-table-column prop="height" label="高度" width="120" />
-                <el-table-column prop="brushType" label="画笔类型" width="120" />
-                <el-table-column prop="fieldType" label="字段类型" width="120" />
-                <el-table-column prop="fieldName" label="字段名称" width="120" />
-                <el-table-column prop="labelName" label="标签值" width="120" />
-                <el-table-column prop="placeholder" label="占位符" width="120" />
-                <el-table-column prop="fontSize" label="字体大小" width="120" />
-                <el-table-column prop="fontName" label="字体名称" width="120" />
-                <el-table-column label="操作">
-                  <template slot-scope="scope">
-                    <el-button
-                      type="text"
-                      size="small"
-                      @click="deleteEleHandleClick(scope.row)"
-                    >删除</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-table-column>
             <el-table-column prop="templateName" label="模板名称" />
             <el-table-column prop="width" label="标签宽度" />
             <el-table-column prop="height" label="标签高度" />
@@ -81,7 +51,7 @@
             </el-table-column>
             <el-table-column label="操作" width="180">
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="addEleHandleClick(scope.row.id)">添加元素</el-button>
+                <el-button type="text" size="small" @click="addEleHandleClick(scope.row.id)">添加/查看元素</el-button>
                 <el-button type="text" size="small" @click="editHandleClick(scope.row)">编辑</el-button>
                 <el-button type="text" size="small" @click="deleteHandleClick(scope.row.id)">删除</el-button>
               </template>
@@ -300,7 +270,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row></el-row>
+          <el-row />
           <el-row>
             <el-col>
               <el-form-item
@@ -333,14 +303,12 @@
 import {
   getLabelTemplateList,
   getAllLabelTemplateList,
-  deleteTemplate,
   addTemplate,
   updateTemplate,
   getAllLabelTemplate,
-  deleteLabelTemplate,
+  deleteLabelTemplate
 } from '@/api/label'
-import { createHash } from 'crypto';
-import {getDictionaryAll} from '@/api/baseData'
+import { getDictionaryAll } from '@/api/baseData'
 export default {
   name: 'LabelTemplate',
   data() {
@@ -349,8 +317,8 @@ export default {
         current: 1,
         size: 10,
         templateName: '',
-        sort:'create_at',
-        deleted:false
+        sort: 'create_at',
+        deleted: false
       },
       listData: [],
       total: 0, // 总数
@@ -369,7 +337,7 @@ export default {
         x: '',
         y: '',
         direction: '',
-        labelType:'',
+        labelType: '',
         description: ''
       },
       directionList: [
@@ -384,21 +352,20 @@ export default {
       ],
       updateItem: {},
       tableData: [],
-      labelType:[],
+      labelType: [],
       templateId: '',
-      loading: false,
       eleId: ''
     }
   },
   mounted() {
     // 初始化标签列表
-    this.getLabelFnc();
+    this.getLabelFnc()
     // 初始化所有标签列表
-    this.getAllLabelTemplateListFnc();
+    this.getAllLabelTemplateListFnc()
     // 初始化所有元素
-    this.getAllLabelTemplateFnc();
-    //获取所有模板类型（字典）
-    this.getDictionaryAll();
+    this.getAllLabelTemplateFnc()
+    // 获取所有模板类型（字典）
+    this.getDictionaryAll()
   },
   methods: {
     // 查询
@@ -460,18 +427,6 @@ export default {
       // 初始化所有元素
       this.getAllLabelTemplateFnc()
     },
-    // 删除元素
-    deleteEleHandleClick(obj) {
-      this.eleId = obj.id
-      this.templateId = obj.templateId
-      this.$confirm('此操作将永久删除该元素, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.deleteLabelTemplateFnc()
-      })
-    },
     // 编辑
     editHandleClick(row) {
       this.updateItem = row
@@ -507,10 +462,10 @@ export default {
     },
     // 删除标签列表
     deleteTemplateFnc() {
-        let params = {
-          id:this.id,
-          deleted:true
-        }
+      const params = {
+        id: this.id,
+        deleted: true
+      }
       updateTemplate(params).then(res => {
         // 分页获取标签列表
         this.getLabelFnc()
@@ -545,16 +500,16 @@ export default {
         this.getLabelFnc()
       })
     },
-    //获取所有标签类型（字典）
+    // 获取所有标签类型（字典）
     getDictionaryAll() {
-      let param = {
-        dictGroup:'label_type'
+      const param = {
+        dictGroup: 'label_type'
       }
       getDictionaryAll(param).then(res => {
         this.labelType = res.result.map(item => {
-          return { value: item.code, label: item.text };
-        });
-      });
+          return { value: item.code, label: item.text }
+        })
+      })
     },
     // 获取所有元素
     getAllLabelTemplateFnc() {

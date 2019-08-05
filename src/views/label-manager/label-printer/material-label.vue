@@ -136,7 +136,7 @@
     title="标签预览"
     :visible.sync="preview"
   >
-    <el-carousel style="background:#f3f2f5"  height="400px">
+    <el-carousel  arrow="never"  style="background:#f3f2f5"  height="400px">
       <el-carousel-item>
         <img :src="src" style="max-width: 100%;max-height: 100%;display: block; margin: 0 auto;"/>
       </el-carousel-item>

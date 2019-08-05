@@ -246,40 +246,43 @@ export const constantRoutes = [{
                     }
                 ]
             }, {
-                path: 'label-data',
+                path: 'label-info',
                 component: () =>
-                    import ('@/views/label-manager/label-data'),
-                name: 'LabelData',
-                // eslint-disable-next-line indent
-                meta: {
-                    title: '标签数据',
-                    noCache: true
-                },
-                children: []
-            },
-            {
-                path: 'label-manager',
-                component: () =>
-                    import ('@/views/label-manager/label-manager'),
+                    import ('@/views/label-manager/label-info/index'),
+                redirect: '/label-manager/label-info/label-manager',
                 name: 'LabelManager',
-                // eslint-disable-next-line indent
                 meta: {
-                    title: '标签管理',
-                    noCache: true
+                    title: '标签信息'
                 },
-                children: []
-            },
-            {
-                path: 'label-operation-log',
-                component: () =>
-                    import ('@/views/label-manager/label-operation-log'),
-                name: 'LabelOperationLog',
-                // eslint-disable-next-line indent
-                meta: {
-                    title: '标签日志',
-                    noCache: true
-                },
-                children: []
+                children: [{
+                        path: 'label-data',
+                        component: () =>
+                            import ('@/views/label-manager/label-info/label-data'),
+                        name: 'LabelData',
+                        meta: {
+                            title: '标签数据'
+                        },
+                        hidden: true
+                    },
+                    {
+                        path: 'label-manager',
+                        component: () =>
+                            import ('@/views/label-manager/label-info/label-manager'),
+                        name: 'LabelManager',
+                        meta: {
+                            title: '标签列表'
+                        }
+                    },
+                    {
+                        path: 'label-operation-log',
+                        component: () =>
+                            import ('@/views/label-manager/label-info/label-operation-log'),
+                        name: 'LabelOperationLog',
+                        meta: {
+                            title: '标签日志'
+                        }
+                    }
+                ]
             },
             {
                 path: 'printer-manager',

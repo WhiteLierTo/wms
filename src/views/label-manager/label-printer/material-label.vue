@@ -65,7 +65,7 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item prop="direction" label="打印方向" :label-width="formLabelWidth">
-                  <el-input v-model="templateEle.direction" autocomplete="off" disabled />
+                  <el-input v-model="direction" autocomplete="off" disabled />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -95,17 +95,33 @@
     </div>
         <el-form ref="templateEle" :model="templateEle" class="demo-ruleForm quantity">
           <el-row>
-            <el-col :span="9">
+            <el-col :span="7">
               <el-form-item
                 prop="number"
                 label="张数"
                 :label-width="formLabelWidth"
-                :rules="[{ required: true, message: '请输入张数', trigger: 'blur' }]"
               >
-                <el-input v-model="number" autocomplete="off" />
+                <el-input type="number" v-model="number" autocomplete="off" />
               </el-form-item>
             </el-col>
-            <el-col :span="9">
+             <el-col :span="7">
+            <el-form-item
+                  prop="archived"
+                  label="是否存档"
+                  :label-width="formLabelWidth"
+                  :rules="[{ required: true, message: '请选择是否存档', trigger: 'blur' }]"
+                >
+                  <el-select v-model="templateEle.archived" placeholder="请选择是否存档" style="width:100%">
+                    <el-option
+                      v-for="item in archivedData"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
+            </el-col>
+            <el-col :span="7">
               <el-form>
                 <el-form-item
                   prop="id"
@@ -150,7 +166,8 @@ import {
   getPrinterAll,
   getlabelTemplateOne,
   getAllLabelTemplate,
-  printer
+  printer,
+  baseURL
 } from '@/api/label';
 import { getOneItemList } from '@/api/baseData';
 import {
@@ -180,11 +197,19 @@ export default {
       elementShow:false,
       flowPic: "",
       src:'',
+       archivedData: [{
+          value: true,
+          label: '是'
+        }, {
+          value: false,
+          label: '否'
+        }],
       template:{
           deleted:false,
           labelType:2
       },
-      tableData: []
+      tableData: [],
+      direction:''
     }
   },
   mounted() {
@@ -194,14 +219,10 @@ export default {
     this.getPrinterAllFnc();
   },
   methods: {
-    /* labelHandleClick() {
-      const url = 'demo.pdf'
-      window.open('/pdf/web/viewer.html?file=' + url)
-    }*/
         //标签预览
     printerViewHandleClick() {
       this.preview = true;
-      this.src = `http://116.62.212.169:8101/wms-label/print/preview?id=${this.templateEle.id}`
+      this.src = `${baseURL}print/preview?id=${this.templateEle.id}`
     },
     // 选择打印模板
     templateChange(val) {
@@ -216,6 +237,13 @@ export default {
     },
     // 打印事件
     printHandleClick() {
+       if(this.printer === '' || this.number === ''){
+         this.$message({
+              message: '请完善打印信息',
+              type: 'warning'
+            })
+          return
+      }
       this.tableData.forEach(v => {
         v.brushType = getDictionaryCode(v.brushType)[0].code
         v.fieldType = getDictionaryCode(v.fieldType)[0].code
@@ -254,6 +282,12 @@ export default {
     getlabelTemplateOneFnc() {
       getlabelTemplateOne(this.params).then(res => {
         this.templateEle = res.result
+        if(this.templateEle.direction === 1){
+          this.direction = '横向'
+        }
+        if(this.templateEle.direction === 0){
+          this.direction = '竖向'
+        }
       })
     },
     // 获取单个物料

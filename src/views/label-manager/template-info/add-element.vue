@@ -280,7 +280,7 @@ export default {
   methods: {
     // 根据字段类型 显示是否需要控件
     fieldChange(val) {
-      val === 'mapped' ? (this.show = true) : (this.show = false)
+      val === 'mapped' || val === 'label-qr'? (this.show = true) : (this.show = false)
     },
     // map映射 选择控件
     checkoutHandleClick() {

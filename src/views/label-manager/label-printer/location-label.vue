@@ -51,12 +51,12 @@
                 filterable
                 :rules="[{ required: true, message: '请选择打印库位', trigger: 'blur' }]"
               >
-                <el-select v-model="locationValue" placeholder="请选择库位" @change="locationChange">
+                <el-select multiple collapse-tags v-model="locationValue" placeholder="请选择库位">
                   <el-option
                     v-for="item in location"
-                    :key="item.id"
-                    :label="item.location"
-                    :value="item.id"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
                   />
                 </el-select>
               </el-form-item>
@@ -89,21 +89,23 @@
               </el-col>
               <el-col :span="8">
                 <el-form-item prop="direction" label="打印方向" :label-width="formLabelWidth">
-                  <el-input v-model="templateEle.direction" autocomplete="off" disabled />
+                  <el-input v-model="direction" autocomplete="off" disabled />
                 </el-form-item>
               </el-col>
             </el-row>
           </el-form>
         </el-card>
 
-      <div v-show="elementShow">
-        <div class="h-title1">模板元素</div>
-             <el-card class="box-card">
-          <div>
-                <el-row >
-                  <div  v-for="item in element" :key="item.id" style="margin:20px 0px 10px 0px ">
+        <div v-show="elementShow">
+          <div class="h-title1">模板元素</div>
+          <el-card class="box-card">
+            <div>
+              <el-row>
+                <div v-for="item in element" :key="item.id" style="margin:20px 0px 10px 0px ">
                   <el-col :span="4">
-                    <div style="margin:20px -5px 10px 20px;font-size:14px;font-weight:600">{{ item.labelName }}</div>
+                    <div
+                      style="margin:20px -5px 10px 20px;font-size:14px;font-weight:600"
+                    >{{ item.labelName }}</div>
                   </el-col>
                   <el-col style="margin-top:10px" :span="4">
                     <el-input
@@ -113,25 +115,37 @@
                       autocomplete="off"
                     />
                   </el-col>
-                  </div>
-            </el-row>
-          </div>
-        </el-card>
-    </div>
+                </div>
+              </el-row>
+            </div>
+          </el-card>
+        </div>
 
         <el-form ref="templateEle" :model="templateEle" class="demo-ruleForm quantity">
           <el-row>
-            <el-col :span="11">
-              <el-form-item
-                prop="number"
-                label="张数"
-                :label-width="formLabelWidth"
-                :rules="[{ required: true, message: '请输入张数', trigger: 'blur' }]"
-              >
-                <el-input v-model="number" autocomplete="off" />
+            <el-col :span="7">
+              <el-form-item prop="number" label="张数" :label-width="formLabelWidth">
+                <el-input type="number" v-model="number" autocomplete="off" />
               </el-form-item>
             </el-col>
-            <el-col :span="11">
+            <el-col :span="7">
+              <el-form-item
+                prop="archived"
+                label="是否存档"
+                :label-width="formLabelWidth"
+                :rules="[{ required: true, message: '请选择是否存档', trigger: 'blur' }]"
+              >
+                <el-select v-model="templateEle.archived" placeholder="请选择是否存档" style="width:100%">
+                  <el-option
+                    v-for="item in archivedData"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="7">
               <el-form>
                 <el-form-item
                   prop="id"
@@ -158,16 +172,13 @@
         </div>
       </el-card>
     </div>
-    <el-dialog
-    title="标签预览"
-    :visible.sync="preview"
-  >
-    <el-carousel arrow="never" style="background:#f3f2f5"  height="400px">
-      <el-carousel-item>
-        <img :src="src" style="max-width: 100%;max-height: 100%;display: block; margin: 0 auto;"/>
-      </el-carousel-item>
-    </el-carousel>
-  </el-dialog>
+    <el-dialog title="标签预览" :visible.sync="preview">
+      <el-carousel arrow="never" style="background:#f3f2f5" height="400px">
+        <el-carousel-item>
+          <img :src="src" style="max-width: 100%;max-height: 100%;display: block; margin: 0 auto;" />
+        </el-carousel-item>
+      </el-carousel>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -177,64 +188,78 @@ import {
   getAllLabelTemplate,
   getPrinterAll,
   printer,
-  printerView
+  printerView,
+  baseURL
 } from "@/api/label";
 import axios from "axios";
 import {
   getWarehouseAll,
   getLocationAll,
-  getLocationOne
+  getLocationOne,
+  getWarehouseOne
 } from "@/api/baseData";
 import { getDictionaryText, getDictionaryCode } from "@/utils/validate";
 export default {
-  name: 'GeneralLabel',
+  name: "GeneralLabel",
   data() {
     return {
       tableData: [],
       printerList: [],
-      value: '',
-      formLabelWidth: '120px',
-      input: '',
+      value: "",
+      formLabelWidth: "120px",
+      input: "",
       templateEle: {}, // 模板元素
       number: 1,
-      printer: '',
+      printer: "",
+      archivedData: [
+        {
+          value: true,
+          label: "是"
+        },
+        {
+          value: false,
+          label: "否"
+        }
+      ],
       location: [],
-      locationValue: "",
+      locationValue: [],
       warehouseValue: "",
       warehouse: [], //库房库位数据
       locationOne: {}, //单个库位信息
       element: [], //元素
       preview: false,
-      elementShow:false,
+      elementShow: false,
       flowPic: "",
-      src:'',
-      template:{
-          deleted:false,
-          labelType:3
+      src: "",
+      template: {
+        deleted: false,
+        labelType: 3
       },
+      direction:'',
+      warehouseName: ""
     };
   },
   mounted() {
     // 获取所有模板
-    this.getTemplateAll()
+    this.getTemplateAll();
     // 获取所有打印机
-    this.getPrinterAll()
+    this.getPrinterAll();
     // 获取所有库位
-    this.getLocationAll()
+    this.getLocationAll();
     // 获取所有库房
-    this.getWarehouseAll()
+    this.getWarehouseAll();
   },
   methods: {
     //标签预览
     printerViewHandleClick() {
       this.preview = true;
-      this.src = `http://116.62.212.169:8101/wms-label/print/preview?id=${this.templateEle.id}`
+      this.src = `${baseURL}print/preview?id=${this.templateEle.id}`;
     },
     // 库位选择后，映射字段
     locationChange(e) {
       const param = {
         id: e
-      }
+      };
       getLocationOne(param).then(res => {
         this.locationOne = res.result;
         this.locationFnc();
@@ -244,90 +269,128 @@ export default {
     locationFnc() {
       this.element.forEach(v => {
         if (v.fieldType === "mapped") {
-          v.fieldValue = this.locationOne.location;
+          v.fieldValue = `${this.warehouseName}-${this.locationOne.location}`;
         }
-      })
-    },
-    // 库房下拉获取库位
-    warehouseChange(e) {
-      this.getLocationAll(e)
-    },
-    // 打印事件
-    printHandleClick() {
+      });
       const ext = {
         labelTemplate: this.templateEle,
         labelTemplateElement: this.element
-      }
+      };
       const param = {
         ext: ext,
         number: this.number,
         printer: this.printer
-      }
+      };
       printer(param)
         .then(res => {
           if (res.errorCode === 0) {
             this.$message({
-              message: '打印成功',
-              type: 'success'
-            })
+              message: "打印成功",
+              type: "success"
+            });
           }
         })
-        .catch(() => {})
+        .catch(() => {});
     },
+    // 库房下拉获取库位
+    warehouseChange(e) {
+      this.getLocationAll(e);
+      const param = {
+        id: e
+      };
+      getWarehouseOne(param).then(res => {
+        this.warehouseName = res.result.warehouseName;
+      });
+    },
+    // 打印事件
+    printHandleClick() {
+      try {
+        this.element.forEach(v => {
+          if (v.fieldType === "input" && v.fieldValue === "") {
+            throw new Error();
+          }
+        });
+      } catch (e) {
+        this.$message({
+          message: "请完善模板元素信息",
+          type: "warning"
+        });
+        return
+      }
+      if (this.printer === "" || this.number === "") {
+        this.$message({
+          message: "请完善打印信息",
+          type: "warning"
+        });
+        return;
+      }
+      this.locationValue.forEach(v => {
+        this.locationChange(v);
+      });
+    },
+
     // 选中模板，获取模板及元素数据
     templateChange(e) {
       const param = {
         id: e
-      }
+      };
       const params = {
         templateId: e
-      }
+      };
       getlabelTemplateOne(param).then(res => {
-        this.templateEle = res.result
-      })
+        this.templateEle = res.result;
+        if(this.templateEle.direction === 1){
+          this.direction = '横向'
+        }
+        if(this.templateEle.direction === 0){
+          this.direction = '竖向'
+        }
+      });
       getAllLabelTemplate(params).then(res => {
         this.element = res.result;
-        if(res.result.length>0){
+        if (res.result.length > 0) {
           this.elementShow = true;
         }
-         this.element.forEach(v => {
+        this.element.forEach(v => {
           if (v.fieldType === "input") {
             v.show = false;
           } else {
             v.show = true;
           }
         });
-      })
+      });
     },
     // 查询所有打印机
     getPrinterAll() {
       getPrinterAll().then(res => {
-        this.printerList = res.result
-      })
+        this.printerList = res.result;
+      });
     },
     // 下拉查询库位列表
     getLocationAll(e) {
       const param = {
         wid: e
-      }
+      };
       getLocationAll(param).then(res => {
-        this.location = res.result
-      })
+        this.location = res.result.map(item => {
+          return { value: item.id, label: item.location };
+        });
+      });
     },
     // 下拉查询库房列表
     getWarehouseAll() {
       getWarehouseAll().then(res => {
-        this.warehouse = res.result
-      })
+        this.warehouse = res.result;
+      });
     },
     // 查询所有模板
     getTemplateAll() {
       getAllLabelTemplateList(this.template).then(res => {
-        this.tableData = res.result
-      })
+        this.tableData = res.result;
+      });
     }
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 .box-card {

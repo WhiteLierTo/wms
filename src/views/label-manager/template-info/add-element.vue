@@ -314,7 +314,8 @@ export default {
         fontSizeShow: false,
         fontStyleShow: false
       },
-      imageUrl: ''
+      imageUrl: '',
+      status: ''
     }
   },
   mounted() {
@@ -345,35 +346,46 @@ export default {
           Object.keys(this.showObj).forEach(key => (this.showObj[key] = false))
           break
         case 'image':
+          this.show = false
           Object.keys(this.showObj).forEach(key => (this.showObj[key] = false))
           this.updateShow = true
+          this.fieldTypeShow = false
           break
         case 'rect':
+          this.show = false
           this.updateShow = false
+          this.fieldTypeShow = false
           Object.keys(this.showObj).forEach(key => (this.showObj[key] = false))
           break
         case 'oval':
+          this.show = false
           this.updateShow = false
+          this.fieldTypeShow = false
           Object.keys(this.showObj).forEach(key => (this.showObj[key] = false))
           break
         case 'td-code':
           this.updateShow = false
+          this.fieldTypeShow = true
           this.showObj.fieldNameShow = true
           this.showObj.fieldValShow = true
           this.showObj.placeholderShow = true
           break
         case 'od-code':
+          this.show = false
           this.updateShow = false
+          this.fieldTypeShow = false
           this.showObj.fieldNameShow = true
           this.showObj.fieldValShow = true
           this.showObj.placeholderShow = true
           break
         case 'string':
+          this.show = false
           this.updateShow = false
           this.fieldTypeShow = true
           Object.keys(this.showObj).forEach(key => (this.showObj[key] = true))
           break
       }
+      this.status = val
     },
     fieldChange(val) {
       val === 'mapped' ? (this.show = true) : (this.show = false)
@@ -387,7 +399,6 @@ export default {
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
       this.eleObj.fieldValue = res.result
-      console.error('图片url:' + this.eleObj.fieldValue)
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg'
@@ -428,7 +439,116 @@ export default {
     // 生成元素
     eleHandleClick() {
       this.eleObj.templateId = sessionStorage.getItem('templateId')
-      this.addlabelTemplateEleFnc('eleObj')
+      if (!this.eleObj.brushType) {
+        this.$message.error('请选择画笔类型!')
+      }
+      switch (this.status) {
+        case 'line':
+          if (
+            !this.eleObj.height ||
+            !this.eleObj.width ||
+            !this.eleObj.x ||
+            !this.eleObj.y ||
+            !this.eleObj.labelName
+          ) {
+            this.$message.error('请填写完整!')
+          } else {
+            this.addlabelTemplateEleFnc('eleObj')
+          }
+          break
+        case 'image':
+          if (
+            !this.eleObj.height ||
+            !this.eleObj.width ||
+            !this.eleObj.x ||
+            !this.eleObj.y ||
+            !this.eleObj.labelName ||
+            !this.imageUrl
+          ) {
+            this.$message.error('请填写完整!')
+          } else {
+            this.addlabelTemplateEleFnc('eleObj')
+          }
+          break
+        case 'rect':
+          if (
+            !this.eleObj.height ||
+            !this.eleObj.width ||
+            !this.eleObj.x ||
+            !this.eleObj.y ||
+            !this.eleObj.labelName
+          ) {
+            this.$message.error('请填写完整!')
+          } else {
+            this.addlabelTemplateEleFnc('eleObj')
+          }
+          break
+        case 'oval':
+          if (
+            !this.eleObj.height ||
+            !this.eleObj.width ||
+            !this.eleObj.x ||
+            !this.eleObj.y ||
+            !this.eleObj.labelName
+          ) {
+            this.$message.error('请填写完整!')
+          } else {
+            this.addlabelTemplateEleFnc('eleObj')
+          }
+          break
+        case 'td-code':
+          if (
+            !this.eleObj.height ||
+            !this.eleObj.width ||
+            !this.eleObj.x ||
+            !this.eleObj.y ||
+            !this.eleObj.labelName ||
+            !this.eleObj.placeholder ||
+            !this.eleObj.fieldName ||
+            !this.eleObj.fieldValue ||
+            !this.eleObj.fieldType
+          ) {
+            this.$message.error('请填写完整!')
+          } else {
+            this.addlabelTemplateEleFnc('eleObj')
+          }
+          break
+        case 'od-code':
+          if (
+            !this.eleObj.height ||
+            !this.eleObj.width ||
+            !this.eleObj.x ||
+            !this.eleObj.y ||
+            !this.eleObj.labelName ||
+            !this.eleObj.placeholder ||
+            !this.eleObj.fieldName ||
+            !this.eleObj.fieldValue
+          ) {
+            this.$message.error('请填写完整!')
+          } else {
+            this.addlabelTemplateEleFnc('eleObj')
+          }
+          break
+        case 'string':
+          if (
+            !this.eleObj.height ||
+            !this.eleObj.width ||
+            !this.eleObj.x ||
+            !this.eleObj.y ||
+            !this.eleObj.labelName ||
+            !this.eleObj.placeholder ||
+            !this.eleObj.fieldName ||
+            !this.eleObj.fontName ||
+            !this.eleObj.fontSize ||
+            !this.eleObj.fontStyle ||
+            !this.eleObj.fieldValue
+          ) {
+            this.$message.error('请填写完整!')
+          } else {
+            this.addlabelTemplateEleFnc('eleObj')
+          }
+          break
+      }
     },
     // 添加元素
     addlabelTemplateEleFnc(formName) {

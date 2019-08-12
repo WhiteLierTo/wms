@@ -112,6 +112,13 @@ export const constantRoutes = [{
     name: 'historicalRecord',
     meta: { title: '出入库历史' },
     children: []
+  }, {
+    path: 'base-data',
+    component: () =>
+                import('@/views/data-manager/base-data'),
+    name: 'baseData',
+    meta: { title: 'execl导入' },
+    children: []
   }]
 },
 {

@@ -4,6 +4,9 @@
     <div class="body">
       <el-card class="box-card">
         <section>
+          <div style="float:left;margin-top:10px">
+            <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload" />
+          </div>
           <div style="float:right">
             <!--工具条-->
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px">
@@ -224,8 +227,10 @@ import {
   postWarehouse,
   getWarehouseAll
 } from '@/api/baseData'
+import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 export default {
   name: 'WarehouseManager',
+  components: { UploadExcelComponent },
   data() {
     return {
       remote: [],
@@ -265,7 +270,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchData()
+    // this.fetchData()
   },
   methods: {
     // 查询
@@ -378,11 +383,27 @@ export default {
     handleCurrentChange(val) {
       this.page.current = val
       this.fetchData()
+    },
+    beforeUpload(file) {
+      const isLt1M = file.size / 1024 / 1024 < 1
+      if (isLt1M) {
+        return true
+      }
+      this.$message({
+        message: 'Please do not upload files larger than 1m in size.',
+        type: 'warning'
+      })
+      return false
+    },
+    handleSuccess({ results, header }) {
+      this.listData = results
+      // this.tableHeader = header
+      console.log('表头:' + JSON.stringify(header))
+      console.log('列表:' + JSON.stringify(results))
     }
   }
 }
 </script>
 
 <style scoped>
-
 </style>

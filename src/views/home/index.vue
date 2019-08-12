@@ -1,6 +1,7 @@
 <template>
   <div class="home-container">
     <div class="home-text">欢迎使用简易版仓库管理系统:admin</div>
+
   </div>
 </template>
 

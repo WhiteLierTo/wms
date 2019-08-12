@@ -505,7 +505,6 @@ export default {
             !this.eleObj.labelName ||
             !this.eleObj.placeholder ||
             !this.eleObj.fieldName ||
-            !this.eleObj.fieldValue ||
             !this.eleObj.fieldType
           ) {
             this.$message.error('请填写完整!')

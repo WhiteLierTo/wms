@@ -236,7 +236,8 @@ export default {
         labelType: 3
       },
       direction:'',
-      warehouseName: ""
+      warehouseName: "",
+      warehouseId:'',
     };
   },
   mounted() {
@@ -267,9 +268,17 @@ export default {
     },
     //库位改变,映射赋值
     locationFnc() {
+      let params = {
+        warehouseId:this.warehouseId,
+        warehouseName:this.warehouseName,
+        location:this.locationOne.location
+      }
       this.element.forEach(v => {
         if (v.fieldType === "mapped") {
-          v.fieldValue = `${this.warehouseName}-${this.locationOne.location}`;
+          v.fieldValue = `${this.locationOne[v.fieldName]}`;
+        }
+        if (v.fieldType === "json-location") {
+          v.fieldValue = params;
         }
       });
       const ext = {
@@ -295,6 +304,7 @@ export default {
     // 库房下拉获取库位
     warehouseChange(e) {
       this.getLocationAll(e);
+      this.warehouseId = e;
       const param = {
         id: e
       };

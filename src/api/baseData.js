@@ -1,7 +1,7 @@
 // 基础数据接口
 import request from '@/utils/request'
-const baseURL = 'http://116.62.212.169:8100/wms-main/'
-// const baseURL = 'http://172.16.28.17:8100/wms-main/'
+export const baseURL = 'http://116.62.212.169:8100/wms-main/'
+// export const baseURL = 'http://192.18.1.149:8100/wms-main/'
 
 // 获取库房列表
 export function getWarehouseList(params) {

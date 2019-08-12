@@ -10,6 +10,23 @@
               <el-form :inline="true" :model="page">
                 <el-form-item>
                   <el-select
+                    v-model="page.batchNumber"
+                    filterable
+                    clearable
+                    reserve-keyword
+                    placeholder="批次"
+                    size="small"
+                  >
+                    <el-option
+                      v-for="item in batch"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.label"
+                    />
+                  </el-select>
+                </el-form-item>
+                <el-form-item>
+                  <el-select
                     v-model="page.itemId"
                     filterable
                     clearable
@@ -22,6 +39,40 @@
                       :key="item.value"
                       :label="item.label"
                       :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
+                <el-form-item>
+                  <el-select
+                    v-model="page.warehouse"
+                    filterable
+                    clearable
+                    reserve-keyword
+                    placeholder="库房"
+                    size="small"
+                  >
+                    <el-option
+                      v-for="item in warehouse"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.label"
+                    />
+                  </el-select>
+                </el-form-item>
+                <el-form-item>
+                  <el-select
+                    v-model="page.location"
+                    filterable
+                    clearable
+                    reserve-keyword
+                    placeholder="库位"
+                    size="small"
+                  >
+                    <el-option
+                      v-for="item in location"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.label"
                     />
                   </el-select>
                 </el-form-item>
@@ -81,13 +132,19 @@
 import {
   getHistoricalRecordList,
   deleteHistoricalRecord,
-  getAllItemList
+  getAllItemList,
+  getAllinvBatchList,
+  getWarehouseAll,
+  getLocationAll
 } from '@/api/baseData'
 export default {
   name: 'HistoricalRecord',
   data() {
     return {
       item: [],
+      batch:[],
+      warehouse:[],
+      location:[],
       setRemote: [],
       formLabelWidth: '80px',
       page: {
@@ -96,14 +153,18 @@ export default {
         total: 40,
         current: 1,
         size: 10,
-        sort: 'create_at'
+        sort: 'create_at',
+        batchNumber:'',
       },
       listData: []
     }
   },
   mounted() {
-    this.fetchData()
-    this.getItem()
+    this.fetchData();
+    this.getItem();
+    this.getBatch();
+    this.getWarehouse();
+    this.getLocation();
   },
   methods: {
     // 查询
@@ -137,10 +198,35 @@ export default {
         this.page.total = res.result.total
       })
     },
-    getItem() {
+    //获取所有物料
+     getItem() {
       getAllItemList().then(res => {
         this.item = res.result.map(item => {
           return { value: item.id, label: item.id }
+        })
+      })
+    },
+       //获取所有批次
+    getBatch() {
+      getAllinvBatchList().then(res => {
+        this.batch = res.result.map(item => {
+          return { value: item.id, label: item.batchNumber }
+        })
+      })
+    },
+       //获取所有库房
+    getWarehouse() {
+      getWarehouseAll().then(res => {
+        this.warehouse = res.result.map(item => {
+          return { value: item.id, label: item.warehouseName }
+        })
+      })
+    },
+       //获取所有库位
+    getLocation() {
+      getLocationAll().then(res => {
+        this.location = res.result.map(item => {
+          return { value: item.id, label: item.location }
         })
       })
     },

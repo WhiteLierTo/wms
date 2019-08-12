@@ -15,7 +15,27 @@
                     clearable
                     remote
                     reserve-keyword
-                    placeholder="单位名称"
+                    placeholder="原单位名称"
+                    :remote-method="remoteMethod"
+                    :loading="loading"
+                    size="small"
+                  >
+                    <el-option
+                      v-for="item in remote"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
+                <el-form-item>
+                  <el-select
+                    v-model="page.unitTo"
+                    filterable
+                    clearable
+                    remote
+                    reserve-keyword
+                    placeholder="目标单位名称"
                     :remote-method="remoteMethod"
                     :loading="loading"
                     size="small"
@@ -72,7 +92,7 @@
 
     <!--新增-->
     <div>
-      <el-dialog title="新增单位" :visible.sync="add">
+      <el-dialog title="新增单位转换" :visible.sync="add">
         <el-form ref="addData" :model="addData" class="demo-ruleForm">
           <el-row>
             <el-col :span="11">
@@ -84,7 +104,8 @@
                   { required: true, message: '物料名称不能为空'}
                 ]"
               >
-                <el-select v-model="addData.itemId" style="width:100%" placeholder="请选择物料">
+                <el-select filterable
+                    clearable v-model="addData.itemId" style="width:100%" placeholder="请选择物料">
                   <el-option
                     v-for="item in item"
                     :key="item.value"
@@ -124,7 +145,7 @@
                   { required: true, message: '换算系数不能为空'}
                 ]"
               >
-                <el-input v-model="addData.coefficient" autocomplete="off" />
+                <el-input type="number" v-model="addData.coefficient" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
@@ -132,9 +153,6 @@
                 prop="unitTo"
                 label="换算单位"
                 :label-width="formLabelWidth"
-                :rules="[
-                  { required: true, message: '换算单位不能为空'},
-                ]"
               >
                 <el-select v-model="addData.unitTo" style="width:100%" placeholder="请选择换算单位">
                   <el-option
@@ -151,9 +169,6 @@
             prop="description"
             label="描述"
             :label-width="formLabelWidth"
-            :rules="[
-              { required: true, message: '描述不能为空'},
-            ]"
           >
             <el-input
               v-model="addData.description"
@@ -166,7 +181,7 @@
         </el-form>
 
         <div slot="footer" class="dialog-footer">
-          <el-button @click="addCancelHandleClick()">取 消</el-button>
+          <el-button @click="addCancelHandleClick('addData')">取 消</el-button>
           <el-button type="primary" @click="addHandleClick('addData')">确 定</el-button>
         </div>
       </el-dialog>
@@ -174,7 +189,7 @@
 
     <!--编辑-->
     <div>
-      <el-dialog title="编辑单位" :visible.sync="edit">
+      <el-dialog title="编辑单位转换" :visible.sync="edit">
         <el-form ref="editData" :model="editData" class="demo-ruleForm">
           <el-row>
             <el-col :span="11">
@@ -186,7 +201,7 @@
                   { required: true, message: '物料名称不能为空'}
                 ]"
               >
-                <el-select v-model="editData.itemId" style="width:100%" placeholder="请选择物料">
+                <el-select disabled v-model="editData.itemId" style="width:100%" placeholder="请选择物料">
                   <el-option
                     v-for="item in item"
                     :key="item.value"
@@ -205,7 +220,7 @@
                   { required: true, message: '单位名称不能为空'},
                 ]"
               >
-                <el-select v-model="editData.unit" style="width:100%" placeholder="请选择单位">
+                <el-select disabled v-model="editData.unit" style="width:100%" placeholder="请选择单位">
                   <el-option
                     v-for="item in setRemote"
                     :key="item.value"
@@ -226,7 +241,7 @@
                   { required: true, message: '换算系数不能为空'}
                 ]"
               >
-                <el-input v-model="editData.coefficient" autocomplete="off" />
+                <el-input type="number" v-model="editData.coefficient" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
@@ -234,11 +249,9 @@
                 prop="unitTo"
                 label="换算单位"
                 :label-width="formLabelWidth"
-                :rules="[
-                  { required: true, message: '换算单位不能为空'},
-                ]"
+               
               >
-                <el-select v-model="editData.unitTo" style="width:100%" placeholder="请选择换算单位">
+                <el-select disabled v-model="editData.unitTo" style="width:100%" placeholder="请选择换算单位">
                   <el-option
                     v-for="item in setRemote"
                     :key="item.value"
@@ -253,9 +266,7 @@
             prop="description"
             label="描述"
             :label-width="formLabelWidth"
-            :rules="[
-              { required: true, message: '描述不能为空'},
-            ]"
+           
           >
             <el-input
               v-model="editData.description"
@@ -285,6 +296,7 @@ import {
   deleteUnitConversion,
   getUnitAll
 } from '@/api/baseData'
+import { positiveNumber } from '@/utils/validate';
 export default {
   name: 'UnitConversion',
   data() {
@@ -307,10 +319,12 @@ export default {
       editData: {},
       page: {
         // 查询条件
-        // unit: '',
+        unit: '',
+        unitTo: '',
         total: 40,
         current: 1,
-        size: 10
+        size: 10,
+        sort:'create_at'
       },
       listData: []
     }
@@ -319,14 +333,14 @@ export default {
     this.fetchData()
   },
   methods: {
+    //表单清空
+       resetForm(formName) {
+        this.$refs[formName].resetFields();
+      },
     // 新增取消
-    addCancelHandleClick() {
-      this.add = false
-      this.addData.unit = ''
-      this.addData.description = ''
-      this.addData.unitTo = ''
-      this.addData.itemId = ''
-      this.addData.coefficient = ''
+    addCancelHandleClick(formName) {
+     this.add = false;
+     this.resetForm(formName)
     },
     // 查询
     queryHandleClick() {
@@ -353,6 +367,20 @@ export default {
     },
     // curd
     addHandleClick(formName) {
+       if (positiveNumber(this.addData.coefficient) === false) {
+            this.$message({
+              message: '数量应为有效正整数',
+              type: 'warning'
+            })
+            return;
+          }
+      if( this.addData.unit === this.addData.unitTo){
+        this.$message({
+                message: '原单位和目标单位不可一致',
+                type: 'warning'
+              })
+              return
+      }
       this.$refs[formName].validate(valid => {
         if (valid) {
           const param = {
@@ -375,7 +403,8 @@ export default {
                 type: 'success'
               })
             }
-            this.fetchData()
+            this.fetchData();
+            this.resetForm(formName)
           })
         } else {
           this.$message.error('请完善信息!')
@@ -406,6 +435,13 @@ export default {
     editSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+        if (positiveNumber(this.editData.coefficient) === false) {
+            this.$message({
+              message: '数量应为有效正整数',
+              type: 'warning'
+            })
+            return;
+          }
           const param = {
             id: this.editData.id,
             coefficient: this.editData.coefficient,

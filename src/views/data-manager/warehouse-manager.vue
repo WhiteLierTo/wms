@@ -4,9 +4,6 @@
     <div class="body">
       <el-card class="box-card">
         <section>
-          <div style="float:left;margin-top:10px">
-            <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload" />
-          </div>
           <div style="float:right">
             <!--工具条-->
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px">
@@ -57,6 +54,20 @@
                 <el-form-item>
                   <el-button size="small" type="primary" @click="add = true">{{ $t('header.add') }}</el-button>
                 </el-form-item>
+                <el-form-item>
+                   <el-upload
+                    :action="excelUrl"
+                    :before-upload="beforeUpload"
+                    :on-success="handleSuccess"
+                    :show-file-list="false">
+                    <el-button class="checkout" size="small" type="success" >
+                    导入<i class="el-icon-download el-icon--right"></i>
+                    </el-button>
+                  </el-upload>
+                </el-form-item>
+                <el-form-item>
+                  <el-button size="small" type="success" @click="exportHandleClick">导出<i class="el-icon-upload2 el-icon--right"></i></el-button>
+                </el-form-item>
               </el-form>
             </el-col>
           </div>
@@ -95,7 +106,7 @@
     <!--新增-->
     <div>
       <el-dialog title="新增仓库" :visible.sync="add">
-        <el-form :model="addData" class="demo-ruleForm">
+        <el-form  ref="addData" :model="addData" class="demo-ruleForm">
           <el-row>
             <el-col :span="11">
               <el-form-item
@@ -150,8 +161,8 @@
         </el-form>
 
         <div slot="footer" class="dialog-footer">
-          <el-button @click="add = false">取 消</el-button>
-          <el-button type="primary" @click="addHandleClick">确 定</el-button>
+          <el-button @click="cancle('addData')">取 消</el-button>
+          <el-button type="primary" @click="addHandleClick('addData')">确 定</el-button>
         </div>
       </el-dialog>
     </div>
@@ -225,7 +236,8 @@ import {
   getWarehouseList,
   putWarehouse,
   postWarehouse,
-  getWarehouseAll
+  getWarehouseAll,
+  baseURL
 } from '@/api/baseData'
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 export default {
@@ -233,6 +245,7 @@ export default {
   components: { UploadExcelComponent },
   data() {
     return {
+      excelUrl:`${baseURL}/bdWarehouse/excel/import`,
       remote: [],
       setRemote: [],
       loading: false,
@@ -263,6 +276,7 @@ export default {
         warehouseLock: '',
         warehouseName: '',
         total: 40,
+        sort:'create_at',
         current: 1,
         size: 10
       },
@@ -270,9 +284,31 @@ export default {
     }
   },
   mounted() {
-    // this.fetchData()
+    this.fetchData()
   },
   methods: {
+     beforeUpload(file) {
+ 
+    },
+    handleSuccess(res,file) {
+       if(res.errorCode==0){
+          this.$message.success('上传成功，更新数据：'+res.result+'条');
+        }else{
+          this.$message.error('上传失败：'+JSON.stringify(res.errorCode));
+        } 
+        this.fetchData();
+    },
+        //export
+    exportHandleClick(){
+      window.open(
+         `${baseURL}/bdWarehouse/excel/export`
+        );
+    },
+    //取消清空数据
+    cancle(formName){
+      this.add = false;
+      this.resetForm(formName);
+    },
     // 查询
     queryHandleClick() {
       this.fetchData()
@@ -297,15 +333,16 @@ export default {
       }
     },
     // curd
-    addHandleClick() {
-      if (!this.addData.warehouseName || !this.addData.description) {
+    addHandleClick(formName) {
+       this.$refs[formName].validate((valid) => {
+/*       if (!this.addData.warehouseName || !this.addData.description) {
         this.$message({
           showClose: true,
           message: '请完善信息',
           type: 'warning'
         })
         return
-      }
+      } */
       const param = {
         id: this.addData.id,
         description: this.addData.description,
@@ -320,9 +357,14 @@ export default {
             type: 'success'
           })
         }
-        this.fetchData()
+        this.fetchData();
+        this.resetForm(formName)
       })
+       });
     },
+     resetForm(formName) {
+        this.$refs[formName].resetFields();
+      },
     deleteHandleClick() {
       this.$confirm('此操作将永久删除该仓库, 是否继续?', '提示', {
         confirmButtonText: '确定',

@@ -86,7 +86,7 @@
                     <span>{{ props.row.humidityUpperLimit }}度</span>
                   </el-form-item>
                   <el-form-item label="湿度下限">
-                    <span>{{ props.row.humidityUpperLimit }}度</span>
+                    <span>{{ props.row.humidityLowerLimit }}度</span>
                   </el-form-item>
                 </el-form>
               </template>
@@ -124,7 +124,7 @@
     <!--新增-->
     <div>
       <el-dialog title="新增仓库" :visible.sync="add">
-        <el-form :model="addData" class="demo-ruleForm">
+        <el-form ref="addData" :model="addData" class="demo-ruleForm">
           <el-row>
             <el-col :span="12">
               <el-form-item
@@ -205,7 +205,7 @@
         </el-form>
 
         <div slot="footer" class="dialog-footer">
-          <el-button @click="add = false">取 消</el-button>
+          <el-button @click="cancle('addData')">取 消</el-button>
           <el-button type="primary" @click="addHandleClick('addData')">确 定</el-button>
         </div>
       </el-dialog>
@@ -330,6 +330,7 @@ export default {
         // 查询条件
         location: '',
         locationLock: '',
+        sort:'create_at',
         wid: '',
         total: 40,
         current: 1,
@@ -343,6 +344,11 @@ export default {
     this.getWarehouseList()
   },
   methods: {
+    //取消清空数据
+    cancle(formName){
+      this.add = false;
+      this.resetForm(formName);
+    },
     // 查询
     queryHandleClick() {
       this.fetchData()
@@ -368,25 +374,44 @@ export default {
     },
     // curd
     addHandleClick(formName) {
-      if (!this.addData.wid || !this.addData.location) {
-        this.$message({
-          showClose: true,
-          message: '请完善信息',
-          type: 'warning'
-        })
-        return
-      }
-      this.postLocationFnc()
-      /*   this.$refs[formName].validate(valid => {
+        this.$refs[formName].validate((valid) => {
         if (valid) {
           this.postLocationFnc();
         } else {
           this.$message.error('请完善信息!')
           return false
         }
-      }) */
+      })
     },
     postLocationFnc() {
+      if(this.addData.tempUpperLimit<this.addData.tempLowerLimit){
+         this.$message({
+            message: '温度下限不能大于温度上限',
+            type: 'warning'
+          })
+          return
+      }
+      if(this.addData.tempUpperLimit.length>5||this.addData.tempLowerLimit.length>5){
+         this.$message({
+            message: '温度上下限不得超过五位数',
+            type: 'warning'
+          })
+          return
+      }
+       if(this.addData.humidityUpperLimit.length>5||this.addData.humidityLowerLimit.length>5){
+         this.$message({
+            message: '湿度上下限不得超过五位数',
+            type: 'warning'
+          })
+          return
+      }
+      if(this.addData.humidityUpperLimit<this.addData.humidityLowerLimit){
+         this.$message({
+            message: '湿度下限不能大于湿度上限',
+            type: 'warning'
+          })
+          return
+      }
       const param = {
         wid: this.addData.wid,
         location: this.addData.location,
@@ -408,7 +433,12 @@ export default {
           })
         }
       })
+       this.fetchData();
+       this.resetForm('addData');
     },
+    resetForm(formName) {
+        this.$refs[formName].resetFields();
+      },
     deleteHandleClick() {
       this.$confirm('此操作将永久删除该仓库, 是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -422,6 +452,7 @@ export default {
           })
         })
         .catch(() => {})
+       this.fetchData()
     },
     editSubmit() {
       if (!this.editData.warehouseName || !this.editData.description) {
@@ -432,7 +463,36 @@ export default {
         })
         return
       }
+      if(this.editData.tempUpperLimit<this.editData.tempLowerLimit){
+         this.$message({
+            message: '温度下限不能大于温度上限',
+            type: 'warning'
+          })
+          return
+      }
+      if(this.editData.tempUpperLimit.length>5||this.editData.tempLowerLimit.length>5){
+         this.$message({
+            message: '温度上下限不得超过五位数',
+            type: 'warning'
+          })
+          return
+      }
+       if(this.editData.humidityUpperLimit.length>5||this.editData.humidityLowerLimit.length>5){
+         this.$message({
+            message: '湿度上下限不得超过五位数',
+            type: 'warning'
+          })
+          return
+      }
+      if(this.editData.humidityUpperLimit<this.editData.humidityLowerLimit){
+         this.$message({
+            message: '湿度下限不能大于湿度上限',
+            type: 'warning'
+          })
+          return
+      }
       const param = {
+        id:this.editData.id,
         wid: this.editData.wid,
         tempUpperLimit: this.editData.tempUpperLimit,
         tempLowerLimit: this.editData.tempLowerLimit,
@@ -451,6 +511,7 @@ export default {
           this.edit = false
         }
       })
+       this.fetchData();
     },
     // 查询库位列表
     fetchData() {

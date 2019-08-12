@@ -11,15 +11,51 @@
                   <el-select
                     v-model="page.batchNumber"
                     filterable
-                    remote
-                    reserve-keyword
-                    placeholder="批次编号"
-                    :remote-method="remoteMethod"
-                    :loading="loading"
-                    size="small"
                     clearable
+                    reserve-keyword
+                    placeholder="批次"
+                    size="small"
                   >
-                    <el-option v-for="item in options" :key="item" :label="item" :value="item" />
+                    <el-option
+                      v-for="item in batch"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.label"
+                    />
+                  </el-select>
+                </el-form-item>
+                <el-form-item>
+                  <el-select
+                    v-model="page.itemId"
+                    filterable
+                    clearable
+                    reserve-keyword
+                    placeholder="物料编号"
+                    size="small"
+                  >
+                    <el-option
+                      v-for="item in item"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
+                <el-form-item>
+                  <el-select
+                    v-model="page.itemName"
+                    filterable
+                    clearable
+                    reserve-keyword
+                    placeholder="物料名称"
+                    size="small"
+                  >
+                    <el-option
+                      v-for="item in itemName"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.label"
+                    />
                   </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -28,7 +64,7 @@
                     type="primary"
                     style="bacground:#0076a8"
                     @click="referHandleClick"
-                  >查询</el-button>
+                  >{{ $t('header.query') }}</el-button>
                 </el-form-item>
                 <el-form-item>
                   <el-button size="small" type="primary" @click="add = true">新增</el-button>
@@ -135,7 +171,8 @@ import {
   addinvBatchList,
   getAllinvBatchList,
   getItemAllFnc,
-  getItemOne
+  getItemOne,
+  getAllItemList
 } from '@/api/baseData'
 import { dateFnc } from '@/utils/validate'
 export default {
@@ -144,6 +181,9 @@ export default {
     return {
       add: false,
       formLabelWidth: '120px',
+      batch:[],
+      item:[],
+      itemName:[],
       addData: {
         // 新增数据
         batchNumber: '',
@@ -173,7 +213,11 @@ export default {
     // 初始化所有批次列表
     this.getAllinvBatchFnc()
     // 获取全部物料
-    this.getItemAllFnc()
+    this.getItem();
+    // 获取全部批次
+    this.getBatch();
+    // 获取全部物料名称
+    this.getItemName();
   },
   methods: {
     // 单行新增选择物料下拉数据，用物料ID查询物料名称
@@ -272,14 +316,30 @@ export default {
         this.getinvBatchFnc()
       })
     },
-    // 获取全部物料
-    getItemAllFnc() {
-      getItemAllFnc().then(res => {
+    //获取所有物料
+     getItem() {
+      getAllItemList().then(res => {
         this.item = res.result.map(item => {
           return { value: item.id, label: item.id }
         })
       })
-    }
+    },
+       //获取所有批次
+    getBatch() {
+      getAllinvBatchList().then(res => {
+        this.batch = res.result.map(item => {
+          return { value: item.id, label: item.batchNumber }
+        })
+      })
+    },
+       //获取所有库房
+    getItemName() {
+      getAllItemList().then(res => {
+        this.itemName = res.result.map(item => {
+          return { value: item.id, label: item.itemName }
+        })
+    })
+  },
   }
 }
 </script>

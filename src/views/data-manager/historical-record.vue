@@ -15,8 +15,6 @@
                     clearable
                     reserve-keyword
                     placeholder="物料编号"
-                    :remote-method="remoteMethod"
-                    :loading="loading"
                     size="small"
                   >
                     <el-option

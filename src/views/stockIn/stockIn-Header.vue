@@ -51,6 +51,19 @@
                 <el-form-item>
                   <el-button size="small" type="primary" @click="add = true">{{ $t('header.add') }}</el-button>
                 </el-form-item>
+                 <el-form-item>
+                   <el-upload
+                    :action="excelUrl"
+                    :on-success="handleSuccess"
+                    :show-file-list="false">
+                    <el-button class="checkout" size="small" type="success" >
+                    导入<i class="el-icon-download el-icon--right"></i>
+                    </el-button>
+                  </el-upload>
+                </el-form-item>
+                <el-form-item>
+                  <el-button size="small" type="success" @click="exportHandleClick">导出<i class="el-icon-upload2 el-icon--right"></i></el-button>
+                </el-form-item>
               </el-form>
             </el-col>
           </div>
@@ -101,8 +114,8 @@
             </el-table-column>
             <el-table-column prop="vendorId" label="供应商ID" />
             <el-table-column prop="vendorName" label="供应商名称" />
+            <el-table-column  prop="typeName" label="外部单据类型"/>
             <el-table-column prop="billNumber" label="外部单据编号" />
-            <!-- <el-table-column  prop="billType" label="外部单据类型"></el-table-column> -->
             <el-table-column prop="state" label="入库单说明" />
             <el-table-column prop="status" label="状态">
               <template slot-scope="scope">
@@ -594,13 +607,15 @@ import {
   getUnitAll,
   getItemAllFnc,
   getItemOne,
-  getBatchOne
+  getBatchOne,
+  baseURL
 } from '@/api/baseData';
 import { positiveNumber } from '@/utils/validate';
 export default {
   name: 'stockIn-Header',
   data() {
     return {
+      excelUrl:`${baseURL}/invStockInHeader/excel/import`,
       remote: [],
       loading: false,
       setRemote: [],
@@ -690,6 +705,20 @@ export default {
     this.getItemAllFnc()
   },
   methods: {
+     handleSuccess(res,file) {
+       if(res.errorCode==0){
+          this.$message.success('上传成功，更新数据：'+res.result+'条');
+        }else{
+          this.$message.error('上传失败：'+JSON.stringify(res.errorCode));
+        } 
+        this.fetchData();
+    },
+        //export
+    exportHandleClick(){
+      window.open(
+         `${baseURL}/invStockInHeader/excel/export`
+        );
+    },
     // 单行取消
     editLineCancle() {
       this.editLine = false
@@ -997,6 +1026,7 @@ export default {
     },
     // 新增取消
     addCancelHandleClick(formName) {
+      this.add = false;
       this.resetForm(formName)
     },
     // 查询

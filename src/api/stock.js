@@ -1,14 +1,14 @@
 // 出入库接口
 import request from '@/utils/request'
 const baseURL = 'http://116.62.212.169:8100/wms-main/'
-// const baseURL = 'http://172.16.28.17:8100/wms-main/'
+// const baseURL = 'http://172.16.28.202:8100/wms-main/'
 
 // 入库
 // 获取单头列表
 export function getStockInHeader(params) {
   return request({
     baseURL,
-    url: 'invStockInHeader/list',
+    url: 'invStockInHeader/mine/list',
     method: 'get',
     params
   })

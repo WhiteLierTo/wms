@@ -8,7 +8,8 @@
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
               <el-form :inline="true" :model="page">
                 <el-form-item>
-                  <el-select
+                  <el-input clearable placeholder="库位编号"  size="small" v-model="page.location"></el-input>
+                  <!-- <el-select
                     v-model="page.location"
                     filterable
                     clearable
@@ -25,7 +26,7 @@
                       :label="item.label"
                       :value="item.value"
                     />
-                  </el-select>
+                  </el-select> -->
                 </el-form-item>
                 <el-form-item>
                   <el-select
@@ -363,7 +364,7 @@ export default {
        if(res.errorCode==0){
           this.$message.success('上传成功，更新数据：'+res.result+'条');
         }else{
-          this.$message.error('上传失败：'+JSON.stringify(res.errorCode));
+          this.$message.error('上传失败：'+JSON.stringify(res.message));
         } 
         this.fetchData();
     },

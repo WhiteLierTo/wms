@@ -113,9 +113,7 @@
                 prop="itemId"
                 label="物料"
                 :label-width="formLabelWidth"
-                :rules="[
-                  { required: true, message: '物料名称不能为空'}
-                ]"
+                
               >
                 <el-select filterable
                     clearable v-model="addData.itemId" style="width:100%" placeholder="请选择物料">
@@ -166,6 +164,9 @@
                 prop="unitTo"
                 label="换算单位"
                 :label-width="formLabelWidth"
+                  :rules="[
+                  { required: true, message: '换算单位不能为空'},
+                ]"
               >
                 <el-select v-model="addData.unitTo" style="width:100%" placeholder="请选择换算单位">
                   <el-option
@@ -173,6 +174,9 @@
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
+                    :rules="[
+                  { required: true, message: '换算单位不能为空'},
+                ]"
                   />
                 </el-select>
               </el-form-item>
@@ -210,9 +214,6 @@
                 prop="itemId"
                 label="物料"
                 :label-width="formLabelWidth"
-                :rules="[
-                  { required: true, message: '物料名称不能为空'}
-                ]"
               >
                 <el-select disabled v-model="editData.itemId" style="width:100%" placeholder="请选择物料">
                   <el-option
@@ -262,7 +263,9 @@
                 prop="unitTo"
                 label="换算单位"
                 :label-width="formLabelWidth"
-               
+                :rules="[
+                  { required: true, message: '换算单位不能为空'},
+                ]"
               >
                 <el-select disabled v-model="editData.unitTo" style="width:100%" placeholder="请选择换算单位">
                   <el-option
@@ -352,7 +355,7 @@ export default {
        if(res.errorCode==0){
           this.$message.success('上传成功，更新数据：'+res.result+'条');
         }else{
-          this.$message.error('上传失败：'+JSON.stringify(res.errorCode));
+          this.$message.error('上传失败：'+JSON.stringify(res.message));
         } 
         this.fetchData();
     },

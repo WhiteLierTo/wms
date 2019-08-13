@@ -9,9 +9,9 @@
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px">
               <el-form :inline="true" :model="page">
                 <el-form-item>
-                  <el-select
+                  <el-input clearable placeholder="请输入库房名称"  size="small" v-model="page.warehouseName"></el-input>
+                  <!-- <el-select
                     v-model="page.warehouseName"
-                    filterable
                     clearable
                     remote
                     reserve-keyword
@@ -26,7 +26,7 @@
                       :label="item.label"
                       :value="item.value"
                     />
-                  </el-select>
+                  </el-select> -->
                 </el-form-item>
                 <el-form-item>
                   <el-select
@@ -295,7 +295,7 @@ export default {
        if(res.errorCode==0){
           this.$message.success('上传成功，更新数据：'+res.result+'条');
         }else{
-          this.$message.error('上传失败：'+JSON.stringify(res.errorCode));
+          this.$message.error('上传失败：'+JSON.stringify(res.message));
         } 
         this.fetchData();
     },
@@ -312,7 +312,7 @@ export default {
     },
     // 查询
     queryHandleClick() {
-      this.fetchData()
+      this.fetchData();
     },
     // 弹出修改页面并赋值
     editHandleClick(e) {

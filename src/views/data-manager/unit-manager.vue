@@ -213,7 +213,7 @@ export default {
        if(res.errorCode==0){
           this.$message.success('上传成功，更新数据：'+res.result+'条');
         }else{
-          this.$message.error('上传失败：'+JSON.stringify(res.errorCode));
+          this.$message.error('上传失败：'+JSON.stringify(res.message));
         } 
         this.fetchData();
     },

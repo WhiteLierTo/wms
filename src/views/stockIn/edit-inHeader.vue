@@ -2,35 +2,40 @@
   <div>
     <div class="body">
       <el-card class="box-card">
-        <div class="h-title">单头信息</div>
+        <div>
+          <el-row>
+        <el-col :span="12"><div class="h-title">单头信息</div></el-col>
+        <el-col :span="12">
+        <div style="float:right;margin-right:50px">
+           <el-button v-show="headerData.status === 1" type="primary" icon="el-icon-edit" @click="editHandleClick('headerData')">单头</el-button>
+          <el-button v-show="headerData.status === 1" type="primary" icon="el-icon-circle-plus-outline" @click="addLineHandleClick">单行</el-button>
+        </div>
+        </el-col>
+        </el-row>
+      </div>
+
         <el-card style="margin-top:14px" class="box-card">
           <el-form ref="headerData" :model="headerData" class="demo-ruleForm">
             <el-row>
-              <el-col :span="7">
+              <el-col :span="11">
                 <el-form-item
                   prop="vendorId"
                   label="供应商ID"
                   :label-width="formLabelWidth"
-                  :rules="[
-                  { required: true, message: '供应商ID不能为空'}
-                ]"
                 >
                   <el-input v-model="headerData.vendorId" autocomplete="off" />
                 </el-form-item>
               </el-col>
-              <el-col :span="7">
+              <el-col :span="11">
                 <el-form-item
                   prop="vendorName"
                   label="供应商名称"
                   :label-width="formLabelWidth"
-                  :rules="[
-                  { required: true, message: '供应商名称不能为空'},
-                ]"
                 >
                   <el-input v-model="headerData.vendorName" autocomplete="off" />
                 </el-form-item>
               </el-col>
-              <el-col :span="7">
+              <el-col :span="11">
                 <el-form-item
                   prop="billType"
                   label="单据类型"
@@ -40,6 +45,7 @@
                 ]"
                 >
                   <el-select
+                    style="width:100%"
                     v-model="headerData.billType"
                     clearable
                     filterable
@@ -54,7 +60,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="7">
+              <el-col :span="11">
                 <el-form-item
                   prop="billNumber"
                   label="单据编号"
@@ -66,7 +72,7 @@
                   <el-input v-model="headerData.billNumber" autocomplete="off" />
                 </el-form-item>
               </el-col>
-              <el-col :span="14">
+              <el-col :span="24">
                 <el-form-item prop="state" label="入库单说明" :label-width="formLabelWidth">
                   <el-input
                     v-model="headerData.state"
@@ -77,10 +83,6 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-form-item style="text-align:center">
-              <el-button v-show="headerData.status === 1" type="primary" @click="editHandleClick('headerData')">修改单头</el-button>
-              <el-button v-show="headerData.status === 1" type="success" @click="addLineHandleClick">新增单行</el-button>
-            </el-form-item>
           </el-form>
         </el-card>
 

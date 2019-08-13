@@ -6,31 +6,25 @@
         <el-card style="margin-top:14px" class="box-card">
           <el-form ref="headerData" :model="headerData" class="demo-ruleForm">
             <el-row>
-              <el-col :span="7">
+              <el-col :span="11">
                 <el-form-item
                   prop="vendorId"
                   label="供应商ID"
                   :label-width="formLabelWidth"
-                  :rules="[
-                  { required: true, message: '供应商ID不能为空'}
-                ]"
                 >
                   <el-input v-model="headerData.vendorId" autocomplete="off" />
                 </el-form-item>
               </el-col>
-              <el-col :span="7">
+              <el-col :span="11">
                 <el-form-item
                   prop="vendorName"
                   label="供应商名称"
                   :label-width="formLabelWidth"
-                  :rules="[
-                  { required: true, message: '供应商名称不能为空'},
-                ]"
                 >
                   <el-input v-model="headerData.vendorName" autocomplete="off" />
                 </el-form-item>
               </el-col>
-              <el-col :span="7">
+              <el-col :span="11">
                 <el-form-item
                   prop="billType"
                   label="单据类型"
@@ -40,12 +34,14 @@
                 ]"
                 >
                   <el-select
+                  style="width:100%"
                     v-model="headerData.billType"
                     clearable
                     filterable
                     placeholder="外部单据类型"
                   >
                     <el-option
+                      
                       v-for="item in setRemote"
                       :key="item.value"
                       :label="item.label"
@@ -54,7 +50,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="7">
+              <el-col :span="11">
                 <el-form-item
                   prop="billNumber"
                   label="单据编号"
@@ -66,14 +62,11 @@
                   <el-input v-model="headerData.billNumber" autocomplete="off" />
                 </el-form-item>
               </el-col>
-              <el-col :span="14">
+              <el-col :span="24">
                 <el-form-item
                   prop="state"
                   label="入库单说明"
                   :label-width="formLabelWidth"
-                  :rules="[
-                  { required: true, message: '入库单说明不能为空'},
-                ]"
                 >
                   <el-input
                     type="textarea"

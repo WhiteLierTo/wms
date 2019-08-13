@@ -97,8 +97,8 @@
                 </el-table>
               </template>
             </el-table-column>
-            <el-table-column prop="customerId" label="供应商ID" />
-            <el-table-column prop="customerName" label="供应商名称" />
+            <el-table-column prop="customerId" label="客户ID" />
+            <el-table-column prop="customerName" label="客户名称" />
             <el-table-column prop="billNumber" label="单据编号" />
             <!-- <el-table-column  prop="billType" label="外部单据类型"></el-table-column> -->
             <el-table-column prop="state" label="出库单说明" />
@@ -305,10 +305,10 @@
             <el-col :span="11">
               <el-form-item
                 prop="customerId"
-                label="供应商ID"
+                label="客户ID"
                 :label-width="formLabelWidth"
                 :rules="[
-                  { required: true, message: '供应商ID不能为空'}
+                  { required: true, message: '客户ID不能为空'}
                 ]"
               >
                 <el-input v-model="addData.customerId" autocomplete="off" />
@@ -317,10 +317,10 @@
             <el-col style="margin-left:10px" :span="11">
               <el-form-item
                 prop="customerName"
-                label="供应商名称"
+                label="客户名称"
                 :label-width="formLabelWidth"
                 :rules="[
-                  { required: true, message: '供应商名称不能为空'},
+                  { required: true, message: '客户名称不能为空'},
                 ]"
               >
                 <el-input v-model="addData.customerName" autocomplete="off" />
@@ -521,10 +521,10 @@
             <el-col :span="11">
               <el-form-item
                 prop="customerId"
-                label="供应商ID"
+                label="客户ID"
                 :label-width="formLabelWidth"
                 :rules="[
-                  { required: true, message: '供应商ID不能为空'}
+                  { required: true, message: '客户ID不能为空'}
                 ]"
               >
                 <el-input v-model="editData.customerId" autocomplete="off" />
@@ -533,10 +533,10 @@
             <el-col style="margin-left:10px" :span="11">
               <el-form-item
                 prop="customerName"
-                label="供应商名称"
+                label="客户名称"
                 :label-width="formLabelWidth"
                 :rules="[
-                  { required: true, message: '供应商名称不能为空'},
+                  { required: true, message: '客户名称不能为空'},
                 ]"
               >
                 <el-input v-model="editData.customerName" autocomplete="off" />

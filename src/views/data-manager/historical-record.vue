@@ -9,7 +9,8 @@
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px">
               <el-form :inline="true" :model="page">
                 <el-form-item>
-                  <el-select
+                   <el-input clearable placeholder="批次"  size="small" v-model="page.batchNumber"></el-input>
+                 <!--  <el-select
                     v-model="page.batchNumber"
                     filterable
                     clearable
@@ -23,10 +24,11 @@
                       :label="item.label"
                       :value="item.label"
                     />
-                  </el-select>
+                  </el-select> -->
                 </el-form-item>
                 <el-form-item>
-                  <el-select
+                  <el-input clearable placeholder="物料编号"  size="small" v-model="page.itemId"></el-input>
+                 <!--  <el-select
                     v-model="page.itemId"
                     filterable
                     clearable
@@ -40,10 +42,11 @@
                       :label="item.label"
                       :value="item.value"
                     />
-                  </el-select>
+                  </el-select> -->
                 </el-form-item>
                 <el-form-item>
-                  <el-select
+                   <el-input clearable placeholder="库房"  size="small" v-model="page.warehouse"></el-input>
+                 <!--  <el-select
                     v-model="page.warehouse"
                     filterable
                     clearable
@@ -57,10 +60,11 @@
                       :label="item.label"
                       :value="item.label"
                     />
-                  </el-select>
+                  </el-select> -->
                 </el-form-item>
                 <el-form-item>
-                  <el-select
+                  <el-input clearable placeholder="库位"  size="small" v-model="page.location"></el-input>
+                  <!-- <el-select
                     v-model="page.location"
                     filterable
                     clearable
@@ -74,7 +78,7 @@
                       :label="item.label"
                       :value="item.label"
                     />
-                  </el-select>
+                  </el-select> -->
                 </el-form-item>
                 <el-form-item>
                   <el-button

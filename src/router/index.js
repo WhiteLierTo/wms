@@ -168,6 +168,22 @@ export const constantRoutes = [{
     meta: { title: '出库明细' },
     hidden: true,
     children: []
+  }, {
+    path: 'add-inHeader',
+    component: () =>
+                import('@/views/stockIn/add-inHeader'),
+    name: 'addInHeader',
+    meta: { title: '新增入库单' },
+    hidden: true,
+    children: []
+  }, {
+    path: 'edit-inHeader',
+    component: () =>
+                import('@/views/stockIn/edit-inHeader'),
+    name: 'editInHeader',
+    meta: { title: '编辑入库单' },
+    hidden: true,
+    children: []
   }]
 },
 {

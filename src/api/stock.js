@@ -30,6 +30,15 @@ export function getStockInLine(params) {
     params
   })
 }
+// 获取单行列表
+export function getStockInLineAll(params) {
+  return request({
+    baseURL,
+    url: 'invStockInLine/all',
+    method: 'get',
+    params
+  })
+}
 // 获取外部单据类型列表
 export function getTypeAllFnc(params) {
   return request({
@@ -131,11 +140,12 @@ export function putHeader(data) {
   })
 }
 // 单头删除
-export function deleteHeader(id) {
+export function deleteHeader(params) {
   return request({
     baseURL,
-    url: `invStockInHeader/${id}`,
-    method: 'delete'
+    url: `invStockInHeader/mine/delete`,
+    method: 'delete',
+    params
   })
 }
 // 单头状态修改

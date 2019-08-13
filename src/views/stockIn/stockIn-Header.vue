@@ -49,7 +49,7 @@
                   >{{ $t('header.query') }}</el-button>
                 </el-form-item>
                 <el-form-item>
-                  <el-button size="small" type="primary" @click="add = true">{{ $t('header.add') }}</el-button>
+                  <el-button size="small" type="primary" @click="addOrder">新增入库单</el-button>
                 </el-form-item>
                  <el-form-item>
                    <el-upload
@@ -68,9 +68,8 @@
             </el-col>
           </div>
           <!--列表-->
-          <el-table :data="listData" @expand-change="expandChange" style="width: 100%">
-            <el-table-column type="expand">
-              <!--单行信息-->
+          <el-table border :data="listData" @expand-change="expandChange" style="width: 100%">
+            <!-- <el-table-column type="expand">
               <template>
                 <el-table v-loading="loading" border :data="LineData" style="width: 100%">
                   <el-table-column prop="itemId" label="物料编号" />
@@ -105,13 +104,13 @@
                         v-show="line.status !== 1"
                         type="text"
                         size="small"
-                        @click="turnToStockDetail(scope.row)"
-                      >明细</el-button>
+                        @click="turnToEditHeader(scope.row)"
+                      >单行</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column prop="vendorId" label="供应商ID" />
             <el-table-column prop="vendorName" label="供应商名称" />
             <el-table-column  prop="typeName" label="外部单据类型"/>
@@ -134,12 +133,12 @@
                   size="small"
                   @click="closeHandleClick(scope.row)"
                 >关闭</el-button>
-                <el-button
+                <!-- <el-button
                   v-show="scope.row.status===1"
                   type="text"
                   size="small"
                   @click="LineHandleClick(scope.row)"
-                >添加单行</el-button>
+                >添加单行</el-button> -->
                 <el-button
                   v-show="scope.row.status===1"
                   type="text"
@@ -150,7 +149,7 @@
                   v-show="scope.row.status===1"
                   type="text"
                   size="small"
-                  @click="editHandleClick(scope.row)"
+                  @click="editOrder(scope.row)"
                 >编辑</el-button>
                 <el-button
                   v-show="scope.row.status===1"
@@ -158,6 +157,12 @@
                   size="small"
                   @click="deleteHandleClick(scope.row.id)"
                 >删除</el-button>
+                 <el-button
+                  v-show="scope.row.status !== 1"
+                  type="text"
+                  size="small"
+                  @click="turnToEditHeader(scope.row)"
+                >明细</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -705,6 +710,17 @@ export default {
     this.getItemAllFnc()
   },
   methods: {
+    //跳转新增入库单
+    addOrder(){
+       this.$router.push({ name: 'addInHeader'})
+    },
+    turnToEditHeader(e){
+       this.$router.push({ name: 'editInHeader',params:{headerId:e.id}})
+    },
+     //跳转编辑入库单
+    editOrder(e){
+       this.$router.push({ name: 'editInHeader',params:{headerId:e.id}})
+    },
      handleSuccess(res,file) {
        if(res.errorCode==0){
           this.$message.success('上传成功，更新数据：'+res.result+'条');
@@ -808,7 +824,8 @@ export default {
     itemBatchChange() {
       if (this.addLineData.batchNumber) {
         const param = {
-          batchNumber: this.addLineData.batchNumber
+          batchNumber: this.addLineData.batchNumber,
+          itemId:this.addLineData.itemId
         }
         getBatchOne(param).then(res => {
           this.addLineData.producedDate = res.result.producedDate
@@ -1067,13 +1084,16 @@ export default {
       })
     },
     deleteHandleClick(e) {
+      let param = {
+          id : e
+      }
       this.$confirm('此操作将永久删除该入库单头, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(async() => {
-          deleteHeader(e).then(res => {
+          deleteHeader(param).then(res => {
             if (res.errorCode === 0) {
               this.add = false
               this.$message({

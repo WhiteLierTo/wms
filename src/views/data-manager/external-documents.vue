@@ -33,6 +33,19 @@
                 <el-form-item>
                   <el-button size="small" type="primary" @click="add = true">新增</el-button>
                 </el-form-item>
+                 <el-form-item>
+                   <el-upload
+                    :action="excelUrl"
+                    :on-success="handleSuccess"
+                    :show-file-list="false">
+                    <el-button class="checkout" size="small" type="success" >
+                    导入<i class="el-icon-download el-icon--right"></i>
+                    </el-button>
+                  </el-upload>
+                </el-form-item>
+                <el-form-item>
+                  <el-button size="small" type="success" @click="exportHandleClick">导出<i class="el-icon-upload2 el-icon--right"></i></el-button>
+                </el-form-item>
               </el-form>
             </el-col>
           </div>
@@ -204,18 +217,21 @@ import {
   getAllbdExternalBillTypeList,
   deleteBdExternalBillTypeList,
   addBdExternalBillTypeList,
-  updateBdExternalBillTypeList
+  updateBdExternalBillTypeList,
+  baseURL
 } from '@/api/baseData'
 export default {
   name: 'ExternalDocuments',
   data() {
     return {
+      excelUrl:`${baseURL}/bdExternalBillType/excel/import`,
       add: false,
       edit: false,
       formLabelWidth: '120px',
       page: {
         // 查询条件
         typeName: '',
+        sort:'create_at',
         current: 1,
         size: 10
       },
@@ -255,6 +271,20 @@ export default {
     this.getAllbdExternalBillTypeListFnc()
   },
   methods: {
+     handleSuccess(res,file) {
+       if(res.errorCode==0){
+          this.$message.success('上传成功，更新数据：'+res.result+'条');
+        }else{
+          this.$message.error('上传失败：'+JSON.stringify(res.errorCode));
+        } 
+        this.getbdExternalBillTypeListFnc();
+    },
+        //export
+    exportHandleClick(){
+      window.open(
+         `${baseURL}/bdExternalBillType/excel/export`
+        );
+    },
     // 查询
     referHandleClick() {
       // 初始化外部单据分页列表

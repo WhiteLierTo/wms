@@ -37,6 +37,19 @@
                 <el-form-item>
                   <el-button size="small" type="primary" @click="add = true">{{ $t('header.add') }}</el-button>
                 </el-form-item>
+                             <el-form-item>
+                   <el-upload
+                    :action="excelUrl"
+                    :on-success="handleSuccess"
+                    :show-file-list="false">
+                    <el-button class="checkout" size="small" type="success" >
+                    导入<i class="el-icon-download el-icon--right"></i>
+                    </el-button>
+                  </el-upload>
+                </el-form-item>
+                <el-form-item>
+                  <el-button size="small" type="success" @click="exportHandleClick">导出<i class="el-icon-upload2 el-icon--right"></i></el-button>
+                </el-form-item>
               </el-form>
             </el-col>
           </div>
@@ -233,12 +246,14 @@ import {
   putDictionary,
   postDictionary,
   getDictionaryAll,
-  deleteDictionary
+  deleteDictionary,
+  baseURL
 } from "@/api/baseData";
 export default {
   name: "Dictionary",
   data() {
     return {
+        excelUrl:`${baseURL}/syDictionary/excel/import`,
       setRemote: [],
       loading: false,
       options: [
@@ -268,6 +283,7 @@ export default {
         // 查询条件
         id: "",
         total: 40,
+        sort:'create_at',
         current: 1,
         size: 10
       },
@@ -279,6 +295,20 @@ export default {
     this.getDictionaryAll();
   },
   methods: {
+    handleSuccess(res,file) {
+       if(res.errorCode==0){
+          this.$message.success('上传成功，更新数据：'+res.result+'条');
+        }else{
+          this.$message.error('上传失败：'+JSON.stringify(res.errorCode));
+        } 
+        this.fetchData();
+    },
+        //export
+    exportHandleClick(){
+      window.open(
+         `${baseURL}/syDictionary/excel/export`
+        );
+    },
     // 查询
     queryHandleClick() {
       this.fetchData();

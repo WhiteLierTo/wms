@@ -69,6 +69,19 @@
                 <el-form-item>
                   <el-button size="small" type="primary" @click="add = true">新增</el-button>
                 </el-form-item>
+                <el-form-item>
+                   <el-upload
+                    :action="excelUrl"
+                    :on-success="handleSuccess"
+                    :show-file-list="false">
+                    <el-button class="checkout" size="small" type="success" >
+                    导入<i class="el-icon-download el-icon--right"></i>
+                    </el-button>
+                  </el-upload>
+                </el-form-item>
+                <el-form-item>
+                  <el-button size="small" type="success" @click="exportHandleClick">导出<i class="el-icon-upload2 el-icon--right"></i></el-button>
+                </el-form-item>
               </el-form>
             </el-col>
           </div>
@@ -172,13 +185,15 @@ import {
   getAllinvBatchList,
   getItemAllFnc,
   getItemOne,
-  getAllItemList
+  getAllItemList,
+  baseURL
 } from '@/api/baseData'
 import { dateFnc } from '@/utils/validate'
 export default {
   name: 'ProductionBatch',
   data() {
     return {
+      excelUrl:`${baseURL}/bdBatch/excel/import`,
       add: false,
       formLabelWidth: '120px',
       batch:[],
@@ -220,6 +235,20 @@ export default {
     this.getItemName();
   },
   methods: {
+     handleSuccess(res,file) {
+       if(res.errorCode==0){
+          this.$message.success('上传成功，更新数据：'+res.result+'条');
+        }else{
+          this.$message.error('上传失败：'+JSON.stringify(res.errorCode));
+        } 
+        this.getinvBatchFnc();
+    },
+    //export
+    exportHandleClick(){
+      window.open(
+         `${baseURL}/bdBatch/excel/export`
+        );
+    },
     // 单行新增选择物料下拉数据，用物料ID查询物料名称
     itemAddChange() {
       const param = {

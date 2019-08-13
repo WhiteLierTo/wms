@@ -240,6 +240,7 @@ import {
   baseURL
 } from '@/api/baseData'
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
+import { stringify } from 'querystring';
 export default {
   name: 'WarehouseManager',
   components: { UploadExcelComponent },
@@ -275,7 +276,6 @@ export default {
         // 查询条件
         warehouseLock: '',
         warehouseName: '',
-        total: 40,
         sort:'create_at',
         current: 1,
         size: 10
@@ -284,7 +284,8 @@ export default {
     }
   },
   mounted() {
-    this.fetchData()
+    this.fetchData();
+    this.getWarehouseAll()
   },
   methods: {
      beforeUpload(file) {
@@ -409,7 +410,6 @@ export default {
         this.listData = res.result.list
         this.page.total = res.result.total
       })
-      this.getWarehouseAll()
     },
     getWarehouseAll() {
       getWarehouseAll().then(res => {

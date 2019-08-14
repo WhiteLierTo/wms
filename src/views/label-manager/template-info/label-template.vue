@@ -305,8 +305,7 @@ import {
   getAllLabelTemplateList,
   addTemplate,
   updateTemplate,
-  getAllLabelTemplate,
-  deleteLabelTemplate
+  getAllLabelTemplate
 } from '@/api/label'
 import { getDictionaryAll } from '@/api/baseData'
 export default {
@@ -467,12 +466,18 @@ export default {
         deleted: true
       }
       updateTemplate(params).then(res => {
-        // 分页获取标签列表
-        this.getLabelFnc()
         this.$message({
           message: '删除成功',
           type: 'success'
         })
+        // 判断是否当前页最后一条数据，如果是，删除后，返回上一页
+        // 总页数
+        const totalPage = Math.ceil((this.total - 1) / this.page.size)
+        this.page.current =
+          this.page.current > totalPage ? totalPage : this.page.current
+        this.page.current = this.page.current < 1 ? 1 : this.page.current
+        // 分页获取标签列表
+        this.getLabelFnc()
       })
     },
     // 增加标签列表
@@ -519,17 +524,6 @@ export default {
       getAllLabelTemplate(params).then(res => {
         this.tableData = res.result
         this.loading = false
-      })
-    },
-    // 删除元素
-    deleteLabelTemplateFnc() {
-      deleteLabelTemplate(this.eleId).then(res => {
-        // 获取所有元素
-        this.getAllLabelTemplateFnc()
-        this.$message({
-          message: '删除成功',
-          type: 'success'
-        })
       })
     }
   }

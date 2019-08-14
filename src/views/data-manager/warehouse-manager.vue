@@ -9,7 +9,12 @@
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px">
               <el-form :inline="true" :model="page">
                 <el-form-item>
-                  <el-input clearable placeholder="请输入库房名称"  size="small" v-model="page.warehouseName"></el-input>
+                  <el-input
+                    v-model="page.warehouseName"
+                    clearable
+                    placeholder="请输入库房名称"
+                    size="small"
+                  />
                   <!-- <el-select
                     v-model="page.warehouseName"
                     clearable
@@ -26,7 +31,7 @@
                       :label="item.label"
                       :value="item.value"
                     />
-                  </el-select> -->
+                  </el-select>-->
                 </el-form-item>
                 <el-form-item>
                   <el-select
@@ -55,18 +60,23 @@
                   <el-button size="small" type="primary" @click="add = true">{{ $t('header.add') }}</el-button>
                 </el-form-item>
                 <el-form-item>
-                   <el-upload
+                  <el-upload
                     :action="excelUrl"
                     :before-upload="beforeUpload"
                     :on-success="handleSuccess"
-                    :show-file-list="false">
-                    <el-button class="checkout" size="small" type="success" >
-                    导入<i class="el-icon-download el-icon--right"></i>
+                    :show-file-list="false"
+                  >
+                    <el-button class="checkout" size="small" type="success">
+                      导入
+                      <i class="el-icon-download el-icon--right" />
                     </el-button>
                   </el-upload>
                 </el-form-item>
                 <el-form-item>
-                  <el-button size="small" type="success" @click="exportHandleClick">导出<i class="el-icon-upload2 el-icon--right"></i></el-button>
+                  <el-button size="small" type="success" @click="exportHandleClick">
+                    导出
+                    <i class="el-icon-upload2 el-icon--right" />
+                  </el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -106,7 +116,7 @@
     <!--新增-->
     <div>
       <el-dialog title="新增仓库" :visible.sync="add">
-        <el-form  ref="addData" :model="addData" class="demo-ruleForm">
+        <el-form ref="addData" :model="addData" class="demo-ruleForm">
           <el-row>
             <el-col :span="11">
               <el-form-item
@@ -239,14 +249,11 @@ import {
   getWarehouseAll,
   baseURL
 } from '@/api/baseData'
-import UploadExcelComponent from '@/components/UploadExcel/index.vue'
-import { stringify } from 'querystring';
 export default {
   name: 'WarehouseManager',
-  components: { UploadExcelComponent },
   data() {
     return {
-      excelUrl:`${baseURL}/bdWarehouse/excel/import`,
+      excelUrl: `${baseURL}/bdWarehouse/excel/import`,
       remote: [],
       setRemote: [],
       loading: false,
@@ -276,7 +283,7 @@ export default {
         // 查询条件
         warehouseLock: '',
         warehouseName: '',
-        sort:'create_at',
+        sort: 'create_at',
         current: 1,
         size: 10
       },
@@ -284,35 +291,32 @@ export default {
     }
   },
   mounted() {
-    this.fetchData();
+    this.fetchData()
     this.getWarehouseAll()
   },
   methods: {
-     beforeUpload(file) {
- 
+    beforeUpload(file) {},
+
+    handleSuccess(res, file) {
+      if (res.errorCode === 0) {
+        this.$message.success('上传成功，更新数据：' + res.result + '条')
+      } else {
+        this.$message.error('上传失败：' + JSON.stringify(res.errorCode))
+      }
+      this.fetchData()
     },
-    handleSuccess(res,file) {
-       if(res.errorCode==0){
-          this.$message.success('上传成功，更新数据：'+res.result+'条');
-        }else{
-          this.$message.error('上传失败：'+JSON.stringify(res.message));
-        } 
-        this.fetchData();
+    // export
+    exportHandleClick() {
+      window.open(`${baseURL}/bdWarehouse/excel/export`)
     },
-        //export
-    exportHandleClick(){
-      window.open(
-         `${baseURL}/bdWarehouse/excel/export`
-        );
-    },
-    //取消清空数据
-    cancle(formName){
-      this.add = false;
-      this.resetForm(formName);
+    // 取消清空数据
+    cancle(formName) {
+      this.add = false
+      this.resetForm(formName)
     },
     // 查询
     queryHandleClick() {
-      this.fetchData();
+      this.fetchData()
     },
     // 弹出修改页面并赋值
     editHandleClick(e) {
@@ -335,37 +339,29 @@ export default {
     },
     // curd
     addHandleClick(formName) {
-       this.$refs[formName].validate((valid) => {
-/*       if (!this.addData.warehouseName || !this.addData.description) {
-        this.$message({
-          showClose: true,
-          message: '请完善信息',
-          type: 'warning'
-        })
-        return
-      } */
-      const param = {
-        id: this.addData.id,
-        description: this.addData.description,
-        warehouseName: this.addData.warehouseName,
-        warehouseLock: this.addData.warehouseLock
-      }
-      postWarehouse(param).then(res => {
-        if (res.errorCode === 0) {
-          this.add = false
-          this.$message({
-            message: '添加成功',
-            type: 'success'
-          })
+      this.$refs[formName].validate(valid => {
+        const param = {
+          id: this.addData.id,
+          description: this.addData.description,
+          warehouseName: this.addData.warehouseName,
+          warehouseLock: this.addData.warehouseLock
         }
-        this.fetchData();
-        this.resetForm(formName)
+        postWarehouse(param).then(res => {
+          if (res.errorCode === 0) {
+            this.add = false
+            this.$message({
+              message: '添加成功',
+              type: 'success'
+            })
+          }
+          this.fetchData()
+          this.resetForm(formName)
+        })
       })
-       });
     },
-     resetForm(formName) {
-        this.$refs[formName].resetFields();
-      },
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+    },
     deleteHandleClick() {
       this.$confirm('此操作将永久删除该仓库, 是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -425,7 +421,7 @@ export default {
     handleCurrentChange(val) {
       this.page.current = val
       this.fetchData()
-    },
+    }
   }
 }
 </script>

@@ -33,18 +33,19 @@
                 <el-form-item>
                   <el-button size="small" type="primary" @click="add = true">新增</el-button>
                 </el-form-item>
-                 <el-form-item>
-                   <el-upload
-                    :action="excelUrl"
-                    :on-success="handleSuccess"
-                    :show-file-list="false">
-                    <el-button class="checkout" size="small" type="success" >
-                    导入<i class="el-icon-download el-icon--right"></i>
+                <el-form-item>
+                  <el-upload :action="excelUrl" :on-success="handleSuccess" :show-file-list="false">
+                    <el-button class="checkout" size="small" type="success">
+                      导入
+                      <i class="el-icon-download el-icon--right" />
                     </el-button>
                   </el-upload>
                 </el-form-item>
                 <el-form-item>
-                  <el-button size="small" type="success" @click="exportHandleClick">导出<i class="el-icon-upload2 el-icon--right"></i></el-button>
+                  <el-button size="small" type="success" @click="exportHandleClick">
+                    导出
+                    <i class="el-icon-upload2 el-icon--right" />
+                  </el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -224,14 +225,14 @@ export default {
   name: 'ExternalDocuments',
   data() {
     return {
-      excelUrl:`${baseURL}/bdExternalBillType/excel/import`,
+      excelUrl: `${baseURL}/bdExternalBillType/excel/import`,
       add: false,
       edit: false,
       formLabelWidth: '120px',
       page: {
         // 查询条件
         typeName: '',
-        sort:'create_at',
+        sort: 'create_at',
         current: 1,
         size: 10
       },
@@ -271,19 +272,17 @@ export default {
     this.getAllbdExternalBillTypeListFnc()
   },
   methods: {
-     handleSuccess(res,file) {
-       if(res.errorCode==0){
-          this.$message.success('上传成功，更新数据：'+res.result+'条');
-        }else{
-          this.$message.error('上传失败：'+JSON.stringify(res.message));
-        } 
-        this.getbdExternalBillTypeListFnc();
+    handleSuccess(res, file) {
+      if (res.errorCode === 0) {
+        this.$message.success('上传成功，更新数据：' + res.result + '条')
+      } else {
+        this.$message.error('上传失败：' + JSON.stringify(res.message))
+      }
+      this.getbdExternalBillTypeListFnc()
     },
-        //export
-    exportHandleClick(){
-      window.open(
-         `${baseURL}/bdExternalBillType/excel/export`
-        );
+    // export
+    exportHandleClick() {
+      window.open(`${baseURL}/bdExternalBillType/excel/export`)
     },
     // 查询
     referHandleClick() {
@@ -370,12 +369,18 @@ export default {
     // 删除外部单据
     deleteBdExternalBillTypeListFnc() {
       deleteBdExternalBillTypeList(this.id).then(res => {
-        // 外部单据分页列表
-        this.getbdExternalBillTypeListFnc()
         this.$message({
           message: '删除成功',
           type: 'success'
         })
+        // 判断是否当前页最后一条数据，如果是，删除后，返回上一页
+        // 总页数
+        const totalPage = Math.ceil((this.total - 1) / this.page.size)
+        this.page.current =
+          this.page.current > totalPage ? totalPage : this.page.current
+        this.page.current = this.page.current < 1 ? 1 : this.page.current
+        // 外部单据分页列表
+        this.getbdExternalBillTypeListFnc()
       })
     },
     // 添加外部单据
@@ -406,5 +411,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

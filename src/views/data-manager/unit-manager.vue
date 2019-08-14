@@ -39,18 +39,19 @@
                 <el-form-item>
                   <el-button size="small" type="primary" @click="add = true">{{ $t('header.add') }}</el-button>
                 </el-form-item>
-                 <el-form-item>
-                   <el-upload
-                    :action="excelUrl"
-                    :on-success="handleSuccess"
-                    :show-file-list="false">
-                    <el-button class="checkout" size="small" type="success" >
-                    导入<i class="el-icon-download el-icon--right"></i>
+                <el-form-item>
+                  <el-upload :action="excelUrl" :on-success="handleSuccess" :show-file-list="false">
+                    <el-button class="checkout" size="small" type="success">
+                      导入
+                      <i class="el-icon-download el-icon--right" />
                     </el-button>
                   </el-upload>
                 </el-form-item>
                 <el-form-item>
-                  <el-button size="small" type="success" @click="exportHandleClick">导出<i class="el-icon-upload2 el-icon--right"></i></el-button>
+                  <el-button size="small" type="success" @click="exportHandleClick">
+                    导出
+                    <i class="el-icon-upload2 el-icon--right" />
+                  </el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -174,7 +175,7 @@ export default {
   name: 'UnitManager',
   data() {
     return {
-       excelUrl:`${baseURL}/bdUnit/excel/import`,
+      excelUrl: `${baseURL}/bdUnit/excel/import`,
       remote: [],
       setRemote: [],
       loading: false,
@@ -192,8 +193,7 @@ export default {
         unit: null,
         total: 40,
         current: 1,
-        size: 10,
-        sort:'create_at'
+        size: 10
       },
       listData: []
     }
@@ -209,19 +209,17 @@ export default {
     this.fetchData()
   },
   methods: {
-     handleSuccess(res,file) {
-       if(res.errorCode==0){
-          this.$message.success('上传成功，更新数据：'+res.result+'条');
-        }else{
-          this.$message.error('上传失败：'+JSON.stringify(res.message));
-        } 
-        this.fetchData();
+    handleSuccess(res, file) {
+      if (res.errorCode === 0) {
+        this.$message.success('上传成功，更新数据：' + res.result + '条')
+      } else {
+        this.$message.error('上传失败：' + JSON.stringify(res.message))
+      }
+      this.fetchData()
     },
-        //export
-    exportHandleClick(){
-      window.open(
-         `${baseURL}/bdUnit/excel/export`
-        );
+    // export
+    exportHandleClick() {
+      window.open(`${baseURL}/bdUnit/excel/export`)
     },
     // 新增取消
     addCancelHandleClick() {
@@ -293,6 +291,12 @@ export default {
                 type: 'success'
               })
             }
+            // 判断是否当前页最后一条数据，如果是，删除后，返回上一页
+            // 总页数
+            const totalPage = Math.ceil((this.page.total - 1) / this.page.size)
+            this.page.current =
+              this.page.current > totalPage ? totalPage : this.page.current
+            this.page.current = this.page.current < 1 ? 1 : this.page.current
             this.fetchData()
           })
         })
@@ -348,5 +352,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

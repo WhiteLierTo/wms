@@ -407,6 +407,12 @@ export default {
                 type: 'success'
               })
             }
+            // 判断是否当前页最后一条数据，如果是，删除后，返回上一页
+            // 总页数
+            const totalPage = Math.ceil((this.page.total - 1) / this.page.size)
+            this.page.current =
+          this.page.current > totalPage ? totalPage : this.page.current
+            this.page.current = this.page.current < 1 ? 1 : this.page.current
             this.fetchData()
           })
         })

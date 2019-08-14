@@ -241,6 +241,10 @@ export default {
                 type: 'success'
               })
             }
+            const totalPage = Math.ceil((this.total - 1) / this.page.size)
+            this.page.current =
+              this.page.current > totalPage ? totalPage : this.page.current
+            this.page.current = this.page.current < 1 ? 1 : this.page.current
             this.fetchData()
           })
         })
@@ -295,5 +299,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

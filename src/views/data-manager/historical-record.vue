@@ -9,8 +9,8 @@
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px">
               <el-form :inline="true" :model="page">
                 <el-form-item>
-                   <el-input clearable placeholder="批次"  size="small" v-model="page.batchNumber"></el-input>
-                 <!--  <el-select
+                  <el-input v-model="page.batchNumber" clearable placeholder="批次" size="small" />
+                  <!--  <el-select
                     v-model="page.batchNumber"
                     filterable
                     clearable
@@ -24,11 +24,11 @@
                       :label="item.label"
                       :value="item.label"
                     />
-                  </el-select> -->
+                  </el-select>-->
                 </el-form-item>
                 <el-form-item>
-                  <el-input clearable placeholder="物料编号"  size="small" v-model="page.itemId"></el-input>
-                 <!--  <el-select
+                  <el-input v-model="page.itemId" clearable placeholder="物料编号" size="small" />
+                  <!--  <el-select
                     v-model="page.itemId"
                     filterable
                     clearable
@@ -42,11 +42,11 @@
                       :label="item.label"
                       :value="item.value"
                     />
-                  </el-select> -->
+                  </el-select>-->
                 </el-form-item>
                 <el-form-item>
-                   <el-input clearable placeholder="库房"  size="small" v-model="page.warehouse"></el-input>
-                 <!--  <el-select
+                  <el-input v-model="page.warehouse" clearable placeholder="库房" size="small" />
+                  <!--  <el-select
                     v-model="page.warehouse"
                     filterable
                     clearable
@@ -60,10 +60,10 @@
                       :label="item.label"
                       :value="item.label"
                     />
-                  </el-select> -->
+                  </el-select>-->
                 </el-form-item>
                 <el-form-item>
-                  <el-input clearable placeholder="库位"  size="small" v-model="page.location"></el-input>
+                  <el-input v-model="page.location" clearable placeholder="库位" size="small" />
                   <!-- <el-select
                     v-model="page.location"
                     filterable
@@ -78,7 +78,7 @@
                       :label="item.label"
                       :value="item.label"
                     />
-                  </el-select> -->
+                  </el-select>-->
                 </el-form-item>
                 <el-form-item>
                   <el-button
@@ -105,7 +105,8 @@
                   <div slot="reference" class="name-wrapper">
                     <el-tag size="medium">
                       <div v-if="scope.row.direction==false" style="color:#ec2126">出</div>
-                      <div v-if="scope.row.direction==true" style="color:#005b00">入</div></el-tag>
+                      <div v-if="scope.row.direction==true" style="color:#005b00">入</div>
+                    </el-tag>
                   </div>
                 </el-popover>
               </template>
@@ -114,7 +115,7 @@
               <template slot-scope="scope">
                 <el-button type="text" size="small" @click="deleteHandleClick(scope.row.id)">删除</el-button>
               </template>
-            </el-table-column> -->
+            </el-table-column>-->
           </el-table>
         </section>
         <el-pagination
@@ -146,9 +147,9 @@ export default {
   data() {
     return {
       item: [],
-      batch:[],
-      warehouse:[],
-      location:[],
+      batch: [],
+      warehouse: [],
+      location: [],
       setRemote: [],
       formLabelWidth: '80px',
       page: {
@@ -158,17 +159,17 @@ export default {
         current: 1,
         size: 10,
         sort: 'create_at',
-        batchNumber:'',
+        batchNumber: ''
       },
       listData: []
     }
   },
   mounted() {
-    this.fetchData();
-    this.getItem();
-    this.getBatch();
-    this.getWarehouse();
-    this.getLocation();
+    this.fetchData()
+    this.getItem()
+    this.getBatch()
+    this.getWarehouse()
+    this.getLocation()
   },
   methods: {
     // 查询
@@ -191,6 +192,10 @@ export default {
                 type: 'success'
               })
             }
+            const totalPage = Math.ceil((this.page.total - 1) / this.page.size)
+            this.page.current =
+              this.page.current > totalPage ? totalPage : this.page.current
+            this.page.current = this.page.current < 1 ? 1 : this.page.current
             this.fetchData()
           })
         })
@@ -202,15 +207,15 @@ export default {
         this.page.total = res.result.total
       })
     },
-    //获取所有物料
-     getItem() {
+    // 获取所有物料
+    getItem() {
       getAllItemList().then(res => {
         this.item = res.result.map(item => {
           return { value: item.id, label: item.id }
         })
       })
     },
-       //获取所有批次
+    // 获取所有批次
     getBatch() {
       getAllinvBatchList().then(res => {
         this.batch = res.result.map(item => {
@@ -218,7 +223,7 @@ export default {
         })
       })
     },
-       //获取所有库房
+    // 获取所有库房
     getWarehouse() {
       getWarehouseAll().then(res => {
         this.warehouse = res.result.map(item => {
@@ -226,7 +231,7 @@ export default {
         })
       })
     },
-       //获取所有库位
+    // 获取所有库位
     getLocation() {
       getLocationAll().then(res => {
         this.location = res.result.map(item => {
@@ -247,5 +252,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

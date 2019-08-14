@@ -60,17 +60,18 @@
                   <el-button size="small" type="primary" @click="add = true">{{ $t('header.add') }}</el-button>
                 </el-form-item>
                 <el-form-item>
-                   <el-upload
+                  <el-upload
                     :action="excelUrl"
                     :on-success="handleSuccess"
-                    :show-file-list="false">
-                    <el-button class="checkout" size="small" type="success" >
-                    导入<i class="el-icon-download el-icon--right"></i>
+                    :show-file-list="false"
+                  >
+                    <el-button class="checkout" size="small" type="success">
+                      导入<i class="el-icon-download el-icon--right" />
                     </el-button>
                   </el-upload>
                 </el-form-item>
                 <el-form-item>
-                  <el-button size="small" type="success" @click="exportHandleClick">导出<i class="el-icon-upload2 el-icon--right"></i></el-button>
+                  <el-button size="small" type="success" @click="exportHandleClick">导出<i class="el-icon-upload2 el-icon--right" /></el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -113,10 +114,14 @@
                 prop="itemId"
                 label="物料"
                 :label-width="formLabelWidth"
-                
               >
-                <el-select filterable
-                    clearable v-model="addData.itemId" style="width:100%" placeholder="请选择物料">
+                <el-select
+                  v-model="addData.itemId"
+                  filterable
+                  clearable
+                  style="width:100%"
+                  placeholder="请选择物料"
+                >
                   <el-option
                     v-for="item in item"
                     :key="item.value"
@@ -156,7 +161,7 @@
                   { required: true, message: '换算系数不能为空'}
                 ]"
               >
-                <el-input type="number" v-model="addData.coefficient" autocomplete="off" />
+                <el-input v-model="addData.coefficient" type="number" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
@@ -164,7 +169,7 @@
                 prop="unitTo"
                 label="换算单位"
                 :label-width="formLabelWidth"
-                  :rules="[
+                :rules="[
                   { required: true, message: '换算单位不能为空'},
                 ]"
               >
@@ -175,8 +180,8 @@
                     :label="item.label"
                     :value="item.value"
                     :rules="[
-                  { required: true, message: '换算单位不能为空'},
-                ]"
+                      { required: true, message: '换算单位不能为空'},
+                    ]"
                   />
                 </el-select>
               </el-form-item>
@@ -215,7 +220,7 @@
                 label="物料"
                 :label-width="formLabelWidth"
               >
-                <el-select disabled v-model="editData.itemId" style="width:100%" placeholder="请选择物料">
+                <el-select v-model="editData.itemId" disabled style="width:100%" placeholder="请选择物料">
                   <el-option
                     v-for="item in item"
                     :key="item.value"
@@ -234,7 +239,7 @@
                   { required: true, message: '单位名称不能为空'},
                 ]"
               >
-                <el-select disabled v-model="editData.unit" style="width:100%" placeholder="请选择单位">
+                <el-select v-model="editData.unit" disabled style="width:100%" placeholder="请选择单位">
                   <el-option
                     v-for="item in setRemote"
                     :key="item.value"
@@ -255,7 +260,7 @@
                   { required: true, message: '换算系数不能为空'}
                 ]"
               >
-                <el-input type="number" v-model="editData.coefficient" autocomplete="off" />
+                <el-input v-model="editData.coefficient" type="number" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col style="margin-left:10px" :span="11">
@@ -267,7 +272,7 @@
                   { required: true, message: '换算单位不能为空'},
                 ]"
               >
-                <el-select disabled v-model="editData.unitTo" style="width:100%" placeholder="请选择换算单位">
+                <el-select v-model="editData.unitTo" disabled style="width:100%" placeholder="请选择换算单位">
                   <el-option
                     v-for="item in setRemote"
                     :key="item.value"
@@ -282,7 +287,6 @@
             prop="description"
             label="描述"
             :label-width="formLabelWidth"
-           
           >
             <el-input
               v-model="editData.description"
@@ -311,14 +315,14 @@ import {
   putUnitConversion,
   deleteUnitConversion,
   getUnitAll,
-    baseURL
+  baseURL
 } from '@/api/baseData'
-import { positiveNumber } from '@/utils/validate';
+import { positiveNumber } from '@/utils/validate'
 export default {
   name: 'UnitConversion',
   data() {
     return {
-       excelUrl:`${baseURL}/bdUnitConverter/excel/import`,
+      excelUrl: `${baseURL}/bdUnitConverter/excel/import`,
       remote: [],
       item: [], // 物料
       setRemote: [],
@@ -341,8 +345,7 @@ export default {
         unitTo: '',
         total: 40,
         current: 1,
-        size: 10,
-        sort:'create_at'
+        size: 10
       },
       listData: []
     }
@@ -351,28 +354,28 @@ export default {
     this.fetchData()
   },
   methods: {
-     handleSuccess(res,file) {
-       if(res.errorCode==0){
-          this.$message.success('上传成功，更新数据：'+res.result+'条');
-        }else{
-          this.$message.error('上传失败：'+JSON.stringify(res.message));
-        } 
-        this.fetchData();
+    handleSuccess(res, file) {
+      if (res.errorCode == 0) {
+        this.$message.success('上传成功，更新数据：' + res.result + '条')
+      } else {
+        this.$message.error('上传失败：' + JSON.stringify(res.message))
+      }
+      this.fetchData()
     },
-        //export
-    exportHandleClick(){
+    // export
+    exportHandleClick() {
       window.open(
-         `${baseURL}/bdUnitConverter/excel/export`
-        );
+        `${baseURL}/bdUnitConverter/excel/export`
+      )
     },
-    //表单清空
-       resetForm(formName) {
-        this.$refs[formName].resetFields();
-      },
+    // 表单清空
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+    },
     // 新增取消
     addCancelHandleClick(formName) {
-     this.add = false;
-     this.resetForm(formName)
+      this.add = false
+      this.resetForm(formName)
     },
     // 查询
     queryHandleClick() {
@@ -399,19 +402,19 @@ export default {
     },
     // curd
     addHandleClick(formName) {
-       if (positiveNumber(this.addData.coefficient) === false) {
-            this.$message({
-              message: '数量应为有效正整数',
-              type: 'warning'
-            })
-            return;
-          }
-      if( this.addData.unit === this.addData.unitTo){
+      if (positiveNumber(this.addData.coefficient) === false) {
         this.$message({
-                message: '原单位和目标单位不可一致',
-                type: 'warning'
-              })
-              return
+          message: '数量应为有效正整数',
+          type: 'warning'
+        })
+        return
+      }
+      if (this.addData.unit === this.addData.unitTo) {
+        this.$message({
+          message: '原单位和目标单位不可一致',
+          type: 'warning'
+        })
+        return
       }
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -435,7 +438,7 @@ export default {
                 type: 'success'
               })
             }
-            this.fetchData();
+            this.fetchData()
             this.resetForm(formName)
           })
         } else {
@@ -459,6 +462,12 @@ export default {
                 type: 'success'
               })
             }
+            // 判断是否当前页最后一条数据，如果是，删除后，返回上一页
+            // 总页数
+            const totalPage = Math.ceil((this.page.total - 1) / this.page.size)
+            this.page.current =
+              this.page.current > totalPage ? totalPage : this.page.current
+            this.page.current = this.page.current < 1 ? 1 : this.page.current
             this.fetchData()
           })
         })
@@ -467,12 +476,12 @@ export default {
     editSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-        if (positiveNumber(this.editData.coefficient) === false) {
+          if (positiveNumber(this.editData.coefficient) === false) {
             this.$message({
               message: '数量应为有效正整数',
               type: 'warning'
             })
-            return;
+            return
           }
           const param = {
             id: this.editData.id,

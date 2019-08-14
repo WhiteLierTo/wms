@@ -303,9 +303,9 @@ import {
   putTemplateWidget,
   deleteTemplateWidget,
   getTemplateWidgetAll
-} from '@/api/label'
-import { getDictionaryText } from '@/utils/validate'
-import { getDictionaryAll } from '@/api/baseData'
+} from '@/api/label';
+import { getDictionaryText } from '@/utils/validate';
+import { getDictionaryAll } from '@/api/baseData';
 export default {
   name: 'TemplateWidget',
   data() {
@@ -360,7 +360,7 @@ export default {
     // 弹出修改页面并赋值
     editHandleClick(e) {
       this.edit = true
-      this.editData = e
+      this.editData = JSON.parse(JSON.stringify(e))
     },
     // curd
     addHandleClick(formName) {
@@ -411,7 +411,7 @@ export default {
             // 总页数
             const totalPage = Math.ceil((this.page.total - 1) / this.page.size)
             this.page.current =
-          this.page.current > totalPage ? totalPage : this.page.current
+              this.page.current > totalPage ? totalPage : this.page.current
             this.page.current = this.page.current < 1 ? 1 : this.page.current
             this.fetchData()
           })
@@ -438,6 +438,7 @@ export default {
                 type: 'success'
               })
               this.edit = false
+              this.fetchData()
             }
           })
         } else {
@@ -455,7 +456,6 @@ export default {
           v.fieldType = getDictionaryText(v.fieldType)[0].text
           v.validatedType = getDictionaryText(v.validatedType)[0].text
         })
-        
       })
     },
     getTemplateWidgetAllFnc() {

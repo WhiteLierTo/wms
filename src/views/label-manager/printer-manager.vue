@@ -249,7 +249,7 @@ export default {
     // 弹出修改页面并赋值
     editHandleClick(e) {
       this.edit = true
-      this.editData = e
+      this.editData = JSON.parse(JSON.stringify(e))
     },
     // curd
     addHandleClick(formName) {
@@ -315,6 +315,7 @@ export default {
                 type: 'success'
               })
               this.edit = false
+              this.fetchData()
             }
           })
         } else {
@@ -349,5 +350,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

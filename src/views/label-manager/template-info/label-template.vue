@@ -428,7 +428,7 @@ export default {
     },
     // 编辑
     editHandleClick(row) {
-      this.updateItem = row
+      this.updateItem = JSON.parse(JSON.stringify(row))
       this.edit = true
     },
     // 确认编辑

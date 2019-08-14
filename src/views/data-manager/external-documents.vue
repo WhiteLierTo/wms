@@ -339,7 +339,7 @@ export default {
     },
     // 修改外部单据
     editHandleClick(row) {
-      this.editData = row
+      this.editData = JSON.parse(JSON.stringify(row))
       this.edit = true
     },
     updateHandleClick(formName) {
@@ -404,6 +404,8 @@ export default {
           message: '编辑成功',
           type: 'success'
         })
+        // 初始化外部单据列表
+        this.getbdExternalBillTypeListFnc()
       })
     }
   }

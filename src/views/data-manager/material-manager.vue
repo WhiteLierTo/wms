@@ -33,19 +33,20 @@
                 <el-form-item>
                   <el-button size="small" type="primary" @click="add = true">新增</el-button>
                 </el-form-item>
-                 <el-form-item>
-                   <el-upload
+                <el-form-item>
+                  <el-upload
                     :action="excelUrl"
                     :before-upload="beforeUpload"
                     :on-success="handleSuccess"
-                    :show-file-list="false">
-                    <el-button class="checkout" size="small" type="success" >
-                    导入<i class="el-icon-download el-icon--right"></i>
+                    :show-file-list="false"
+                  >
+                    <el-button class="checkout" size="small" type="success">
+                      导入<i class="el-icon-download el-icon--right" />
                     </el-button>
                   </el-upload>
                 </el-form-item>
                 <el-form-item>
-                  <el-button size="small" type="success" @click="exportHandleClick">导出<i class="el-icon-upload2 el-icon--right"></i></el-button>
+                  <el-button size="small" type="success" @click="exportHandleClick">导出<i class="el-icon-upload2 el-icon--right" /></el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -584,17 +585,17 @@ import {
   updateItemList,
   baseURL
 } from '@/api/baseData'
-import { stringify } from 'querystring';
+import { stringify } from 'querystring'
 export default {
   name: 'MaterialManager',
   data() {
     return {
-      excelUrl:`${baseURL}/bdItem/excel/import`,
+      excelUrl: `${baseURL}/bdItem/excel/import`,
       page: {
         id: null,
         current: 1,
         size: 10,
-        sort:'create_at'
+        sort: 'create_at'
       },
       listData: [],
       total: 0, // 总数
@@ -646,30 +647,30 @@ export default {
     this.getUnitAllFnc()
   },
   methods: {
-       //取消清空数据
-    cancle(formName){
-      this.add = false;
-      this.resetForm(formName);
+    // 取消清空数据
+    cancle(formName) {
+      this.add = false
+      this.resetForm(formName)
     },
     resetForm(formName) {
-        this.$refs[formName].resetFields();
-      },
-      beforeUpload(file) {
- 
+      this.$refs[formName].resetFields()
     },
-    handleSuccess(res,file) {
-       if(res.errorCode==0){
-          this.$message.success('上传成功，更新数据：'+res.result+'条');
-        }else{
-          this.$message.error('上传失败：'+JSON.stringify(res.message));
-        } 
-        this.getItemListFnc();
+    beforeUpload(file) {
+
     },
-    //export
-    exportHandleClick(){
+    handleSuccess(res, file) {
+      if (res.errorCode == 0) {
+        this.$message.success('上传成功，更新数据：' + res.result + '条')
+      } else {
+        this.$message.error('上传失败：' + JSON.stringify(res.message))
+      }
+      this.getItemListFnc()
+    },
+    // export
+    exportHandleClick() {
       window.open(
-         `${baseURL}/bdItem/excel/export`
-        );
+        `${baseURL}/bdItem/excel/export`
+      )
     },
     // 查询
     referHandleClick() {
@@ -732,14 +733,14 @@ export default {
       } else {
         this.humidityShow = false
       }
-      this.updateItem = row
+      this.updateItem = JSON.parse(JSON.stringify(row))
       this.edit = true
     },
     // 确定编辑
     editSureHandleClick(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.updateItemListFnc();
+          this.updateItemListFnc()
         } else {
           this.$message.error('请填写完整!')
           return false
@@ -768,40 +769,40 @@ export default {
     },
     // 添加物料
     addBdItemListFnc() {
-      if(this.addData.shelfLife<0){
-         this.$message({
+      if (this.addData.shelfLife < 0) {
+        this.$message({
           message: '物料保质期错误',
           type: 'warning'
         })
         return
       }
-        if(this.addData.tempUpperLimit<this.addData.tempLowerLimit){
-         this.$message({
-            message: '温度下限不能大于温度上限',
-            type: 'warning'
-          })
-          return
+      if (this.addData.tempUpperLimit < this.addData.tempLowerLimit) {
+        this.$message({
+          message: '温度下限不能大于温度上限',
+          type: 'warning'
+        })
+        return
       }
-      if(this.addData.tempUpperLimit.length>5||this.addData.tempLowerLimit.length>5){
-         this.$message({
-            message: '温度上下限不得超过五位数',
-            type: 'warning'
-          })
-          return
+      if (this.addData.tempUpperLimit.length > 5 || this.addData.tempLowerLimit.length > 5) {
+        this.$message({
+          message: '温度上下限不得超过五位数',
+          type: 'warning'
+        })
+        return
       }
-       if(this.addData.humidityUpperLimit.length>5||this.addData.humidityLowerLimit.length>5){
-         this.$message({
-            message: '湿度上下限不得超过五位数',
-            type: 'warning'
-          })
-          return
+      if (this.addData.humidityUpperLimit.length > 5 || this.addData.humidityLowerLimit.length > 5) {
+        this.$message({
+          message: '湿度上下限不得超过五位数',
+          type: 'warning'
+        })
+        return
       }
-      if(this.addData.humidityUpperLimit<this.addData.humidityLowerLimit){
-         this.$message({
-            message: '湿度下限不能大于湿度上限',
-            type: 'warning'
-          })
-          return
+      if (this.addData.humidityUpperLimit < this.addData.humidityLowerLimit) {
+        this.$message({
+          message: '湿度下限不能大于湿度上限',
+          type: 'warning'
+        })
+        return
       }
       addBdItemList(this.addData).then(res => {
         this.add = false
@@ -811,46 +812,46 @@ export default {
           type: 'success'
         })
         // 初始化批次列表
-        this.getItemListFnc();
-        this.resetForm('addData');
+        this.getItemListFnc()
+        this.resetForm('addData')
       })
     },
     // 编辑物料
     updateItemListFnc() {
-        if(this.updateItem.shelfLife<0){
-         this.$message({
+      if (this.updateItem.shelfLife < 0) {
+        this.$message({
           message: '物料保质期错误',
           type: 'warning'
         })
         return
       }
-        if(this.updateItem.tempUpperLimit<this.updateItem.tempLowerLimit){
-         this.$message({
-            message: '温度下限不能大于温度上限',
-            type: 'warning'
-          })
-          return
+      if (this.updateItem.tempUpperLimit < this.updateItem.tempLowerLimit) {
+        this.$message({
+          message: '温度下限不能大于温度上限',
+          type: 'warning'
+        })
+        return
       }
-      if(this.updateItem.tempUpperLimit.length>5||this.updateItem.tempLowerLimit.length>5){
-         this.$message({
-            message: '温度上下限不得超过五位数',
-            type: 'warning'
-          })
-          return
+      if (this.updateItem.tempUpperLimit.length > 5 || this.updateItem.tempLowerLimit.length > 5) {
+        this.$message({
+          message: '温度上下限不得超过五位数',
+          type: 'warning'
+        })
+        return
       }
-       if(this.updateItem.humidityUpperLimit.length>5||this.updateItem.humidityLowerLimit.length>5){
-         this.$message({
-            message: '湿度上下限不得超过五位数',
-            type: 'warning'
-          })
-          return
+      if (this.updateItem.humidityUpperLimit.length > 5 || this.updateItem.humidityLowerLimit.length > 5) {
+        this.$message({
+          message: '湿度上下限不得超过五位数',
+          type: 'warning'
+        })
+        return
       }
-      if(this.updateItem.humidityUpperLimit<this.updateItem.humidityLowerLimit){
-         this.$message({
-            message: '湿度下限不能大于湿度上限',
-            type: 'warning'
-          })
-          return
+      if (this.updateItem.humidityUpperLimit < this.updateItem.humidityLowerLimit) {
+        this.$message({
+          message: '湿度下限不能大于湿度上限',
+          type: 'warning'
+        })
+        return
       }
       updateItemList(this.updateItem).then(res => {
         this.edit = false

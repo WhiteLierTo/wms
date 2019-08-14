@@ -8,7 +8,7 @@
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
               <el-form :inline="true" :model="page">
                 <el-form-item>
-                  <el-input clearable placeholder="库位编号"  size="small" v-model="page.location"></el-input>
+                  <el-input clearable v-model="page.location" placeholder="库位编号" size="small" />
                   <!-- <el-select
                     v-model="page.location"
                     filterable
@@ -66,17 +66,18 @@
                   <el-button size="small" type="primary" @click="add = true">新增</el-button>
                 </el-form-item>
                 <el-form-item>
-                   <el-upload
+                  <el-upload
                     :action="excelUrl"
                     :on-success="handleSuccess"
-                    :show-file-list="false">
-                    <el-button class="checkout" size="small" type="success" >
-                    导入<i class="el-icon-download el-icon--right"></i>
+                    :show-file-list="false"
+                  >
+                    <el-button class="checkout" size="small" type="success">
+                      导入<i class="el-icon-download el-icon--right" />
                     </el-button>
                   </el-upload>
                 </el-form-item>
                 <el-form-item>
-                  <el-button size="small" type="success" @click="exportHandleClick">导出<i class="el-icon-upload2 el-icon--right"></i></el-button>
+                  <el-button size="small" type="success" @click="exportHandleClick">导出<i class="el-icon-upload2 el-icon--right" /></el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -309,7 +310,7 @@ export default {
   name: 'LocationManager',
   data() {
     return {
-      excelUrl:`${baseURL}/bdLocation/excel/import`,
+      excelUrl: `${baseURL}/bdLocation/excel/import`,
       remote: [], // 远程查询库位编号
       setRemote: [],
       loading: false,
@@ -346,7 +347,7 @@ export default {
         // 查询条件
         location: '',
         locationLock: '',
-        sort:'create_at',
+        sort: 'create_at',
         wid: '',
         total: 40,
         current: 1,
@@ -360,24 +361,24 @@ export default {
     this.getWarehouseList()
   },
   methods: {
-        handleSuccess(res,file) {
-       if(res.errorCode==0){
-          this.$message.success('上传成功，更新数据：'+res.result+'条');
-        }else{
-          this.$message.error('上传失败：'+JSON.stringify(res.message));
-        } 
-        this.fetchData();
+    handleSuccess(res, file) {
+      if (res.errorCode == 0) {
+        this.$message.success('上传成功，更新数据：' + res.result + '条')
+      } else {
+        this.$message.error('上传失败：' + JSON.stringify(res.message))
+      }
+      this.fetchData()
     },
-    //export
-    exportHandleClick(){
+    // export
+    exportHandleClick() {
       window.open(
-         `${baseURL}/bdLocation/excel/export`
-        );
+        `${baseURL}/bdLocation/excel/export`
+      )
     },
-    //取消清空数据
-    cancle(formName){
-      this.add = false;
-      this.resetForm(formName);
+    // 取消清空数据
+    cancle(formName) {
+      this.add = false
+      this.resetForm(formName)
     },
     // 查询
     queryHandleClick() {
@@ -386,7 +387,7 @@ export default {
     // 弹出修改页面并赋值
     editHandleClick(e) {
       this.edit = true
-      this.editData = e
+      this.editData = JSON.parse(JSON.stringify(e))
     },
     // 查询库位编号
     remoteMethod(query) {
@@ -404,9 +405,9 @@ export default {
     },
     // curd
     addHandleClick(formName) {
-        this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.postLocationFnc();
+          this.postLocationFnc()
         } else {
           this.$message.error('请完善信息!')
           return false
@@ -414,33 +415,33 @@ export default {
       })
     },
     postLocationFnc() {
-      if(this.addData.tempUpperLimit<this.addData.tempLowerLimit){
-         this.$message({
-            message: '温度下限不能大于温度上限',
-            type: 'warning'
-          })
-          return
+      if (this.addData.tempUpperLimit < this.addData.tempLowerLimit) {
+        this.$message({
+          message: '温度下限不能大于温度上限',
+          type: 'warning'
+        })
+        return
       }
-      if(this.addData.tempUpperLimit.length>5||this.addData.tempLowerLimit.length>5){
-         this.$message({
-            message: '温度上下限不得超过五位数',
-            type: 'warning'
-          })
-          return
+      if (this.addData.tempUpperLimit.length > 5 || this.addData.tempLowerLimit.length > 5) {
+        this.$message({
+          message: '温度上下限不得超过五位数',
+          type: 'warning'
+        })
+        return
       }
-       if(this.addData.humidityUpperLimit.length>5||this.addData.humidityLowerLimit.length>5){
-         this.$message({
-            message: '湿度上下限不得超过五位数',
-            type: 'warning'
-          })
-          return
+      if (this.addData.humidityUpperLimit.length > 5 || this.addData.humidityLowerLimit.length > 5) {
+        this.$message({
+          message: '湿度上下限不得超过五位数',
+          type: 'warning'
+        })
+        return
       }
-      if(this.addData.humidityUpperLimit<this.addData.humidityLowerLimit){
-         this.$message({
-            message: '湿度下限不能大于湿度上限',
-            type: 'warning'
-          })
-          return
+      if (this.addData.humidityUpperLimit < this.addData.humidityLowerLimit) {
+        this.$message({
+          message: '湿度下限不能大于湿度上限',
+          type: 'warning'
+        })
+        return
       }
       const param = {
         wid: this.addData.wid,
@@ -463,12 +464,12 @@ export default {
           })
         }
       })
-       this.fetchData();
-       this.resetForm('addData');
+      this.fetchData()
+      this.resetForm('addData')
     },
     resetForm(formName) {
-        this.$refs[formName].resetFields();
-      },
+      this.$refs[formName].resetFields()
+    },
     deleteHandleClick() {
       this.$confirm('此操作将永久删除该仓库, 是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -482,7 +483,7 @@ export default {
           })
         })
         .catch(() => {})
-       this.fetchData()
+      this.fetchData()
     },
     editSubmit() {
       if (!this.editData.warehouseName || !this.editData.description) {
@@ -493,36 +494,36 @@ export default {
         })
         return
       }
-      if(this.editData.tempUpperLimit<this.editData.tempLowerLimit){
-         this.$message({
-            message: '温度下限不能大于温度上限',
-            type: 'warning'
-          })
-          return
+      if (this.editData.tempUpperLimit < this.editData.tempLowerLimit) {
+        this.$message({
+          message: '温度下限不能大于温度上限',
+          type: 'warning'
+        })
+        return
       }
-      if(this.editData.tempUpperLimit.length>5||this.editData.tempLowerLimit.length>5){
-         this.$message({
-            message: '温度上下限不得超过五位数',
-            type: 'warning'
-          })
-          return
+      if (this.editData.tempUpperLimit.length > 5 || this.editData.tempLowerLimit.length > 5) {
+        this.$message({
+          message: '温度上下限不得超过五位数',
+          type: 'warning'
+        })
+        return
       }
-       if(this.editData.humidityUpperLimit.length>5||this.editData.humidityLowerLimit.length>5){
-         this.$message({
-            message: '湿度上下限不得超过五位数',
-            type: 'warning'
-          })
-          return
+      if (this.editData.humidityUpperLimit.length > 5 || this.editData.humidityLowerLimit.length > 5) {
+        this.$message({
+          message: '湿度上下限不得超过五位数',
+          type: 'warning'
+        })
+        return
       }
-      if(this.editData.humidityUpperLimit<this.editData.humidityLowerLimit){
-         this.$message({
-            message: '湿度下限不能大于湿度上限',
-            type: 'warning'
-          })
-          return
+      if (this.editData.humidityUpperLimit < this.editData.humidityLowerLimit) {
+        this.$message({
+          message: '湿度下限不能大于湿度上限',
+          type: 'warning'
+        })
+        return
       }
       const param = {
-        id:this.editData.id,
+        id: this.editData.id,
         wid: this.editData.wid,
         tempUpperLimit: this.editData.tempUpperLimit,
         tempLowerLimit: this.editData.tempLowerLimit,
@@ -541,7 +542,7 @@ export default {
           this.edit = false
         }
       })
-       this.fetchData();
+      this.fetchData()
     },
     // 查询库位列表
     fetchData() {

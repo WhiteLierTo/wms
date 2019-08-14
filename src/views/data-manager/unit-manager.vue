@@ -234,7 +234,7 @@ export default {
     // 弹出修改页面并赋值
     editHandleClick(e) {
       this.edit = true
-      this.editData = e
+      this.editData = JSON.parse(JSON.stringify(e))
     },
     // 查询单位名称
     remoteMethod(query) {
@@ -317,6 +317,7 @@ export default {
                 type: 'success'
               })
               this.edit = false
+              this.fetchData()
             }
           })
         } else {

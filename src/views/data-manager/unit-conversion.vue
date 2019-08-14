@@ -60,18 +60,18 @@
                   <el-button size="small" type="primary" @click="add = true">{{ $t('header.add') }}</el-button>
                 </el-form-item>
                 <el-form-item>
-                  <el-upload
-                    :action="excelUrl"
-                    :on-success="handleSuccess"
-                    :show-file-list="false"
-                  >
+                  <el-upload :action="excelUrl" :on-success="handleSuccess" :show-file-list="false">
                     <el-button class="checkout" size="small" type="success">
-                      导入<i class="el-icon-download el-icon--right" />
+                      导入
+                      <i class="el-icon-download el-icon--right" />
                     </el-button>
                   </el-upload>
                 </el-form-item>
                 <el-form-item>
-                  <el-button size="small" type="success" @click="exportHandleClick">导出<i class="el-icon-upload2 el-icon--right" /></el-button>
+                  <el-button size="small" type="success" @click="exportHandleClick">
+                    导出
+                    <i class="el-icon-upload2 el-icon--right" />
+                  </el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -110,11 +110,7 @@
         <el-form ref="addData" :model="addData" class="demo-ruleForm">
           <el-row>
             <el-col :span="11">
-              <el-form-item
-                prop="itemId"
-                label="物料"
-                :label-width="formLabelWidth"
-              >
+              <el-form-item prop="itemId" label="物料" :label-width="formLabelWidth">
                 <el-select
                   v-model="addData.itemId"
                   filterable
@@ -187,11 +183,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-form-item
-            prop="description"
-            label="描述"
-            :label-width="formLabelWidth"
-          >
+          <el-form-item prop="description" label="描述" :label-width="formLabelWidth">
             <el-input
               v-model="addData.description"
               type="textarea"
@@ -215,12 +207,13 @@
         <el-form ref="editData" :model="editData" class="demo-ruleForm">
           <el-row>
             <el-col :span="11">
-              <el-form-item
-                prop="itemId"
-                label="物料"
-                :label-width="formLabelWidth"
-              >
-                <el-select v-model="editData.itemId" disabled style="width:100%" placeholder="请选择物料">
+              <el-form-item prop="itemId" label="物料" :label-width="formLabelWidth">
+                <el-select
+                  v-model="editData.itemId"
+                  disabled
+                  style="width:100%"
+                  placeholder="请选择物料"
+                >
                   <el-option
                     v-for="item in item"
                     :key="item.value"
@@ -272,7 +265,12 @@
                   { required: true, message: '换算单位不能为空'},
                 ]"
               >
-                <el-select v-model="editData.unitTo" disabled style="width:100%" placeholder="请选择换算单位">
+                <el-select
+                  v-model="editData.unitTo"
+                  disabled
+                  style="width:100%"
+                  placeholder="请选择换算单位"
+                >
                   <el-option
                     v-for="item in setRemote"
                     :key="item.value"
@@ -283,11 +281,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-form-item
-            prop="description"
-            label="描述"
-            :label-width="formLabelWidth"
-          >
+          <el-form-item prop="description" label="描述" :label-width="formLabelWidth">
             <el-input
               v-model="editData.description"
               type="textarea"
@@ -316,8 +310,8 @@ import {
   deleteUnitConversion,
   getUnitAll,
   baseURL
-} from '@/api/baseData'
-import { positiveNumber } from '@/utils/validate'
+} from '@/api/baseData';
+import { positiveNumber } from '@/utils/validate';
 export default {
   name: 'UnitConversion',
   data() {
@@ -364,9 +358,7 @@ export default {
     },
     // export
     exportHandleClick() {
-      window.open(
-        `${baseURL}/bdUnitConverter/excel/export`
-      )
+      window.open(`${baseURL}/bdUnitConverter/excel/export`)
     },
     // 表单清空
     resetForm(formName) {
@@ -384,7 +376,7 @@ export default {
     // 弹出修改页面并赋值
     editHandleClick(e) {
       this.edit = true
-      this.editData = e
+      this.editData = JSON.parse(JSON.stringify(e))
     },
     // 查询单位名称
     remoteMethod(query) {
@@ -407,14 +399,14 @@ export default {
           message: '数量应为有效正整数',
           type: 'warning'
         })
-        return
+        return;
       }
       if (this.addData.unit === this.addData.unitTo) {
         this.$message({
           message: '原单位和目标单位不可一致',
           type: 'warning'
         })
-        return
+        return;
       }
       this.$refs[formName].validate(valid => {
         if (valid) {
@@ -428,11 +420,11 @@ export default {
           postUnitConversion(param).then(res => {
             if (res.errorCode === 0) {
               this.add = false
-              this.addData.unit = ''
-              this.addData.description = ''
-              this.addData.unitTo = ''
-              this.addData.itemId = ''
-              this.addData.coefficient = ''
+              this.addData.unit = '';
+              this.addData.description = '';
+              this.addData.unitTo = '';
+              this.addData.itemId = '';
+              this.addData.coefficient = '';
               this.$message({
                 message: '添加成功',
                 type: 'success'
@@ -481,7 +473,7 @@ export default {
               message: '数量应为有效正整数',
               type: 'warning'
             })
-            return
+            return;
           }
           const param = {
             id: this.editData.id,
@@ -498,6 +490,7 @@ export default {
                 type: 'success'
               })
               this.edit = false
+              this.fetchData()
             }
           })
         } else {
@@ -543,5 +536,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

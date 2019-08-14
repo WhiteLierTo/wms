@@ -37,18 +37,19 @@
                 <el-form-item>
                   <el-button size="small" type="primary" @click="add = true">{{ $t('header.add') }}</el-button>
                 </el-form-item>
-                             <el-form-item>
-                   <el-upload
-                    :action="excelUrl"
-                    :on-success="handleSuccess"
-                    :show-file-list="false">
-                    <el-button class="checkout" size="small" type="success" >
-                    导入<i class="el-icon-download el-icon--right"></i>
+                <el-form-item>
+                  <el-upload :action="excelUrl" :on-success="handleSuccess" :show-file-list="false">
+                    <el-button class="checkout" size="small" type="success">
+                      导入
+                      <i class="el-icon-download el-icon--right" />
                     </el-button>
                   </el-upload>
                 </el-form-item>
                 <el-form-item>
-                  <el-button size="small" type="success" @click="exportHandleClick">导出<i class="el-icon-upload2 el-icon--right"></i></el-button>
+                  <el-button size="small" type="success" @click="exportHandleClick">
+                    导出
+                    <i class="el-icon-upload2 el-icon--right" />
+                  </el-button>
                 </el-form-item>
               </el-form>
             </el-col>
@@ -123,8 +124,8 @@
                 label="字典分组"
                 :label-width="formLabelWidth"
                 :rules="[
-                { required: true, message: '字典分组不能为空'}
-              ]"
+                  { required: true, message: '字典分组不能为空'}
+                ]"
               >
                 <el-input v-model="addData.dictGroup" autocomplete="off" />
               </el-form-item>
@@ -137,7 +138,7 @@
             </el-col>
           </el-row>
           <div>
-        <el-form-item
+            <el-form-item
               prop="state"
               label="字典说明"
               :label-width="formLabelWidth"
@@ -199,8 +200,8 @@
                 label="字典分组"
                 :label-width="formLabelWidth"
                 :rules="[
-                { required: true, message: '字典分组不能为空'}
-              ]"
+                  { required: true, message: '字典分组不能为空'}
+                ]"
               >
                 <el-input v-model="editData.dictGroup" autocomplete="off" />
               </el-form-item>
@@ -213,7 +214,7 @@
             </el-col>
           </el-row>
           <div>
-        <el-form-item
+            <el-form-item
               prop="state"
               label="字典说明"
               :label-width="formLabelWidth"
@@ -248,75 +249,73 @@ import {
   getDictionaryAll,
   deleteDictionary,
   baseURL
-} from "@/api/baseData";
+} from '@/api/baseData'
 export default {
-  name: "Dictionary",
+  name: 'Dictionary',
   data() {
     return {
-        excelUrl:`${baseURL}/syDictionary/excel/import`,
+      excelUrl: `${baseURL}/syDictionary/excel/import`,
       setRemote: [],
       loading: false,
       options: [
         {
           // 字典状态查询
           value: true,
-          label: "开启"
+          label: '开启'
         },
         {
           value: false,
-          label: "关闭"
+          label: '关闭'
         }
       ],
       add: false,
       edit: false,
-      formLabelWidth: "80px",
+      formLabelWidth: '80px',
       addData: {
         // 新增数据
-        code: "",
-        text: "",
-        dictGroup: "",
-        state:'',
-        enabled:false
+        code: '',
+        text: '',
+        dictGroup: '',
+        state: '',
+        enabled: false
       },
       editData: {},
       page: {
         // 查询条件
-        id: "",
+        id: '',
         total: 40,
-        sort:'create_at',
+        sort: 'create_at',
         current: 1,
         size: 10
       },
       listData: []
-    };
+    }
   },
   mounted() {
-    this.fetchData();
-    this.getDictionaryAll();
+    this.fetchData()
+    this.getDictionaryAll()
   },
   methods: {
-    handleSuccess(res,file) {
-       if(res.errorCode==0){
-          this.$message.success('上传成功，更新数据：'+res.result+'条');
-        }else{
-          this.$message.error('上传失败：'+JSON.stringify(res.message));
-        } 
-        this.fetchData();
+    handleSuccess(res, file) {
+      if (res.errorCode == 0) {
+        this.$message.success('上传成功，更新数据：' + res.result + '条')
+      } else {
+        this.$message.error('上传失败：' + JSON.stringify(res.message))
+      }
+      this.fetchData()
     },
-        //export
-    exportHandleClick(){
-      window.open(
-         `${baseURL}/syDictionary/excel/export`
-        );
+    // export
+    exportHandleClick() {
+      window.open(`${baseURL}/syDictionary/excel/export`)
     },
     // 查询
     queryHandleClick() {
-      this.fetchData();
+      this.fetchData()
     },
     // 弹出修改页面并赋值
     editHandleClick(e) {
-      this.edit = true;
-      this.editData = e;
+      this.edit = true
+      this.editData = JSON.parse(JSON.stringify(e))
     },
     // curd
     addHandleClick() {
@@ -326,26 +325,26 @@ export default {
         dictGroup: this.addData.dictGroup,
         state: this.addData.state,
         enabled: this.addData.enabled
-      };
+      }
       postDictionary(param).then(res => {
         if (res.errorCode === 0) {
-          this.add = false;
+          this.add = false
           this.$message({
-            message: "添加成功",
-            type: "success"
-          });
+            message: '添加成功',
+            type: 'success'
+          })
         }
-        this.fetchData();
-      });
+        this.fetchData()
+      })
     },
     deleteHandleClick(e) {
-      this.$confirm("此操作将永久删除该字典, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+      this.$confirm('此操作将永久删除该字典, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
-        .then(async () => {
-           deleteDictionary(e).then(res => {
+        .then(async() => {
+          deleteDictionary(e).then(res => {
             if (res.errorCode === 0) {
               this.add = false
               this.$message({
@@ -356,7 +355,7 @@ export default {
             this.fetchData()
           })
         })
-        .catch(() => {});
+        .catch(() => {})
     },
     editSubmit() {
       const param = {
@@ -366,40 +365,41 @@ export default {
         dictGroup: this.editData.dictGroup,
         state: this.editData.state,
         enabled: this.editData.enabled
-      };
+      }
       putDictionary(param).then(res => {
         if (res.errorCode === 0) {
           this.$message({
-            message: "编辑成功",
-            type: "success"
-          });
-          this.edit = false;
+            message: '编辑成功',
+            type: 'success'
+          })
+          this.edit = false
+          this.fetchData()
         }
-      });
+      })
     },
     fetchData() {
       getDictionaryList(this.page).then(res => {
-        this.listData = res.result.list;
-        this.page.total = res.result.total;
-      });
+        this.listData = res.result.list
+        this.page.total = res.result.total
+      })
     },
     getDictionaryAll() {
       getDictionaryAll().then(res => {
         this.setRemote = res.result.map(item => {
-          return { value: item.id, label: item.code };
-        });
-      });
+          return { value: item.id, label: item.code }
+        })
+      })
     },
     handleSizeChange(val) {
-      this.page.size = val;
-      this.fetchData();
+      this.page.size = val
+      this.fetchData()
     },
     handleCurrentChange(val) {
-      this.page.current = val;
-      this.fetchData();
+      this.page.current = val
+      this.fetchData()
     }
   }
-};
+}
 </script>
 
 <style scoped>

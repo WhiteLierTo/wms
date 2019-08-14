@@ -51,7 +51,7 @@
                 filterable
                 :rules="[{ required: true, message: '请选择打印库位', trigger: 'blur' }]"
               >
-                <el-select multiple collapse-tags v-model="locationValue" placeholder="请选择库位">
+                <el-select v-model="locationValue" multiple collapse-tags placeholder="请选择库位">
                   <el-option
                     v-for="item in location"
                     :key="item.value"
@@ -125,7 +125,7 @@
           <el-row>
             <el-col :span="7">
               <el-form-item prop="number" label="张数" :label-width="formLabelWidth">
-                <el-input type="number" v-model="number" autocomplete="off" />
+                <el-input v-model="number" type="number" autocomplete="off" />
               </el-form-item>
             </el-col>
             <el-col :span="7">
@@ -175,7 +175,7 @@
     <el-dialog title="标签预览" :visible.sync="preview">
       <el-carousel arrow="never" style="background:#f3f2f5" height="400px">
         <el-carousel-item>
-          <img :src="src" style="max-width: 100%;max-height: 100%;display: block; margin: 0 auto;" />
+          <img :src="src" style="max-width: 100%;max-height: 100%;display: block; margin: 0 auto;">
         </el-carousel-item>
       </el-carousel>
     </el-dialog>
@@ -190,217 +190,217 @@ import {
   printer,
   printerView,
   baseURL
-} from "@/api/label";
-import axios from "axios";
+} from '@/api/label'
+import axios from 'axios'
 import {
   getWarehouseAll,
   getLocationAll,
   getLocationOne,
   getWarehouseOne
-} from "@/api/baseData";
-import { getDictionaryText, getDictionaryCode } from "@/utils/validate";
+} from '@/api/baseData'
+import { getDictionaryText, getDictionaryCode } from '@/utils/validate'
 export default {
-  name: "GeneralLabel",
+  name: 'GeneralLabel',
   data() {
     return {
       tableData: [],
       printerList: [],
-      value: "",
-      formLabelWidth: "120px",
-      input: "",
+      value: '',
+      formLabelWidth: '120px',
+      input: '',
       templateEle: {}, // 模板元素
       number: 1,
-      printer: "",
+      printer: '',
       archivedData: [
         {
           value: true,
-          label: "是"
+          label: '是'
         },
         {
           value: false,
-          label: "否"
+          label: '否'
         }
       ],
       location: [],
       locationValue: [],
-      warehouseValue: "",
-      warehouse: [], //库房库位数据
-      locationOne: {}, //单个库位信息
-      element: [], //元素
+      warehouseValue: '',
+      warehouse: [], // 库房库位数据
+      locationOne: {}, // 单个库位信息
+      element: [], // 元素
       preview: false,
       elementShow: false,
-      flowPic: "",
-      src: "",
+      flowPic: '',
+      src: '',
       template: {
         deleted: false,
         labelType: 3
       },
-      direction:'',
-      warehouseName: "",
-      warehouseId:'',
-    };
+      direction: '',
+      warehouseName: '',
+      warehouseId: ''
+    }
   },
   mounted() {
     // 获取所有模板
-    this.getTemplateAll();
+    this.getTemplateAll()
     // 获取所有打印机
-    this.getPrinterAll();
+    this.getPrinterAll()
     // 获取所有库位
-    this.getLocationAll();
+    this.getLocationAll()
     // 获取所有库房
-    this.getWarehouseAll();
+    this.getWarehouseAll()
   },
   methods: {
-    //标签预览
+    // 标签预览
     printerViewHandleClick() {
-      this.preview = true;
-      this.src = `${baseURL}print/preview?id=${this.templateEle.id}`;
+      this.preview = true
+      this.src = `${baseURL}print/preview?id=${this.templateEle.id}`
     },
     // 库位选择后，映射字段
     locationChange(e) {
       const param = {
         id: e
-      };
+      }
       getLocationOne(param).then(res => {
-        this.locationOne = res.result;
-        this.locationFnc();
-      });
+        this.locationOne = res.result
+        this.locationFnc()
+      })
     },
-    //库位改变,映射赋值
+    // 库位改变,映射赋值
     locationFnc() {
-      let params = {
-        warehouseId:this.warehouseId,
-        warehouseName:this.warehouseName,
-        location:this.locationOne.location
+      const params = {
+        warehouseId: this.warehouseId,
+        warehouseName: this.warehouseName,
+        location: this.locationOne.location
       }
       this.element.forEach(v => {
-        if (v.fieldType === "mapped") {
-          v.fieldValue = `${this.locationOne[v.fieldName]}`;
+        if (v.fieldType === 'mapped') {
+          v.fieldValue = `${this.locationOne[v.fieldName]}`
         }
-        if (v.fieldType === "json-location") {
-          v.fieldValue = params;
+        if (v.fieldType === 'json-location') {
+          v.fieldValue = params
         }
-      });
+      })
       const ext = {
         labelTemplate: this.templateEle,
         labelTemplateElement: this.element
-      };
+      }
       const param = {
         ext: ext,
         number: this.number,
         printer: this.printer
-      };
+      }
       printer(param)
         .then(res => {
           if (res.errorCode === 0) {
             this.$message({
-              message: "打印成功",
-              type: "success"
-            });
+              message: '打印成功',
+              type: 'success'
+            })
           }
         })
-        .catch(() => {});
+        .catch(() => {})
     },
     // 库房下拉获取库位
     warehouseChange(e) {
-      this.getLocationAll(e);
-      this.warehouseId = e;
+      this.getLocationAll(e)
+      this.warehouseId = e
       const param = {
         id: e
-      };
+      }
       getWarehouseOne(param).then(res => {
-        this.warehouseName = res.result.warehouseName;
-      });
+        this.warehouseName = res.result.warehouseName
+      })
     },
     // 打印事件
     printHandleClick() {
       try {
         this.element.forEach(v => {
-          if (v.fieldType === "input" && v.fieldValue === "") {
-            throw new Error();
+          if (v.fieldType === 'input' && v.fieldValue === '') {
+            throw new Error()
           }
-        });
+        })
       } catch (e) {
         this.$message({
-          message: "请完善模板元素信息",
-          type: "warning"
-        });
+          message: '请完善模板元素信息',
+          type: 'warning'
+        })
         return
       }
-      if (this.printer === "" || this.number === "") {
+      if (this.printer === '' || this.number === '') {
         this.$message({
-          message: "请完善打印信息",
-          type: "warning"
-        });
-        return;
+          message: '请完善打印信息',
+          type: 'warning'
+        })
+        return
       }
       this.locationValue.forEach(v => {
-        this.locationChange(v);
-      });
+        this.locationChange(v)
+      })
     },
 
     // 选中模板，获取模板及元素数据
     templateChange(e) {
       const param = {
         id: e
-      };
+      }
       const params = {
         templateId: e
-      };
+      }
       getlabelTemplateOne(param).then(res => {
-        this.templateEle = res.result;
-        if(this.templateEle.direction === 1){
+        this.templateEle = res.result
+        if (this.templateEle.direction === 1) {
           this.direction = '横向'
         }
-        if(this.templateEle.direction === 0){
+        if (this.templateEle.direction === 0) {
           this.direction = '竖向'
         }
-      });
+      })
       getAllLabelTemplate(params).then(res => {
-        this.element = res.result;
+        this.element = res.result
         if (res.result.length > 0) {
-          this.elementShow = true;
+          this.elementShow = true
         }
         this.element.forEach(v => {
-          if (v.fieldType === "input") {
-            v.show = false;
+          if (v.fieldType === 'input') {
+            v.show = false
           } else {
-            v.show = true;
+            v.show = true
           }
-        });
-      });
+        })
+      })
     },
     // 查询所有打印机
     getPrinterAll() {
       getPrinterAll().then(res => {
-        this.printerList = res.result;
-      });
+        this.printerList = res.result
+      })
     },
     // 下拉查询库位列表
     getLocationAll(e) {
       const param = {
         wid: e
-      };
+      }
       getLocationAll(param).then(res => {
         this.location = res.result.map(item => {
-          return { value: item.id, label: item.location };
-        });
-      });
+          return { value: item.id, label: item.location }
+        })
+      })
     },
     // 下拉查询库房列表
     getWarehouseAll() {
       getWarehouseAll().then(res => {
-        this.warehouse = res.result;
-      });
+        this.warehouse = res.result
+      })
     },
     // 查询所有模板
     getTemplateAll() {
       getAllLabelTemplateList(this.template).then(res => {
-        this.tableData = res.result;
-      });
+        this.tableData = res.result
+      })
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .box-card {

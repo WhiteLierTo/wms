@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- <button @click="labelHandleClick">标签打印</button> -->
     <div class="body">
       <el-card class="box-card">
         <el-row>
@@ -71,55 +70,53 @@
             </el-row>
           </el-form>
         </el-card>
-          <div v-show="elementShow">
-            <div class="h-title1">模板元素</div>
-                <el-card class="box-card">
-              <div>
-                <el-row >
-                  <div  v-for="item in tableData" :key="item.id" style="margin:20px 0px 10px 0px ">
+        <div v-show="elementShow">
+          <div class="h-title1">模板元素</div>
+          <el-card class="box-card">
+            <div>
+              <el-row>
+                <div v-for="item in tableData" :key="item.id" style="margin:20px 0px 10px 0px ">
                   <el-col :span="4">
-                    <div style="margin:20px -5px 10px 20px;font-size:14px;font-weight:600">{{ item.labelName }}</div>
+                    <div
+                      style="margin:20px -5px 10px 20px;font-size:14px;font-weight:600"
+                    >{{ item.labelName }}</div>
                   </el-col>
                   <el-col style="margin-top:10px" :span="4">
                     <el-input
                       v-model="item.fieldValue"
-                      :disabled="item.show"
                       :placeholder="item.placeholder"
+                      :disabled="item.show"
                       autocomplete="off"
                     />
                   </el-col>
-                  </div>
-            </el-row>
-          </div>
-        </el-card>
-    </div>
+                </div>
+              </el-row>
+            </div>
+          </el-card>
+        </div>
         <el-form ref="templateEle" :model="templateEle" class="demo-ruleForm quantity">
           <el-row>
             <el-col :span="7">
-              <el-form-item
-                prop="number"
-                label="张数"
-                :label-width="formLabelWidth"
-              >
-                <el-input type="number" v-model="number" autocomplete="off" />
+              <el-form-item prop="number" label="张数" :label-width="formLabelWidth">
+                <el-input v-model="number" type="number" autocomplete="off" />
               </el-form-item>
             </el-col>
-             <el-col :span="7">
-            <el-form-item
-                  prop="archived"
-                  label="是否存档"
-                  :label-width="formLabelWidth"
-                  :rules="[{ required: true, message: '请选择是否存档', trigger: 'blur' }]"
-                >
-                  <el-select v-model="templateEle.archived" placeholder="请选择是否存档" style="width:100%">
-                    <el-option
-                      v-for="item in archivedData"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    />
-                  </el-select>
-                </el-form-item>
+            <el-col :span="7">
+              <el-form-item
+                prop="archived"
+                label="是否存档"
+                :label-width="formLabelWidth"
+                :rules="[{ required: true, message: '请选择是否存档', trigger: 'blur' }]"
+              >
+                <el-select v-model="templateEle.archived" placeholder="请选择是否存档" style="width:100%">
+                  <el-option
+                    v-for="item in archivedData"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
             </el-col>
             <el-col :span="7">
               <el-form>
@@ -148,16 +145,13 @@
         </div>
       </el-card>
     </div>
-     <el-dialog
-    title="标签预览"
-    :visible.sync="preview"
-  >
-    <el-carousel  arrow="never"  style="background:#f3f2f5"  height="400px">
-      <el-carousel-item>
-        <img :src="src" style="max-width: 100%;max-height: 100%;display: block; margin: 0 auto;"/>
-      </el-carousel-item>
-    </el-carousel>
-  </el-dialog>
+    <el-dialog title="标签预览" :visible.sync="preview">
+      <el-carousel arrow="never" style="background:#f3f2f5" height="400px">
+        <el-carousel-item>
+          <img :src="src" style="max-width: 100%;max-height: 100%;display: block; margin: 0 auto;" >
+        </el-carousel-item>
+      </el-carousel>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -194,34 +188,37 @@ export default {
       params: {},
       templateId: '',
       preview: false,
-      elementShow:false,
-      flowPic: "",
-      src:'',
-       archivedData: [{
+      elementShow: false,
+      flowPic: '',
+      src: '',
+      archivedData: [
+        {
           value: true,
           label: '是'
-        }, {
+        },
+        {
           value: false,
           label: '否'
-        }],
-      template:{
-          deleted:false,
-          labelType:2
+        }
+      ],
+      template: {
+        deleted: false,
+        labelType: 2
       },
       tableData: [],
-      direction:''
+      direction: ''
     }
   },
   mounted() {
     // 获取所有模板列表
     this.getAllLabelTemplateListFnc()
     // 获取所有打印机
-    this.getPrinterAllFnc();
+    this.getPrinterAllFnc()
   },
   methods: {
-        //标签预览
+    // 标签预览
     printerViewHandleClick() {
-      this.preview = true;
+      this.preview = true
       this.src = `${baseURL}print/preview?id=${this.templateEle.id}`
     },
     // 选择打印模板
@@ -233,16 +230,17 @@ export default {
     },
     // 物料查询
     referHandleClick() {
+      if (!this.itemId) {
+        this.$message.error('请填写物料编号')
+        return;
+      }
       this.getOneItemListFnc()
     },
     // 打印事件
     printHandleClick() {
-       if(this.printer === '' || this.number === ''){
-         this.$message({
-              message: '请完善打印信息',
-              type: 'warning'
-            })
-          return
+      if (this.printerVal === '' || this.number === '') {
+        this.$message.error('请完善打印信息')
+        return;
       }
       this.tableData.forEach(v => {
         v.brushType = getDictionaryCode(v.brushType)[0].code
@@ -275,18 +273,18 @@ export default {
     // 获取所有模板列表
     getAllLabelTemplateListFnc() {
       getAllLabelTemplateList(this.template).then(res => {
-        this.options = res.result;
+        this.options = res.result
       })
     },
     // 获取单个模板
     getlabelTemplateOneFnc() {
       getlabelTemplateOne(this.params).then(res => {
         this.templateEle = res.result
-        if(this.templateEle.direction === 1){
-          this.direction = '横向'
+        if (this.templateEle.direction === 1) {
+          this.direction = '横向';
         }
-        if(this.templateEle.direction === 0){
-          this.direction = '竖向'
+        if (this.templateEle.direction === 0) {
+          this.direction = '竖向';
         }
       })
     },
@@ -296,21 +294,11 @@ export default {
         id: this.itemId
       }
       getOneItemList(params).then(res => {
-        res.result.length === null
-          ? this.$message.error('未查到该物料')
-          : (this.itemInfo = res.result)
-        const param = {
-          itemId: this.itemId,
-          itemName:res.result.itemName,
-          itemUnit:res.result.itemUnit,
-          batchNumber:res.result.batchNumber,
-          quantity:res.result.quantity,
-        }
+        this.itemInfo = res.result
         this.tableData.forEach(v => {
-        if (v.fieldType === "label-qr") {
-          v.fieldValue = param;
-         }
-          v.fieldValue = getValFnc(this.itemInfo, v.fieldName)
+          if (v.fieldType === '字段映射') {
+            v.fieldValue = getValFnc(this.itemInfo, v.fieldName)
+          }
         })
       })
     },
@@ -326,14 +314,19 @@ export default {
         templateId: this.templateId
       }
       getAllLabelTemplate(params).then(res => {
-        this.tableData = res.result;
-        if(res.result.length>0){
-          this.elementShow = true;
+        this.tableData = res.result
+        if (res.result.length > 0) {
+          this.elementShow = true
         }
-        console.log('tableData:' + JSON.stringify(this.tableData))
+
         this.tableData.forEach(v => {
           v.brushType = getDictionaryText(v.brushType)[0].text
           v.fieldType = getDictionaryText(v.fieldType)[0].text
+          if (v.fieldType === 'input') {
+            v.show = false
+          } else {
+            v.show = true
+          }
         })
       })
     }
@@ -342,7 +335,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .box-card {
-    .h-title1 {
+  .h-title1 {
     padding: 40px 10px 40px 20px;
     font-size: 16px;
   }

@@ -8,7 +8,13 @@
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
               <el-form :inline="true" :model="page">
                 <el-form-item>
-                  <el-select
+                    <el-input
+                    v-model="page.id"
+                    clearable
+                    placeholder="物料编号"
+                    size="small"
+                  />
+                <!--   <el-select
                     v-model="page.id"
                     filterable
                     remote
@@ -20,7 +26,7 @@
                     clearable
                   >
                     <el-option v-for="item in options" :key="item" :label="item" :value="item" />
-                  </el-select>
+                  </el-select> -->
                 </el-form-item>
                 <el-form-item>
                   <el-button

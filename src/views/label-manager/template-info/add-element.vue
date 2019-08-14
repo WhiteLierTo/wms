@@ -575,8 +575,7 @@ export default {
             !this.eleObj.fieldName ||
             !this.eleObj.fontName ||
             !this.eleObj.fontSize ||
-            !this.eleObj.fontStyle ||
-            !this.eleObj.fieldValue
+            !this.eleObj.fontStyle
           ) {
             this.$message.error("请填写完整!");
           } else {

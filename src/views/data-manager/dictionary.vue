@@ -90,7 +90,7 @@
     <!--新增-->
     <div>
       <el-dialog title="新增字典" :visible.sync="add">
-        <el-form :model="addData" class="demo-ruleForm">
+        <el-form ref="addData"  :model="addData" class="demo-ruleForm">
           <el-row>
             <el-col :span="11">
               <el-form-item
@@ -157,7 +157,7 @@
         </el-form>
 
         <div slot="footer" class="dialog-footer">
-          <el-button @click="add = false">取 消</el-button>
+          <el-button @click="cancle('addData')">取 消</el-button>
           <el-button type="primary" @click="addHandleClick">确 定</el-button>
         </div>
       </el-dialog>
@@ -296,13 +296,21 @@ export default {
     this.getDictionaryAll()
   },
   methods: {
-    handleSuccess(res, file) {
-      if (res.errorCode == 0) {
-        this.$message.success('上传成功，更新数据：' + res.result + '条')
-      } else {
-        this.$message.error('上传失败：' + JSON.stringify(res.message))
-      }
-      this.fetchData()
+     //取消数据清除
+    cancle(formName){
+        this.resetForm(formName);
+        this.add = false;
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+    },
+    handleSuccess(res,file) {
+       if(res.errorCode==0){
+          this.$message.success('上传成功，更新数据：'+res.result+'条');
+        }else{
+          this.$message.error('上传失败：'+JSON.stringify(res.message));
+        } 
+        this.fetchData();
     },
     // export
     exportHandleClick() {
@@ -334,8 +342,9 @@ export default {
             type: 'success'
           })
         }
-        this.fetchData()
-      })
+        this.resetForm('addData');
+        this.fetchData();
+      });
     },
     deleteHandleClick(e) {
       this.$confirm('此操作将永久删除该字典, 是否继续?', '提示', {

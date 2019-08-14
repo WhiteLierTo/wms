@@ -154,7 +154,7 @@ import {
   printer,
   baseURL
 } from "@/api/label";
-import { getDictionaryText, getDictionaryCode } from "@/utils/validate";
+import { getDictionaryText, getDictionaryCode ,positiveNumber} from "@/utils/validate";
 export default {
   name: "GeneralLabel",
   data() {
@@ -206,6 +206,13 @@ export default {
               type: 'warning'
             })
           return
+      }
+      if(positiveNumber(this.number) === false) {
+        this.$message({
+          message: '数量应为有效正整数',
+          type: 'warning'
+        })
+        return
       }
       const ext = {
         labelTemplate: this.templateEle,

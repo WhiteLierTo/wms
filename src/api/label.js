@@ -1,7 +1,7 @@
 // 标签接口
 import request from '@/utils/request'
-export const baseURL = 'http://116.62.212.169:8101/wms-label/'
-// export const baseURL = 'http://192.18.1.149:8101/wms-label/'
+// export const baseURL = 'http://116.62.212.169:8101/wms-label/'
+export const baseURL = 'http://192.18.1.149:8101/wms-label/'
 
 // 分页获取标签
 export function getLabelTemplateList(params) {

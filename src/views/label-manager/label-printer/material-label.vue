@@ -167,7 +167,8 @@ import { getOneItemList } from '@/api/baseData';
 import {
   getDictionaryText,
   getDictionaryCode,
-  getValFnc
+  getValFnc,
+  positiveNumber
 } from '@/utils/validate';
 export default {
   name: 'MaterialLabel',
@@ -241,6 +242,13 @@ export default {
       if (this.printerVal === '' || this.number === '') {
         this.$message.error('请完善打印信息')
         return;
+      }
+      if(positiveNumber(this.number) === false) {
+        this.$message({
+          message: '数量应为有效正整数',
+          type: 'warning'
+        })
+        return
       }
       this.tableData.forEach(v => {
         v.brushType = getDictionaryCode(v.brushType)[0].code

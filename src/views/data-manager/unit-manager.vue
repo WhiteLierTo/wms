@@ -9,7 +9,13 @@
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px">
               <el-form :inline="true" :model="page">
                 <el-form-item>
-                  <el-select
+                   <el-input
+                    v-model="page.unit"
+                    clearable
+                    placeholder="单位名称"
+                    size="small"
+                  />
+                 <!--  <el-select
                     v-model="page.unit"
                     filterable
                     clearable
@@ -25,8 +31,8 @@
                       :key="item.value"
                       :label="item.label"
                       :value="item.value"
-                    />
-                  </el-select>
+                    /> 
+                  </el-select>-->
                 </el-form-item>
                 <el-form-item>
                   <el-button

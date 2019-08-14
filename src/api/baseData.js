@@ -1,7 +1,7 @@
 // 基础数据接口
 import request from '@/utils/request'
-export const baseURL = 'http://116.62.212.169:8100/wms-main/'
-// export const baseURL = 'http://192.18.1.149:8100/wms-main/'
+// export const baseURL = 'http://116.62.212.169:8100/wms-main/'
+export const baseURL = 'http://192.18.1.149:8100/wms-main/'
 
 // 获取库房列表
 export function getWarehouseList(params) {
@@ -185,7 +185,7 @@ export function addInvControlList(data) {
 export function getUnit(params) {
   return request({
     baseURL,
-    url: 'bdUnit/list',
+    url: 'bdUnit/mine/list',
     method: 'get',
     params
   })

@@ -142,7 +142,7 @@
         </el-form>
 
         <div slot="footer" class="dialog-footer">
-          <el-button @click="add = false">取 消</el-button>
+          <el-button @click="cancle('addData')">取 消</el-button>
           <el-button type="primary" @click="addHandleClick('addData')">确 定</el-button>
         </div>
       </el-dialog>
@@ -272,6 +272,14 @@ export default {
     this.getAllbdExternalBillTypeListFnc()
   },
   methods: {
+    //取消数据清除
+    cancle(formName){
+        this.resetForm(formName);
+        this.add = false;
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+    },
     handleSuccess(res, file) {
       if (res.errorCode === 0) {
         this.$message.success('上传成功，更新数据：' + res.result + '条')
@@ -393,7 +401,8 @@ export default {
           type: 'success'
         })
         // 初始化外部单据列表
-        this.getbdExternalBillTypeListFnc()
+        this.getbdExternalBillTypeListFnc();
+         this.resetForm('addData')
       })
     },
     // 修改外部单据

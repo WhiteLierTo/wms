@@ -71,6 +71,14 @@ export const constantRoutes = [{
     meta: { title: '库存管理' },
     children: []
   }, {
+    path: 'invcontrol-detail',
+    component: () =>
+                import('@/views/data-manager/invcontrol-detail'),
+    name: 'invcontrolDetail',
+    meta: { title: '库存明细' },
+    hidden: true,
+    children: []
+  }, {
     path: 'material-manager',
     component: () =>
                 import('@/views/data-manager/material-manager'),

@@ -2,7 +2,19 @@
   <div>
     <div class="body">
       <el-card class="box-card">
-        <div class="t-ele">添加标签元素</div>
+        <el-row>
+          <div>
+            <el-col :span="12">
+              <div class="t-ele">添加标签元素</div>
+            </el-col>
+
+            <el-col :span="12">
+              <div style="float:right;margin-right:50px">
+                <el-button type="primary" icon="el-icon-star-off" @click="printerViewHandleClick">预览</el-button>
+              </div>
+            </el-col>
+          </div>
+        </el-row>
         <el-row>
           <el-col :span="6">
             <el-form>
@@ -62,7 +74,7 @@
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
             >
-              <img v-if="imageUrl" :src="imageUrl" class="avatar">
+              <img v-if="imageUrl" :src="imageUrl" class="avatar" />
               <i v-else class="el-icon-plus avatar-uploader-icon" />
             </el-upload>
           </el-col>
@@ -229,7 +241,7 @@
           <el-table-column prop="placeholder" label="占位符" width="120" />
           <el-table-column prop="fontSize" label="字体大小" width="120" />
           <el-table-column prop="fontName" label="字体名称" width="120" />
-          <el-table-column label="操作">
+          <el-table-column fixed="right" label="操作">
             <template slot-scope="scope">
               <el-button type="text" size="small" @click="deleteEleHandleClick(scope.row.id)">删除</el-button>
             </template>
@@ -262,39 +274,51 @@
         </div>
       </el-dialog>
     </div>
+    <el-dialog
+    title="标签预览"
+    :visible.sync="preview"
+  >
+    <el-carousel  arrow="never"  style="background:#f3f2f5"  height="400px">
+      <el-carousel-item>
+        <img :src="src" style="max-width: 100%;max-height: 100%;display: block; margin: 0 auto;"/>
+      </el-carousel-item>
+    </el-carousel>
+  </el-dialog>
   </div>
 </template>
 <script>
-import { getDictionary } from '@/utils/validate'
+import { getDictionary } from "@/utils/validate";
 import {
   addlabelTemplateEle,
   getTemplateWidgetAll,
   getAllLabelTemplate,
-  deleteLabelTemplate
-} from '@/api/label'
+  deleteLabelTemplate,
+  baseURL
+} from "@/api/label";
 export default {
-  name: 'AddElement',
+  name: "AddElement",
   data() {
     return {
-      formLabelWidth: '80px',
+      formLabelWidth: "80px",
       show: false,
       add: false,
       eleObj: {
-        brushType: '',
-        fieldName: '',
-        labelName: '',
-        fieldType: '',
-        fieldValue: '',
-        fontName: '',
-        fontSize: '',
-        fontStyle: '',
-        height: '',
-        width: '',
-        x: '',
-        y: '',
-        templateId: '',
-        placeholder: ''
+        brushType: "",
+        fieldName: "",
+        labelName: "",
+        fieldType: "",
+        fieldValue: "",
+        fontName: "",
+        fontSize: "",
+        fontStyle: "",
+        height: "",
+        width: "",
+        x: "",
+        y: "",
+        templateId: "",
+        placeholder: ""
       },
+     templateId:'',
       brushTypeList: [],
       fieldTypeList: [],
       fontNameList: [],
@@ -302,8 +326,10 @@ export default {
       tableData: [],
       multipleSelection: [],
       elementList: [],
-      eleId: '',
+      eleId: "",
       fieldShow: false,
+      preview:false,
+      src:'',
       fieldTypeShow: false, // 控制字段类型消失
       updateShow: false, // 控制上传图片
       showObj: {
@@ -314,136 +340,146 @@ export default {
         fontSizeShow: false,
         fontStyleShow: false
       },
-      imageUrl: '',
-      status: ''
-    }
+      imageUrl: "",
+      status: ""
+    };
   },
   mounted() {
     // 通用字典赋值(画笔类型)
-    this.brushTypeList = getDictionary('brush_type')
+    this.brushTypeList = getDictionary("brush_type");
     // 通用字典赋值(字段类型)
-    this.fieldTypeList = getDictionary('field_type')
+    this.fieldTypeList = getDictionary("field_type");
     // 通用字典赋值(字体类型)
-    this.fontNameList = getDictionary('font_name')
+    this.fontNameList = getDictionary("font_name");
     // 通用字典赋值(字体样式)
-    this.fontStyleList = getDictionary('font_style')
+    this.fontStyleList = getDictionary("font_style");
 
-    sessionStorage.setItem('templateId', this.$route.params.id)
+    localStorage.setItem("templateId", this.$route.params.id);
+    this.templateId = this.$route.params.id;
+   if (!this.templateId) {
+      this.$router.push({ name: "LabelTemplate" });
+      return;
+    }
     // 初始化所有控件
-    this.getTemplateWidgetAllFnc()
+    this.getTemplateWidgetAllFnc();
     // 初始化当前模板下所有的元素
-    this.getAllLabelTemplateFnc()
+    this.getAllLabelTemplateFnc();
   },
   methods: {
+      //标签预览
+    printerViewHandleClick() {
+      this.preview = true;
+      this.src = `${baseURL}print/preview?id=${this.templateId}`;
+    },
     // 根据画笔类型 显示对应元素
     // 根据字段类型 显示是否需要控件或者字段值可填
     brushChange(val) {
       switch (val) {
-        case 'line':
-          this.show = false
-          this.updateShow = false
-          this.fieldTypeShow = false
-          Object.keys(this.showObj).forEach(key => (this.showObj[key] = false))
-          break
-        case 'image':
-          this.show = false
-          Object.keys(this.showObj).forEach(key => (this.showObj[key] = false))
-          this.updateShow = true
-          this.fieldTypeShow = false
-          break
-        case 'rect':
-          this.show = false
-          this.updateShow = false
-          this.fieldTypeShow = false
-          Object.keys(this.showObj).forEach(key => (this.showObj[key] = false))
-          break
-        case 'oval':
-          this.show = false
-          this.updateShow = false
-          this.fieldTypeShow = false
-          Object.keys(this.showObj).forEach(key => (this.showObj[key] = false))
-          break
-        case 'td-code':
-          this.updateShow = false
-          this.fieldTypeShow = true
-          this.showObj.fieldNameShow = true
-          this.showObj.fieldValShow = true
-          this.showObj.placeholderShow = true
-          break
-        case 'od-code':
-          this.show = false
-          this.updateShow = false
-          this.fieldTypeShow = false
-          this.showObj.fieldNameShow = true
-          this.showObj.fieldValShow = true
-          this.showObj.placeholderShow = true
-          break
-        case 'string':
-          this.show = false
-          this.updateShow = false
-          this.fieldTypeShow = true
-          Object.keys(this.showObj).forEach(key => (this.showObj[key] = true))
-          break
+        case "line":
+          this.show = false;
+          this.updateShow = false;
+          this.fieldTypeShow = false;
+          Object.keys(this.showObj).forEach(key => (this.showObj[key] = false));
+          break;
+        case "image":
+          this.show = false;
+          Object.keys(this.showObj).forEach(key => (this.showObj[key] = false));
+          this.updateShow = true;
+          this.fieldTypeShow = false;
+          break;
+        case "rect":
+          this.show = false;
+          this.updateShow = false;
+          this.fieldTypeShow = false;
+          Object.keys(this.showObj).forEach(key => (this.showObj[key] = false));
+          break;
+        case "oval":
+          this.show = false;
+          this.updateShow = false;
+          this.fieldTypeShow = false;
+          Object.keys(this.showObj).forEach(key => (this.showObj[key] = false));
+          break;
+        case "td-code":
+          this.updateShow = false;
+          this.fieldTypeShow = true;
+          this.showObj.fieldNameShow = true;
+          this.showObj.fieldValShow = true;
+          this.showObj.placeholderShow = true;
+          break;
+        case "od-code":
+          this.show = false;
+          this.updateShow = false;
+          this.fieldTypeShow = false;
+          this.showObj.fieldNameShow = true;
+          this.showObj.fieldValShow = true;
+          this.showObj.placeholderShow = true;
+          break;
+        case "string":
+          this.show = false;
+          this.updateShow = false;
+          this.fieldTypeShow = true;
+          Object.keys(this.showObj).forEach(key => (this.showObj[key] = true));
+          break;
       }
-      this.status = val
+      this.status = val;
     },
     fieldChange(val) {
-      val === 'mapped' ? (this.show = true) : (this.show = false)
-      this.fieldShow = false
-      if (val === 'mapped') {
-        this.fieldShow = true
-      } else if (val === 'input') {
-        this.fieldShow = true
+      val === "mapped" ? (this.show = true) : (this.show = false);
+      this.fieldShow = false;
+      if (val === "mapped") {
+        this.fieldShow = true;
+      } else if (val === "input") {
+        this.fieldShow = true;
       }
     },
     handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw)
-      this.eleObj.fieldValue = res.result
+      this.imageUrl = URL.createObjectURL(file.raw);
+      this.eleObj.fieldValue = res.result;
     },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg'
-      const isLt2M = file.size / 1024 / 1024 < 2
+      const isJPG = file.type === "image/jpeg";
+      const isLt2M = file.size / 1024 / 1024 < 2;
 
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
+        this.$message.error("上传头像图片只能是 JPG 格式!");
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+        this.$message.error("上传头像图片大小不能超过 2MB!");
       }
-      return isJPG && isLt2M
+      return isJPG && isLt2M;
     },
     // map映射 选择控件
     checkoutHandleClick() {
-      this.add = true
+      this.add = true;
     },
     // 点击选择
     handleSelectionChange(val) {
-      this.multipleSelection = val
+      this.multipleSelection = val;
     },
     // 确定选择控件
     addSubmit() {
       if (this.multipleSelection.length === 0) {
-        this.$message.error('请选择控件')
+        this.$message.error("请选择控件");
       } else if (this.multipleSelection.length > 1) {
-        this.$message.error('有且只有一个控件')
+        this.$message.error("有且只有一个控件");
       }
-      this.eleObj = this.multipleSelection[0]
-      this.add = false
+      this.eleObj = this.multipleSelection[0];
+      this.add = false;
     },
     // 清空
     clearHandleClick(formName) {
-      this.$refs[formName].resetFields()
-      this.eleObj.brushType = ''
-      this.eleObj.fieldType = ''
+      this.$refs[formName].resetFields();
+      this.eleObj.brushType = "";
+      this.eleObj.fieldType = "";
     },
     // 生成元素
     eleHandleClick() {
-      this.eleObj.templateId = sessionStorage.getItem('templateId')
+      this.eleObj.templateId = this.templateId;
       if (!this.eleObj.brushType) {
-        this.$message.error('请选择画笔类型!')
+        this.$message.error("请选择画笔类型!");
       }
       switch (this.status) {
-        case 'line':
+        case "line":
           if (
             !this.eleObj.height ||
             !this.eleObj.width ||
@@ -451,12 +487,12 @@ export default {
             !this.eleObj.y ||
             !this.eleObj.labelName
           ) {
-            this.$message.error('请填写完整!')
+            this.$message.error("请填写完整!");
           } else {
-            this.addlabelTemplateEleFnc('eleObj')
+            this.addlabelTemplateEleFnc("eleObj");
           }
-          break
-        case 'image':
+          break;
+        case "image":
           if (
             !this.eleObj.height ||
             !this.eleObj.width ||
@@ -465,12 +501,12 @@ export default {
             !this.eleObj.labelName ||
             !this.imageUrl
           ) {
-            this.$message.error('请填写完整!')
+            this.$message.error("请填写完整!");
           } else {
-            this.addlabelTemplateEleFnc('eleObj')
+            this.addlabelTemplateEleFnc("eleObj");
           }
-          break
-        case 'rect':
+          break;
+        case "rect":
           if (
             !this.eleObj.height ||
             !this.eleObj.width ||
@@ -478,12 +514,12 @@ export default {
             !this.eleObj.y ||
             !this.eleObj.labelName
           ) {
-            this.$message.error('请填写完整!')
+            this.$message.error("请填写完整!");
           } else {
-            this.addlabelTemplateEleFnc('eleObj')
+            this.addlabelTemplateEleFnc("eleObj");
           }
-          break
-        case 'oval':
+          break;
+        case "oval":
           if (
             !this.eleObj.height ||
             !this.eleObj.width ||
@@ -491,12 +527,12 @@ export default {
             !this.eleObj.y ||
             !this.eleObj.labelName
           ) {
-            this.$message.error('请填写完整!')
+            this.$message.error("请填写完整!");
           } else {
-            this.addlabelTemplateEleFnc('eleObj')
+            this.addlabelTemplateEleFnc("eleObj");
           }
-          break
-        case 'td-code':
+          break;
+        case "td-code":
           if (
             !this.eleObj.height ||
             !this.eleObj.width ||
@@ -507,12 +543,12 @@ export default {
             !this.eleObj.fieldName ||
             !this.eleObj.fieldType
           ) {
-            this.$message.error('请填写完整!')
+            this.$message.error("请填写完整!");
           } else {
-            this.addlabelTemplateEleFnc('eleObj')
+            this.addlabelTemplateEleFnc("eleObj");
           }
-          break
-        case 'od-code':
+          break;
+        case "od-code":
           if (
             !this.eleObj.height ||
             !this.eleObj.width ||
@@ -523,12 +559,12 @@ export default {
             !this.eleObj.fieldName ||
             !this.eleObj.fieldValue
           ) {
-            this.$message.error('请填写完整!')
+            this.$message.error("请填写完整!");
           } else {
-            this.addlabelTemplateEleFnc('eleObj')
+            this.addlabelTemplateEleFnc("eleObj");
           }
-          break
-        case 'string':
+          break;
+        case "string":
           if (
             !this.eleObj.height ||
             !this.eleObj.width ||
@@ -542,65 +578,65 @@ export default {
             !this.eleObj.fontStyle ||
             !this.eleObj.fieldValue
           ) {
-            this.$message.error('请填写完整!')
+            this.$message.error("请填写完整!");
           } else {
-            this.addlabelTemplateEleFnc('eleObj')
+            this.addlabelTemplateEleFnc("eleObj");
           }
-          break
+          break;
       }
     },
     // 添加元素
     addlabelTemplateEleFnc(formName) {
       addlabelTemplateEle(this.eleObj).then(res => {
         // 置空
-        this.$refs[formName].resetFields()
-        this.eleObj.brushType = ''
-        this.eleObj.fieldType = ''
+        this.$refs[formName].resetFields();
+        this.eleObj.brushType = "";
+        this.eleObj.fieldType = "";
         this.$message({
-          message: '新建成功',
-          type: 'success'
-        })
+          message: "新建成功",
+          type: "success"
+        });
         // 获取所有元素
-        this.getAllLabelTemplateFnc()
-      })
+        this.getAllLabelTemplateFnc();
+      });
     },
     // 初始化所有控件
     getTemplateWidgetAllFnc() {
       getTemplateWidgetAll().then(res => {
-        this.tableData = res.result
-      })
+        this.tableData = res.result;
+      });
     },
     // 获取所有元素
     getAllLabelTemplateFnc() {
       const params = {
-        templateId: sessionStorage.getItem('templateId')
-      }
+        templateId:this.templateId
+      };
       getAllLabelTemplate(params).then(res => {
-        this.elementList = res.result
-      })
+        this.elementList = res.result;
+      });
     },
     // 删除对应模板下面的元素
     deleteEleHandleClick(id) {
-      this.eleId = id
-      this.$confirm('此操作将永久删除该元素, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+      this.eleId = id;
+      this.$confirm("此操作将永久删除该元素, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       }).then(() => {
-        this.deleteLabelTemplateFnc()
-      })
+        this.deleteLabelTemplateFnc();
+      });
     },
     deleteLabelTemplateFnc() {
       deleteLabelTemplate(this.eleId).then(res => {
         this.$message({
-          message: '删除成功',
-          type: 'success'
-        })
-        this.getAllLabelTemplateFnc()
-      })
+          message: "删除成功",
+          type: "success"
+        });
+        this.getAllLabelTemplateFnc();
+      });
     }
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 .body {

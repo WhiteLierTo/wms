@@ -41,24 +41,16 @@
           </div>
 
           <!--列表-->
-          <el-table :data="listData" @expand-change="expandChange" style="width: 100%" border>
-            <el-table-column type="expand">
-              <!--单行信息-->
-              <template>
-                <el-table v-loading="loading" border :data="InvControlData" style="width: 100%">
-                  <el-table-column prop="warehouse" label="仓库" />
-                  <el-table-column prop="location" label="库位" />
-                  <el-table-column prop="batchNumber" label="批次" />
-                  <el-table-column prop="quantity" label="数量"></el-table-column>
-                  <el-table-column prop="modifyAt" label="创建时间" />
-                </el-table>
-              </template>
-            </el-table-column>
+          <el-table :data="listData"  style="width: 100%" border>
             <el-table-column prop="itemId" label="物料编号" />
             <el-table-column prop="itemName" label="物料名称" />
             <el-table-column prop="itemUnit" label="物料单位" />
             <el-table-column prop="quantity" label="库存数量" />
-            <!-- <el-table-column prop="createAt" label="创建时间" /> -->
+              <el-table-column label="操作" width="150">
+              <template>
+                <el-button type="text" size="small" @click="turnToInvcontrolDetail">详细库存</el-button>
+              </template>
+            </el-table-column>
           </el-table>
           <el-pagination
             background
@@ -223,6 +215,10 @@ export default {
     this.getItemAllFnc()
   },
   methods: {
+    //跳转库存详细
+    turnToInvcontrolDetail(){
+        this.$router.push({ name: 'invcontrolDetail'})
+    },
     // 对某一行展开或者关闭的时候会触发该事件
     expandChange(row, expandedRows) {
       this.loading = true

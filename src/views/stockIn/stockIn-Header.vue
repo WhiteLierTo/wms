@@ -1135,6 +1135,7 @@ export default {
     // 获取单头列表
     fetchData() {
       getStockInHeader(this.page).then(res => {
+        debugger
         this.listData = res.result.list
         this.page.total = res.result.total
       })

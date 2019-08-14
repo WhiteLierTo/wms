@@ -132,8 +132,8 @@
                   <el-select v-model="printerVal" placeholder="请选择打印机" style="width:100%">
                     <el-option
                       v-for="item in printerList"
-                      :key="item.id"
-                      :label="item.printerName"
+                      :key="item.printerUrl"
+                      :label="item.printerUrl"
                       :value="item.printerUrl"
                     />
                   </el-select>
@@ -299,7 +299,17 @@ export default {
         res.result.length === null
           ? this.$message.error('未查到该物料')
           : (this.itemInfo = res.result)
+        const param = {
+          itemId: this.itemId,
+          itemName:res.result.itemName,
+          itemUnit:res.result.itemUnit,
+          batchNumber:res.result.batchNumber,
+          quantity:res.result.quantity,
+        }
         this.tableData.forEach(v => {
+        if (v.fieldType === "label-qr") {
+          v.fieldValue = param;
+         }
           v.fieldValue = getValFnc(this.itemInfo, v.fieldName)
         })
       })

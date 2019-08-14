@@ -444,11 +444,12 @@ export default {
     fetchData() {
       getTemplateWidgetList(this.page).then(res => {
         this.listData = res.result.list
+        this.page.total = res.result.total
         this.listData.forEach(v => {
           v.fieldType = getDictionaryText(v.fieldType)[0].text
           v.validatedType = getDictionaryText(v.validatedType)[0].text
         })
-        this.page.total = res.result.total
+        
       })
     },
     getTemplateWidgetAllFnc() {

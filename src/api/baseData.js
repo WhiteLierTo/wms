@@ -276,7 +276,7 @@ export function deleteUnitConversion(id) {
 export function getItemList(params) {
   return request({
     baseURL,
-    url: 'bdItem/list',
+    url: 'bdItem/mine/list',
     method: 'get',
     params
   })
@@ -373,7 +373,7 @@ export function updateBdExternalBillTypeList(data) {
 export function getHistoricalRecordList(params) {
   return request({
     baseURL,
-    url: 'invInOutHistory/list',
+    url: 'invInOutHistory/mine/list',
     method: 'get',
     params
   })

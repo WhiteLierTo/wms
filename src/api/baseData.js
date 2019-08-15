@@ -1,7 +1,7 @@
 // 基础数据接口
 import request from '@/utils/request'
-// export const baseURL = 'http://116.62.212.169:8100/wms-main/'
-export const baseURL = 'http://192.18.1.149:8100/wms-main/'
+export const baseURL = 'http://116.62.212.169:8100/wms-main/'
+// export const baseURL = 'http://192.18.1.149:8100/wms-main/'
 
 // 获取库房列表
 export function getWarehouseList(params) {
@@ -453,6 +453,24 @@ export function getLocationOne(params) {
   return request({
     baseURL,
     url: 'bdLocation/one',
+    method: 'get',
+    params
+  })
+}
+// 获取所有供应商
+export function getSupplier(params) {
+  return request({
+    baseURL,
+    url: 'bdSupplier/all',
+    method: 'get',
+    params
+  })
+}
+// 获取单个供应商
+export function getSupplierOne(params) {
+  return request({
+    baseURL,
+    url: 'bdSupplier/one',
     method: 'get',
     params
   })

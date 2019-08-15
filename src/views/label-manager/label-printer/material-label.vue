@@ -38,51 +38,21 @@
             </el-form>
           </el-col>
         </el-row>
-        <div class="h-title">模板内容</div>
-        <el-card class="box-card">
-          <el-form ref="templateEle" :model="templateEle" class="demo-ruleForm">
-            <el-row>
-              <el-col :span="8">
-                <el-form-item prop="x" label="起始坐标x" :label-width="formLabelWidth">
-                  <el-input v-model="templateEle.x" autocomplete="off" disabled />
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item prop="y" label="起始坐标y" :label-width="formLabelWidth">
-                  <el-input v-model="templateEle.y" autocomplete="off" disabled />
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item prop="width" label="标签宽度" :label-width="formLabelWidth">
-                  <el-input v-model="templateEle.width" autocomplete="off" disabled />
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item prop="height" label="标签高度" :label-width="formLabelWidth">
-                  <el-input v-model="templateEle.height" autocomplete="off" disabled />
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item prop="direction" label="打印方向" :label-width="formLabelWidth">
-                  <el-input v-model="direction" autocomplete="off" disabled />
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
-        </el-card>
         <div v-show="elementShow">
           <div class="h-title1">模板元素</div>
           <el-card class="box-card">
             <div>
               <el-row>
-                <div v-for="item in tableData" :key="item.id" style="margin:20px 0px 10px 0px ">
+                <div v-for="item in newElement" :key="item.id" style="margin:20px 0px 10px 0px ">
                   <el-col :span="4">
                     <div
+                      v-show="item.dis"
                       style="margin:20px -5px 10px 20px;font-size:14px;font-weight:600"
                     >{{ item.labelName }}</div>
                   </el-col>
                   <el-col style="margin-top:10px" :span="4">
                     <el-input
+                      v-show="item.dis"
                       v-model="item.fieldValue"
                       :placeholder="item.placeholder"
                       :disabled="item.show"
@@ -101,7 +71,7 @@
                 <el-input v-model="number" type="number" autocomplete="off" />
               </el-form-item>
             </el-col>
-            <el-col :span="7">
+            <!-- <el-col :span="7">
               <el-form-item
                 prop="archived"
                 label="是否存档"
@@ -117,7 +87,7 @@
                   />
                 </el-select>
               </el-form-item>
-            </el-col>
+            </el-col> -->
             <el-col :span="7">
               <el-form>
                 <el-form-item
@@ -140,7 +110,7 @@
           </el-row>
         </el-form>
         <div class="btn">
-          <el-button type="primary" @click="printerViewHandleClick">预览</el-button>
+         <!--  <el-button type="primary" @click="printerViewHandleClick">预览</el-button> -->
           <el-button type="primary" @click="printHandleClick">开始打印</el-button>
         </div>
       </el-card>
@@ -207,6 +177,7 @@ export default {
         labelType: 2
       },
       tableData: [],
+      newElement:[],
       direction: ''
     }
   },
@@ -330,8 +301,11 @@ export default {
         this.tableData.forEach(v => {
           v.brushType = getDictionaryText(v.brushType)[0].text
           v.fieldType = getDictionaryText(v.fieldType)[0].text
-          if (v.fieldType === 'input') {
-            v.show = false
+          if(v.fieldType === '用户输入' || v.fieldType === '字段映射'){
+           this.newElement.push(v)
+          }
+          if (v.fieldType === '用户输入') {
+            v.show = false;
           } else {
             v.show = true
           }

@@ -1168,7 +1168,10 @@ export default {
     },
     // 获取外部单据类型
     getTypeAllFnc() {
-      getTypeAllFnc().then(res => {
+       let param = {
+        direction:1
+      }
+      getTypeAllFnc(param).then(res => {
         this.setRemote = res.result.map(item => {
           return { value: item.id, label: item.typeName }
         })

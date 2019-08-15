@@ -63,45 +63,13 @@
             </el-form>
           </el-col>
         </el-row>
-        <div class="h-title">模板信息</div>
-        <el-card class="box-card">
-          <el-form ref="templateEle" :model="templateEle" class="demo-ruleForm">
-            <el-row>
-              <el-col :span="8">
-                <el-form-item prop="x" label="起始坐标x" :label-width="formLabelWidth">
-                  <el-input v-model="templateEle.x" autocomplete="off" disabled />
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item prop="y" label="起始坐标y" :label-width="formLabelWidth">
-                  <el-input v-model="templateEle.y" autocomplete="off" disabled />
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item prop="width" label="标签宽度" :label-width="formLabelWidth">
-                  <el-input v-model="templateEle.width" autocomplete="off" disabled />
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item prop="height" label="标签高度" :label-width="formLabelWidth">
-                  <el-input v-model="templateEle.height" autocomplete="off" disabled />
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item prop="direction" label="打印方向" :label-width="formLabelWidth">
-                  <el-input v-model="direction" autocomplete="off" disabled />
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </el-form>
-        </el-card>
 
         <div v-show="elementShow">
           <div class="h-title1">模板元素</div>
           <el-card class="box-card">
             <div>
               <el-row>
-                <div v-for="item in element" :key="item.id" style="margin:20px 0px 10px 0px ">
+                <div v-for="item in newElement" :key="item.id" style="margin:20px 0px 10px 0px ">
                   <el-col :span="4">
                     <div
                       style="margin:20px -5px 10px 20px;font-size:14px;font-weight:600"
@@ -128,7 +96,7 @@
                 <el-input v-model="number" type="number" autocomplete="off" />
               </el-form-item>
             </el-col>
-            <el-col :span="7">
+           <!--  <el-col :span="7">
               <el-form-item
                 prop="archived"
                 label="是否存档"
@@ -144,7 +112,7 @@
                   />
                 </el-select>
               </el-form-item>
-            </el-col>
+            </el-col> -->
             <el-col :span="7">
               <el-form>
                 <el-form-item
@@ -167,7 +135,7 @@
           </el-row>
         </el-form>
         <div class="btn">
-          <el-button type="primary" @click="printerViewHandleClick">预览</el-button>
+          <!-- <el-button type="primary" @click="printerViewHandleClick">预览</el-button> -->
           <el-button type="primary" @click="printHandleClick">开始打印</el-button>
         </div>
       </el-card>
@@ -227,6 +195,7 @@ export default {
       warehouse: [], // 库房库位数据
       locationOne: {}, // 单个库位信息
       element: [], // 元素
+      newElement:[],
       preview: false,
       elementShow: false,
       flowPic: '',
@@ -369,10 +338,13 @@ export default {
           this.elementShow = true
         }
         this.element.forEach(v => {
-          if (v.fieldType === 'input') {
-            v.show = false
+           if (v.fieldType === 'input') {
+            v.show = false;
           } else {
             v.show = true
+          }
+          if(v.fieldType === 'input' || v.fieldType === 'mapped'){
+                this.newElement.push(v)
           }
         })
       })

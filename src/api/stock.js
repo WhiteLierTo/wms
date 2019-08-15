@@ -1,7 +1,7 @@
 // 出入库接口
 import request from '@/utils/request'
-// const baseURL = 'http://116.62.212.169:8100/wms-main/'
-const baseURL = 'http://192.18.1.149:8100/wms-main/'
+const baseURL = 'http://116.62.212.169:8100/wms-main/'
+// const baseURL = 'http://192.18.1.149:8100/wms-main/'
 
 // 入库
 // 获取单头列表

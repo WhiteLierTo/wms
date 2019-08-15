@@ -12,16 +12,21 @@
                   label="供应商ID"
                   :label-width="formLabelWidth"
                 >
-                  <el-input v-model="headerData.vendorId" autocomplete="off" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="11">
-                <el-form-item
-                  prop="vendorName"
-                  label="供应商名称"
-                  :label-width="formLabelWidth"
-                >
-                  <el-input v-model="headerData.vendorName" autocomplete="off" />
+                  <el-select
+                    style="width:100%"
+                    v-model="headerData.vendorId"
+                    clearable
+                    filterable
+                    placeholder="供应商"
+                    @change="vendorChange"
+                  >
+                    <el-option
+                      v-for="item in supplier"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="11">
@@ -62,7 +67,7 @@
                   <el-input v-model="headerData.billNumber" autocomplete="off" />
                 </el-form-item>
               </el-col>
-              <el-col :span="24">
+              <el-col :span="22">
                 <el-form-item
                   prop="state"
                   label="入库单说明"
@@ -219,7 +224,9 @@ import {
   getUnitAll,
   getItemAllFnc,
   getItemOne,
-  getBatchOne
+  getBatchOne,
+  getSupplier,
+  getSupplierOne
 } from "@/api/baseData";
 import { positiveNumber } from "@/utils/validate";
 export default {
@@ -227,6 +234,8 @@ export default {
     this.getTypeAllFnc();
     //获取全部物料
     this.getItemAllFnc();
+    //获取所有供应商
+     this.getSupplier();
   },
   destroyed(){
     this.listData = [];
@@ -244,6 +253,7 @@ export default {
       item: [], //物料下拉
       unit: [], //单位下拉
       batchNumber: [], //批次下拉
+      supplier:[], //供应商下拉
       addLineData: {
         // 新增单行数据
         headerId: "",
@@ -252,11 +262,28 @@ export default {
         itemUnit: "",
         batchNumber: "",
         quantity: "",
-        producedDate: ""
+        producedDate: "",
       }
     };
   },
   methods: {
+    //供应商改变
+    vendorChange(){
+      let param = {
+        id:this.headerData.vendorId
+      }
+      getSupplierOne(param).then(res=>{
+          this.headerData.vendorName = res.result.supplierName
+        })
+    },
+     //获取所有供应商
+     getSupplier(){
+        getSupplier().then(res => {
+        this.supplier = res.result.map(item => {
+          return { value: item.id, label: item.supplierName };
+        });
+      });
+     },
     //返回入库单页面
     Form(){
         this.listData = [];
@@ -400,7 +427,10 @@ export default {
     },
     // 获取外部单据类型
     getTypeAllFnc() {
-      getTypeAllFnc().then(res => {
+      let param = {
+        direction:1
+      }
+      getTypeAllFnc(param).then(res => {
         this.setRemote = res.result.map(item => {
           return { value: item.id, label: item.typeName };
         });

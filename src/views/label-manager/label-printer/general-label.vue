@@ -16,6 +16,7 @@
                   <el-option
                     v-for="item in tableData"
                     :key="item.id"
+                    :disabled="item.show"
                     :label="item.templateName"
                     :value="item.id"
                   />
@@ -24,7 +25,7 @@
             </el-form>
           </el-col>
         </el-row>
-        <div class="h-title">模板信息</div>
+       <!--  <div class="h-title">模板信息</div>
         <el-card class="box-card">
           <el-form ref="templateEle" :model="templateEle" class="demo-ruleForm">
             <el-row>
@@ -56,13 +57,13 @@
             </el-row>
           </el-form>
         </el-card>
-
+ -->
         <div v-show="elementShow">
           <div class="h-title1">模板元素</div>
           <el-card class="box-card">
             <div>
               <el-row>
-                <div v-for="item in element" :key="item.id" style="margin:20px 0px 10px 0px ">
+                <div v-for="item in newElement" :key="item.id" style="margin:20px 0px 10px 0px ">
                   <el-col :span="4">
                     <div
                       style="margin:20px -5px 10px 20px;font-size:14px;font-weight:600"
@@ -71,7 +72,6 @@
                   <el-col style="margin-top:10px" :span="4">
                     <el-input
                       v-model="item.fieldValue"
-                      :disabled="item.show"
                       :placeholder="item.placeholder"
                       autocomplete="off"
                     />
@@ -92,7 +92,7 @@
                 <el-input type="number" v-model="number" autocomplete="off" />
               </el-form-item>
             </el-col>
-             <el-col :span="7">
+            <!--  <el-col :span="7">
             <el-form-item
                   prop="archived"
                   label="是否存档"
@@ -108,7 +108,7 @@
                     />
                   </el-select>
                 </el-form-item>
-            </el-col>
+            </el-col> -->
             <el-col :span="7">
               <el-form>
                 <el-form-item
@@ -131,7 +131,7 @@
           </el-row>
         </el-form>
         <div class="btn">
-          <el-button type="primary" @click="printerViewHandleClick">预览</el-button>
+          <!-- <el-button type="primary" @click="printerViewHandleClick">预览</el-button> -->
           <el-button type="primary" @click="printHandleClick">开始打印</el-button>
         </div>
       </el-card>
@@ -160,6 +160,7 @@ export default {
   data() {
     return {
       tableData: [],
+      newElement:[],
       printerList: [],
       value: "",
       formLabelWidth: "120px",
@@ -257,10 +258,13 @@ export default {
           this.elementShow = true;
         }
         this.element.forEach(v => {
-          if (v.fieldType === "input") {
+           if (v.fieldType === 'input') {
             v.show = false;
           } else {
-            v.show = true;
+            v.show = true
+          }
+          if(v.fieldType === 'input' || v.fieldType === 'mapped'){
+                this.newElement.push(v)
           }
         });
       });
